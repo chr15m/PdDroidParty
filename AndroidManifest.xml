@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="cx.mccormick" android:versionCode="1" android:versionName="1.0">
+	package="cx.mccormick.pddroidparty" android:versionCode="1" android:versionName="1.0">
         <supports-screens
             android:largeScreens="true"
             android:normalScreens="true"

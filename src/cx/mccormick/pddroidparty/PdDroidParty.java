@@ -1,4 +1,4 @@
-package cx.mccormick;
+package cx.mccormick.pddroidparty;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,6 +21,9 @@ import android.os.IBinder;
 import android.widget.Toast;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.opengl.GLSurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class PdDroidParty extends Activity {
 
@@ -110,9 +113,13 @@ public class PdDroidParty extends Activity {
 	}
 	
 	private void initGui() {
-		setContentView(R.layout.main);
+		//setContentView(R.layout.main);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		GLSurfaceView view = new GLSurfaceView(this);
+		view.setRenderer(new OpenGLRenderer());
+		setContentView(view);
 	}
-
+	
 	private void initPd() {
 		if (AudioParameters.suggestSampleRate() < SAMPLE_RATE) {
 			post("required sample rate not available; exiting");
