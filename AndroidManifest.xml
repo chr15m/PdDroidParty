@@ -10,7 +10,7 @@
 		android:theme="@android:style/Theme.NoTitleBar">
 		<activity android:name=".PdDroidParty" android:label="@string/app_name"
 			android:configChanges="orientation" android:launchMode="singleTask"
-                        android:screenOrientation="portrait">
+                        android:screenOrientation="landscape">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
