@@ -9,6 +9,9 @@ import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 
 public class OpenGLRenderer implements Renderer {
+	// initialise a test slider
+	Slider slider = new Slider();
+	
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		// Set the background color to black ( rgba ).
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
@@ -27,6 +30,15 @@ public class OpenGLRenderer implements Renderer {
 	public void onDrawFrame(GL10 gl) {
 		// Clears the screen and depth buffer.
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);		
+		
+		// Replace the current matrix with the identity matrix
+		gl.glLoadIdentity(); // OpenGL docs
+		
+		// Translates 4 units into the screen.
+		gl.glTranslatef(0, 0, -4); // OpenGL docs
+		
+		// Draw our square.
+		slider.draw(gl); // ( NEW )
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
