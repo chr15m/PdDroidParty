@@ -1,3 +1,5 @@
+
+
 package cx.mccormick.pddroidparty;
 
 import java.nio.ByteBuffer;
@@ -8,22 +10,20 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.opengles.GL10;
 
 public class Slider {
-	// Our vertices.
-	private float vertices[] = {
-		      -1.0f,  1.0f, 0.0f,  // 0, Top Left
-		      -1.0f, -1.0f, 0.0f,  // 1, Bottom Left
-		       1.0f, -1.0f, 0.0f,  // 2, Bottom Right
-		       1.0f,  1.0f, 0.0f,  // 3, Top Right
-		};
-
-	// The order we like to connect them.
-	private short[] indices = { 0, 1, 2, 0, 2, 3 };
+	private float x = 0.25f;
+	private float y = 0.25f;
+	private float s = 0.5f;
 
 	// Our vertex buffer.
 	private FloatBuffer vertexBuffer;
-
-	// Our index buffer.
-	private ShortBuffer indexBuffer;
+	
+	private float vertices[] = 
+	{
+	        x,     y + s,
+	        x + s, y + s,
+	        x,     y,
+	        x + s, y
+	};
 
 	public Slider() {
 		// a float is 4 bytes, therefore we multiply the number if
@@ -33,14 +33,6 @@ public class Slider {
 		vertexBuffer = vbb.asFloatBuffer();
 		vertexBuffer.put(vertices);
 		vertexBuffer.position(0);
-
-		// short is 2 bytes, therefore we multiply the number if
-		// vertices with 2.
-		ByteBuffer ibb = ByteBuffer.allocateDirect(indices.length * 2);
-		ibb.order(ByteOrder.nativeOrder());
-		indexBuffer = ibb.asShortBuffer();
-		indexBuffer.put(indices);
-		indexBuffer.position(0);
 	}
 
 	/**
@@ -48,28 +40,21 @@ public class Slider {
 	 * @param gl
 	 */
 	public void draw(GL10 gl) {
-		// Counter-clockwise winding.
-		gl.glFrontFace(GL10.GL_CCW); // OpenGL docs
-		// Enable face culling.
-		gl.glEnable(GL10.GL_CULL_FACE); // OpenGL docs
-		// What faces to remove with the face culling.
-		gl.glCullFace(GL10.GL_BACK); // OpenGL docs
-
+		gl.glColor4f((float)0.0, (float)0.0, (float)0.0, (float)0.0);
 		// Enabled the vertices buffer for writing and to be used during
 		// rendering.
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);// OpenGL docs.
 		// Specifies the location and data format of an array of vertex
 		// coordinates to use when rendering.
-		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, // OpenGL docs
-                                 vertexBuffer);
+		//gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
+		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);
 
-		gl.glDrawElements(GL10.GL_TRIANGLES, indices.length,// OpenGL docs
-				  GL10.GL_UNSIGNED_SHORT, indexBuffer);
+		//gl.glDrawElements(GL10.GL_TRIANGLES, indices.length, GL10.GL_UNSIGNED_SHORT, indexBuffer);
+		gl.glDrawArrays(GL10.GL_LINES, 0, vertices.length);
 
 		// Disable the vertices buffer.
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY); // OpenGL docs
-		// Disable face culling.
-		gl.glDisable(GL10.GL_CULL_FACE); // OpenGL docs
 	}
 }
+
 

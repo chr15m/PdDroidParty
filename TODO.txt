@@ -11,7 +11,7 @@
      * comment
      * canvas
    * test duplicate receivers in patch and in PdClient
-   * make 2D OpenGL renderer
+   + make 2D OpenGL renderer
    * integrate patch parser
    * read interface objects from patch or subpatch called [pd android-interface] if it exists
 

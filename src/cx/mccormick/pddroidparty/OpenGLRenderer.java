@@ -13,7 +13,7 @@ public class OpenGLRenderer implements Renderer {
 	Slider slider = new Slider();
 	
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-		// Set the background color to black ( rgba ).
+		/*// Set the background color to black ( rgba ).
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
 		// Enable Smooth Shading, default not really needed.
 		gl.glShadeModel(GL10.GL_SMOOTH);
@@ -24,35 +24,34 @@ public class OpenGLRenderer implements Renderer {
 		// The type of depth testing to do.
 		gl.glDepthFunc(GL10.GL_LEQUAL);
 		// Really nice perspective calculations.
-		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);*/
 	}
 
 	public void onDrawFrame(GL10 gl) {
-		// Clears the screen and depth buffer.
+		/*// Clears the screen and depth buffer.
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);		
-		
-		// Replace the current matrix with the identity matrix
-		gl.glLoadIdentity(); // OpenGL docs
 		
 		// Translates 4 units into the screen.
 		gl.glTranslatef(0, 0, -4); // OpenGL docs
+		*/
+
+		// Replace the current matrix with the identity matrix
+		gl.glLoadIdentity(); // OpenGL docs
+		// trick for exact pixels
+		//gl.glTranslatef((float)0.375, (float)0.375, (float)0);
+		
+		gl.glClearColor((float)1.0, (float)1.0, (float)1.0, (float)1.0);
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 		// Draw our square.
 		slider.draw(gl); // ( NEW )
 	}
-
+	
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
-		// Sets the current view port to the new size.
-		gl.glViewport(0, 0, width, height);
-		// Select the projection matrix
 		gl.glMatrixMode(GL10.GL_PROJECTION);
-		// Reset the projection matrix
 		gl.glLoadIdentity();
-		// Calculate the aspect ratio of the window
-		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 0.1f, 100.0f);
-		// Select the modelview matrix
+		gl.glOrthof(0, (float)1.0, (float)1.0, 0, 0, 1);
+		gl.glDisable(GL10.GL_DEPTH_TEST);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
-		// Reset the modelview matrix
-		gl.glLoadIdentity();
 	}
 }
