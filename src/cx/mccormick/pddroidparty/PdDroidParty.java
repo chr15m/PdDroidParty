@@ -25,6 +25,8 @@ import android.opengl.GLSurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
+import cx.mccormick.pddroidparty.PdParser;
+
 public class PdDroidParty extends Activity {
 
 	private static final String PD_CLIENT = "Pd Client";
@@ -142,6 +144,10 @@ public class PdDroidParty extends Activity {
 		try {
 			pdService.initAudio(SAMPLE_RATE, nIn, nOut, -1);   // negative values default to PdService preferences
 			patch = PdUtils.openPatch(path);
+			// parse the patch for GUI elements
+			PdParser p = new PdParser();
+			p.printAtoms(p.parsePatch(path));
+			// start the audio thread
 			String name = res.getString(R.string.app_name);
 			pdService.startAudio(new Intent(this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
 		} catch (IOException e) {

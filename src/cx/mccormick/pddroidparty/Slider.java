@@ -1,5 +1,3 @@
-
-
 package cx.mccormick.pddroidparty;
 
 import java.nio.ByteBuffer;
