@@ -42,7 +42,7 @@ public class PdDroidParty extends Activity {
 		@Override public void receiveBang(String source) {}
 
 		@Override public void print(String s) {
-			post(s);
+			Log.e("PdDroidParty", s);
 		}
 	};
 
