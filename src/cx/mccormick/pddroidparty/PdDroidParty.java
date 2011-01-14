@@ -29,11 +29,12 @@ import cx.mccormick.pddroidparty.PdParser;
 
 public class PdDroidParty extends Activity {
 
-	private static final String PD_CLIENT = "Pd Client";
+	private static final String PD_CLIENT = "PdDroidParty";
 	private static final int SAMPLE_RATE = 22050;
 	private PdService pdService = null;
 	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
-
+	
+	// receive messages and prints back from Pd
 	private final PdReceiver receiver = new PdReceiver() {
 		@Override public void receiveSymbol(String source, String symbol) {}
 		@Override public void receiveMessage(String source, String symbol, Object... args) {}
@@ -45,7 +46,8 @@ public class PdDroidParty extends Activity {
 			Log.e("PdDroidParty", s);
 		}
 	};
-
+	
+	// post a 'toast' alert to the Android UI
 	private void post(final String msg) {
 		runOnUiThread(new Runnable() {
 			@Override
@@ -54,7 +56,8 @@ public class PdDroidParty extends Activity {
 			}
 		});
 	}
-
+	
+	// our connection to the Pd service
 	private final ServiceConnection serviceConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -67,7 +70,8 @@ public class PdDroidParty extends Activity {
 			// this method will never be called
 		}
 	};
-
+	
+	// called when the app is launched
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -82,12 +86,14 @@ public class PdDroidParty extends Activity {
 		initGui();
 	}
 
+	// When the app shuts down
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		cleanup();
 	}
 	
+	// send a Pd atom-string 's' to a particular receiver 'dest'
 	public void send(String dest, String s) {
 		List<Object> list = new ArrayList<Object>();
 		String[] bits = s.split(" ");
@@ -104,6 +110,7 @@ public class PdDroidParty extends Activity {
 		PdBase.sendList(dest, ol);
 	}
 	
+	// if we receive a touch even
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// osc1
@@ -111,9 +118,11 @@ public class PdDroidParty extends Activity {
 		Log.e("EV:", event.getX() + ", " + event.getY());
 		PdBase.sendFloat("osc1", event.getX());
 		PdBase.sendFloat("osc2", event.getY());
+		// TODO: for down/move events, loop through all sliders and test
 		return true;
 	}
 	
+	// initialise the GUI with the OpenGL rendering engine
 	private void initGui() {
 		//setContentView(R.layout.main);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -122,6 +131,7 @@ public class PdDroidParty extends Activity {
 		setContentView(view);
 	}
 	
+	// initialise Pd asking for the desired sample rate, parameters, etc.
 	private void initPd() {
 		if (AudioParameters.suggestSampleRate() < SAMPLE_RATE) {
 			post("required sample rate not available; exiting");
@@ -147,6 +157,7 @@ public class PdDroidParty extends Activity {
 			// parse the patch for GUI elements
 			PdParser p = new PdParser();
 			p.printAtoms(p.parsePatch(path));
+			buildUI(p.parsePatch(path));
 			// start the audio thread
 			String name = res.getString(R.string.app_name);
 			pdService.startAudio(new Intent(this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
@@ -155,13 +166,15 @@ public class PdDroidParty extends Activity {
 			finish();
 		}
 	}
-
+	
+	// close the app and exit
 	@Override
 	public void finish() {
 		cleanup();
 		super.finish();
 	}
-
+	
+	// quit the Pd service and release other resources
 	private void cleanup() {
 		// make sure to release all resources
 		if (pdService != null) pdService.stopAudio();
