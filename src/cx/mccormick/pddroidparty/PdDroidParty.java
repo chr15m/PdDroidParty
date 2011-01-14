@@ -29,8 +29,10 @@ import cx.mccormick.pddroidparty.PdParser;
 
 public class PdDroidParty extends Activity {
 
+	public static final String PATCH = "PATCH";
 	private static final String PD_CLIENT = "PdDroidParty";
 	private static final int SAMPLE_RATE = 22050;
+	private String path;
 	private PdService pdService = null;
 	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
 	
@@ -75,6 +77,8 @@ public class PdDroidParty extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Intent intent = getIntent();
+		path = intent.getStringExtra(PATCH);
 		initGui();
 		bindService(new Intent(this, PdService.class), serviceConnection, BIND_AUTO_CREATE);
 	}
@@ -149,7 +153,6 @@ public class PdDroidParty extends Activity {
 			return;
 		}
 		Resources res = getResources();
-		String path = res.getString(R.string.path_to_patch);
 		PdBase.setReceiver(receiver);
 		try {
 			pdService.initAudio(SAMPLE_RATE, nIn, nOut, -1);   // negative values default to PdService preferences
@@ -157,7 +160,6 @@ public class PdDroidParty extends Activity {
 			// parse the patch for GUI elements
 			PdParser p = new PdParser();
 			p.printAtoms(p.parsePatch(path));
-			buildUI(p.parsePatch(path));
 			// start the audio thread
 			String name = res.getString(R.string.app_name);
 			pdService.startAudio(new Intent(this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
