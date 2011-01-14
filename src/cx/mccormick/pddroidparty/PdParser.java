@@ -18,13 +18,18 @@ public final class PdParser {
 		printAtoms(atomlines);
 	}
 	
+	// print out a particular atom line
+	public static void printAtom(String[] line) {
+		for (int i=0; i<line.length; i++) {
+			System.out.print(" [" + line[i] + "]");
+		}
+		System.out.println();
+	}
+	
 	// print out all of the atoms found
 	public static void printAtoms(ArrayList<String[]> atomlines) {
 		for (String[] line: atomlines) {
-			for (int i=0; i<line.length; i++) {
-				System.out.print(" [" + line[i] + "]");
-			}
-			System.out.println();
+			printAtom(line);
 		}
 	}
 	
