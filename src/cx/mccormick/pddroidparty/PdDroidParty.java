@@ -159,13 +159,42 @@ public class PdDroidParty extends Activity {
 			patch = PdUtils.openPatch(path);
 			// parse the patch for GUI elements
 			PdParser p = new PdParser();
-			p.printAtoms(p.parsePatch(path));
+			// p.printAtoms(p.parsePatch(path));
+			buildUI(p, p.parsePatch(path));
 			// start the audio thread
 			String name = res.getString(R.string.app_name);
 			pdService.startAudio(new Intent(this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
 		} catch (IOException e) {
 			post(e.toString() + "; exiting now");
 			finish();
+		}
+	}
+	
+	// build a user interface using the stuff found in the patch
+	private void buildUI(PdParser p, ArrayList<String[]> atomlines) {
+		//ArrayList<String> canvases = new ArrayList<String>();
+		ArrayList<Slider> sliders = new ArrayList<Slider>();
+		for (String[] line: atomlines) {
+			if (line.length >= 4) {
+				// find canvas begin and end lines
+				/*if (line[1].equals("canvas")) {
+					if (canvases.length == 0) {
+						canvases.add(0, "self");
+					} else {
+						canvases.add(0, line[6]);
+					}
+				else if (line[1].equals("canvas")) {
+					canvases.remove(0);*/
+					
+				// find different types of UI element
+				if (line[4].equals("vsl")) {
+					p.printAtom(line);
+				} else if (line[4].equals("hsl")) {
+					p.printAtom(line);
+				} else if (line[4].equals("tgl")) {
+					p.printAtom(line);
+				}
+			}
 		}
 	}
 	
