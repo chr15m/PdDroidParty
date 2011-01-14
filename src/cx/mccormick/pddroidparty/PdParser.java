@@ -12,14 +12,13 @@ public final class PdParser {
 	private static final String line_re = "(#((.|\r|\n)*?)[^\\\\])\r{0,1}\n{0,1};\r{0,1}\n";
 	private static final String token_re = " |\r\n?|\n";
 	
-	/**
-	* The pattern is matched to the first argument.
-	*/
+	// test stub
 	public static void main (String[] aArguments) {
 		ArrayList<String[]> atomlines = getAtomLines(readPatch(aArguments[0]));
 		printAtoms(atomlines);
 	}
 	
+	// print out all of the atoms found
 	public static void printAtoms(ArrayList<String[]> atomlines) {
 		for (String[] line: atomlines) {
 			for (int i=0; i<line.length; i++) {
@@ -29,10 +28,12 @@ public final class PdParser {
 		}
 	}
 	
+	// read a file and get an array of arrays of atoms (strings)
 	public static ArrayList<String[]> parsePatch(String filename) {
 		return getAtomLines(readPatch(filename));
 	}
 	
+	// read a text file
 	private static String readPatch(String name)
 	{
 		File file = new File(name);
@@ -67,10 +68,7 @@ public final class PdParser {
 		return contents.toString();
 	}
 	
-	/**
-	* The Matcher.find method attempts to match *parts* of the input
-	* to the given pattern.
-	*/
+	// use a regular expression to extract rows of atoms from a given text
 	public static ArrayList<String[]> getAtomLines(String patchtext) {
 		Pattern pattern = Pattern.compile(line_re, Pattern.MULTILINE);
 		Pattern token_pattern = Pattern.compile(token_re, Pattern.MULTILINE);

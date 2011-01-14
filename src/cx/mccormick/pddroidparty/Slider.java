@@ -13,7 +13,7 @@ public class Slider {
 	private float s = 0.5f;
 
 	private FloatBuffer vertexBuffer;
-
+	
 	private float vertices[] = 
 	{
 	        x,	y,
