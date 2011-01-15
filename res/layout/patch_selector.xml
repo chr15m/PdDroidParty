@@ -5,7 +5,7 @@
 	
 	<TextView android:layout_height="wrap_content" android:layout_marginLeft="5px"
 		android:textStyle="bold" android:layout_width="fill_parent"
-		android:layout_marginTop="5px" android:text="PdDroidParty patches found:" />
+		android:layout_marginTop="5px" android:text="PdDroidParty compatible patches found:" />
 	
 	<ListView android:id="@+id/patch_selector"
 		android:layout_width="fill_parent" android:layout_height="wrap_content" />
