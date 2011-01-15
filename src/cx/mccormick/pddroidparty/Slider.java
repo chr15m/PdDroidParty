@@ -8,27 +8,31 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.view.MotionEvent;
+import android.util.Log;
 
 public class Slider extends Widget{
-	private float x = 0.25f;
-	private float y = 0.25f;
-	private float s = 0.5f;
-
 	private FloatBuffer vertexBuffer;
+	private float vertices[] = new float[16];
 	
-	private float vertices[] = 
-	{
-	        x,	y,
-	        x + s,	y,
-	        x + s,	y,
-	        x + s,	y + s,
-	        x + s,	y + s,
-	        x,	y + s,
-	        x,	y + s,
-		x,	y,
-	};
-
-	public Slider() {
+	public Slider(float x, float y, float w, float h) {
+		vertices[0] = x;
+		vertices[1] = y;
+		vertices[2] = x + w;
+		vertices[3] = y;
+		vertices[4] = x + w;
+		vertices[5] = y;
+		vertices[6] = x + w;
+		vertices[7] = y + h;
+		vertices[8] = x + w;
+		vertices[9] = y + h;
+		vertices[10] = x;
+		vertices[11] = y + h;
+		vertices[12] = x;
+		vertices[13] = y + h;
+		vertices[14] = x;
+		vertices[15] = y;
+		Log.e("Slider:", "" + x + " " + y + " " + w + " " + h);
+		
 		// a float is 4 bytes, therefore we multiply the number if vertices with 4.
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
 		vbb.order(ByteOrder.nativeOrder());

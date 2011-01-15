@@ -2,6 +2,8 @@ package cx.mccormick.pddroidparty;
 
 // originally from here: http://blog.jayway.com/2009/12/03/opengl-es-tutorial-for-android-part-i/
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -10,7 +12,11 @@ import android.opengl.GLSurfaceView.Renderer;
 
 public class OpenGLRenderer implements Renderer {
 	// initialise a test slider
-	Slider slider = new Slider();
+	ArrayList<Widget> widgets;
+	
+	public OpenGLRenderer(ArrayList<Widget> in) {
+		widgets = in;
+	}
 	
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		/*// Set the background color to black ( rgba ).
@@ -43,8 +49,12 @@ public class OpenGLRenderer implements Renderer {
 		gl.glClearColor((float)1.0, (float)1.0, (float)1.0, (float)1.0);
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
-		// Draw our square.
-		slider.draw(gl); // ( NEW )
+		// draw all widgets
+		if (widgets != null) {
+			for (Widget widget: widgets) {
+				widget.draw(gl);
+			}
+		}
 	}
 	
 	public void onSurfaceChanged(GL10 gl, int width, int height) {

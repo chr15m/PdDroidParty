@@ -35,6 +35,7 @@ public class PdDroidParty extends Activity {
 	private String path;
 	private PdService pdService = null;
 	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
+	ArrayList<Widget> widgets = new ArrayList<Widget>();
 	
 	// receive messages and prints back from Pd
 	private final PdReceiver receiver = new PdReceiver() {
@@ -123,6 +124,12 @@ public class PdDroidParty extends Activity {
 		PdBase.sendFloat("osc1", event.getX());
 		PdBase.sendFloat("osc2", event.getY());
 		// TODO: for down/move events, loop through all sliders and test
+		if (widgets != null) {
+			for (Widget widget: widgets) {
+				widget.touch(event);
+			}
+		}
+
 		return true;
 	}
 	
@@ -131,7 +138,7 @@ public class PdDroidParty extends Activity {
 		//setContentView(R.layout.main);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		GLSurfaceView view = new GLSurfaceView(this);
-		view.setRenderer(new OpenGLRenderer());
+		view.setRenderer(new OpenGLRenderer(widgets));
 		setContentView(view);
 	}
 	
@@ -173,26 +180,36 @@ public class PdDroidParty extends Activity {
 	// build a user interface using the stuff found in the patch
 	private void buildUI(PdParser p, ArrayList<String[]> atomlines) {
 		//ArrayList<String> canvases = new ArrayList<String>();
-		ArrayList<Slider> sliders = new ArrayList<Slider>();
+		int level = 0;
+		int width = 0;
+		int height = 0;
+		
 		for (String[] line: atomlines) {
 			if (line.length >= 4) {
 				// find canvas begin and end lines
-				/*if (line[1].equals("canvas")) {
-					if (canvases.length == 0) {
+				if (line[1].equals("canvas")) {
+					/*if (canvases.length == 0) {
 						canvases.add(0, "self");
 					} else {
 						canvases.add(0, line[6]);
+					}*/
+					width = Integer.parseInt(line[4]);
+					height = Integer.parseInt(line[5]);
+					Log.e("width", "" + width);
+					Log.e("height", "" + height);
+					level += 1;
+				} else if (line[1].equals("restore")) {
+					//canvases.remove(0);
+					level -= 1;
+				// find different types of UI element in the top level patch
+				} else if (level == 1) {
+					if (line[4].equals("vsl")) {
+						p.printAtom(line);
+					} else if (line[4].equals("hsl")) {
+						widgets.add(new Slider(Float.parseFloat(line[2]) / width, Float.parseFloat(line[3]) / height, Float.parseFloat(line[5]) / width, Float.parseFloat(line[6]) / height));
+					} else if (line[4].equals("tgl")) {
+						p.printAtom(line);
 					}
-				else if (line[1].equals("canvas")) {
-					canvases.remove(0);*/
-					
-				// find different types of UI element
-				if (line[4].equals("vsl")) {
-					p.printAtom(line);
-				} else if (line[4].equals("hsl")) {
-					p.printAtom(line);
-				} else if (line[4].equals("tgl")) {
-					p.printAtom(line);
 				}
 			}
 		}
