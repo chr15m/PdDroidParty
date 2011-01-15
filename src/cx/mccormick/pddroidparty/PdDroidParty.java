@@ -29,12 +29,15 @@ import cx.mccormick.pddroidparty.PdParser;
 
 public class PdDroidParty extends Activity {
 
+	public GLSurfaceView view = null;
 	public static final String PATCH = "PATCH";
 	private static final String PD_CLIENT = "PdDroidParty";
 	private static final int SAMPLE_RATE = 22050;
 	private String path;
 	private PdService pdService = null;
 	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
+	public int width;
+	public int height;
 	ArrayList<Widget> widgets = new ArrayList<Widget>();
 	
 	// receive messages and prints back from Pd
@@ -137,7 +140,7 @@ public class PdDroidParty extends Activity {
 	private void initGui() {
 		//setContentView(R.layout.main);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		GLSurfaceView view = new GLSurfaceView(this);
+		view = new GLSurfaceView(this);
 		view.setRenderer(new OpenGLRenderer(widgets));
 		setContentView(view);
 	}
@@ -181,8 +184,6 @@ public class PdDroidParty extends Activity {
 	private void buildUI(PdParser p, ArrayList<String[]> atomlines) {
 		//ArrayList<String> canvases = new ArrayList<String>();
 		int level = 0;
-		int width = 0;
-		int height = 0;
 		
 		for (String[] line: atomlines) {
 			if (line.length >= 4) {
@@ -195,8 +196,6 @@ public class PdDroidParty extends Activity {
 					}*/
 					width = Integer.parseInt(line[4]);
 					height = Integer.parseInt(line[5]);
-					Log.e("width", "" + width);
-					Log.e("height", "" + height);
 					level += 1;
 				} else if (line[1].equals("restore")) {
 					//canvases.remove(0);
@@ -206,7 +205,7 @@ public class PdDroidParty extends Activity {
 					if (line[4].equals("vsl")) {
 						p.printAtom(line);
 					} else if (line[4].equals("hsl")) {
-						widgets.add(new Slider(Float.parseFloat(line[2]) / width, Float.parseFloat(line[3]) / height, Float.parseFloat(line[5]) / width, Float.parseFloat(line[6]) / height));
+						widgets.add(new Slider(this, line));
 					} else if (line[4].equals("tgl")) {
 						p.printAtom(line);
 					}

@@ -13,8 +13,29 @@ import android.util.Log;
 public class Slider extends Widget{
 	private FloatBuffer vertexBuffer;
 	private float vertices[] = new float[16];
+	private PdDroidParty parent;
 	
-	public Slider(float x, float y, float w, float h) {
+	float min, max, val;
+	int log, init;
+	String send, recv, labl;
+	
+	public Slider(PdDroidParty app, String[] atomline) {
+		parent = app;
+		
+		x = Float.parseFloat(atomline[2]) / parent.width;
+		y = Float.parseFloat(atomline[3]) / parent.height;
+		w = Float.parseFloat(atomline[5]) / parent.width;
+		h = Float.parseFloat(atomline[6]) / parent.height;
+		
+		min = Float.parseFloat(atomline[7]);
+		max = Float.parseFloat(atomline[8]);
+		log = Integer.parseInt(atomline[9]);
+		init = Integer.parseInt(atomline[10]);
+		send = atomline[11];
+		recv = atomline[12];
+		labl = atomline[13];
+		val = (Float.parseFloat(atomline[21]) / 100) / w;
+		
 		vertices[0] = x;
 		vertices[1] = y;
 		vertices[2] = x + w;
@@ -31,7 +52,6 @@ public class Slider extends Widget{
 		vertices[13] = y + h;
 		vertices[14] = x;
 		vertices[15] = y;
-		Log.e("Slider:", "" + x + " " + y + " " + w + " " + h);
 		
 		// a float is 4 bytes, therefore we multiply the number if vertices with 4.
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -41,10 +61,6 @@ public class Slider extends Widget{
 		vertexBuffer.position(0);
 	}
 
-	/**
-	 * This function draws our square on screen.
-	 * @param gl
-	 */
 	public void draw(GL10 gl) {
 		// Draw UI elements in black
 		gl.glColor4f((float)0.0, (float)0.0, (float)0.0, (float)0.0);
@@ -58,6 +74,17 @@ public class Slider extends Widget{
 		// Disable the vertices buffer.
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 	}
+	
+	public void touch(MotionEvent event) {
+		float ex = event.getX() / parent.view.getWidth();
+		float ey = event.getY() / parent.view.getHeight();
+		if (inside(ex, ey)) {
+			if (event.getAction() == event.ACTION_DOWN) {
+			} else if (event.getAction() == event.ACTION_MOVE) {
+				parent.send(send, "" + (((ex - x) / w) * (max - min) + min));
+			} else if (event.getAction() == event.ACTION_UP) {
+			}
+		}
+	}
 }
-
 
