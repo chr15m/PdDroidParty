@@ -7,7 +7,9 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-public class Slider {
+import android.view.MotionEvent;
+
+public class Slider extends Widget{
 	private float x = 0.25f;
 	private float y = 0.25f;
 	private float s = 0.5f;
