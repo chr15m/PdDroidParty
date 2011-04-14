@@ -12,7 +12,7 @@ public class Widget {
 	 * Generic draw method for all widgets.
 	 * @param canvas
 	 */
-	public void draw(Canvas canvas, Paint paint) {
+	public void draw(Canvas canvas) {
 	}
 	
 	/**

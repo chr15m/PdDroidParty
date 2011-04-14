@@ -37,10 +37,11 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	
 	@Override
 	public void onDraw(Canvas canvas) {
+		canvas.drawPaint(paint);
 		// draw all widgets
 		if (widgets != null) {
 			for (Widget widget: widgets) {
-				widget.draw(canvas, paint);
+				widget.draw(canvas);
 			}
 		}
 	}
