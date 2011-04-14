@@ -9,6 +9,8 @@ import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
 import org.puredata.core.PdReceiver;
 import org.puredata.core.utils.PdUtils;
+import org.puredata.core.utils.PdDispatcher;
+
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -36,20 +38,23 @@ public class PdDroidParty extends Activity {
 	private String path;
 	private PdService pdService = null;
 	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
-		
-	// receive messages and prints back from Pd
-	private final PdReceiver receiver = new PdReceiver() {
-		@Override public void receiveSymbol(String source, String symbol) {}
-		@Override public void receiveMessage(String source, String symbol, Object... args) {}
-		@Override public void receiveList(String source, Object... args) {}
-		@Override public void receiveFloat(String source, float x) {}
-		@Override public void receiveBang(String source) {}
-
-		@Override public void print(String s) {
-			Log.e("PdDroidParty", s);
+	private final Object lock = new Object();
+	
+	private final PdDispatcher dispatcher = new PdDispatcher() {
+		@Override
+		public void print(String s) {
+			post(s);
 		}
 	};
 	
+	/*private final PdListener overlayListener = new PdListener.Adapter() {
+		@Override
+		public void receiveList(Object... args) {
+			String key = (String) args[0];
+			String cmd = (String) args[1];
+		}
+	}*/
+
 	// post a 'toast' alert to the Android UI
 	private void post(final String msg) {
 		runOnUiThread(new Runnable() {
@@ -64,8 +69,10 @@ public class PdDroidParty extends Activity {
 	private final ServiceConnection serviceConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			pdService = ((PdService.PdBinder) service).getService();
-			initPd();
+			synchronized(lock) {
+				pdService = ((PdService.PdBinder) service).getService();
+				initPd();
+			}
 		}
 		
 		@Override
@@ -81,7 +88,12 @@ public class PdDroidParty extends Activity {
 		Intent intent = getIntent();
 		path = intent.getStringExtra(PATCH);
 		initGui();
-		bindService(new Intent(this, PdService.class), serviceConnection, BIND_AUTO_CREATE);
+		new Thread() {
+			@Override
+			public void run() {
+				bindService(new Intent(PdDroidParty.this, PdService.class), serviceConnection, BIND_AUTO_CREATE);
+			}
+		}.start();
 	}
 
 	// this callback makes sure that we handle orientation changes without audio glitches
@@ -127,50 +139,59 @@ public class PdDroidParty extends Activity {
 	
 	// initialise Pd asking for the desired sample rate, parameters, etc.
 	private void initPd() {
-		int sRate = AudioParameters.suggestSampleRate();
-		Log.e(TAG, "suggested sample rate: " + sRate);
-		if (sRate < SAMPLE_RATE) {
-			Log.e(TAG, "warning: sample rate is only " + sRate);
-		}
-		// clamp it
-		sRate = Math.min(sRate, SAMPLE_RATE);
-		Log.e(TAG, "actual sample rate: " + sRate);
-		
-		int nIn = Math.min(AudioParameters.suggestInputChannels(), 1);
-		Log.e(TAG, "input channels: " + nIn);
-		if (nIn == 0) {
-			Log.e(TAG, "warning: audio input not available");
-		}
-		
-		int nOut = Math.min(AudioParameters.suggestOutputChannels(), 2);
-		Log.e(TAG, "output channels: " + nOut);
-		if (nOut == 0) {
-			Log.e(TAG, "audio output not available; exiting");
-			finish();
-			return;
-		}
-		
-		Resources res = getResources();
-		PdBase.setReceiver(receiver);
-		try {
-			try {
-				pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
-			} catch (IOException e) {
-				Log.e(TAG, e.toString());
-				finish();
+		new Thread() {
+			@Override
+			public void run() {
+				int sRate = AudioParameters.suggestSampleRate();
+				Log.e(TAG, "suggested sample rate: " + sRate);
+				if (sRate < SAMPLE_RATE) {
+					Log.e(TAG, "warning: sample rate is only " + sRate);
+				}
+				// clamp it
+				sRate = Math.min(sRate, SAMPLE_RATE);
+				Log.e(TAG, "actual sample rate: " + sRate);
+				
+				int nIn = Math.min(AudioParameters.suggestInputChannels(), 1);
+				Log.e(TAG, "input channels: " + nIn);
+				if (nIn == 0) {
+					Log.e(TAG, "warning: audio input not available");
+				}
+				
+				int nOut = Math.min(AudioParameters.suggestOutputChannels(), 2);
+				Log.e(TAG, "output channels: " + nOut);
+				if (nOut == 0) {
+					Log.e(TAG, "audio output not available; exiting");
+					finish();
+					return;
+				}
+				
+				Resources res = getResources();
+				PdBase.setReceiver(dispatcher);
+				//dispatcher.addListener(, overlayListener);
+				//dispatcher.addListener(RJ_TEXT_ANDROID, overlayListener);
+				
+				try {
+					try {
+						pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
+					} catch (IOException e) {
+						Log.e(TAG, e.toString());
+						finish();
+					}
+					patch = PdUtils.openPatch(path);
+					// parse the patch for GUI elements
+					PdParser p = new PdParser();
+					// p.printAtoms(p.parsePatch(path));
+					patchview.buildUI(p, p.parsePatch(path));
+					// start the audio thread
+					String name = res.getString(R.string.app_name);
+					pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
+				} catch (IOException e) {
+					post(e.toString() + "; exiting now");
+					finish();
+				}
 			}
-			patch = PdUtils.openPatch(path);
-			// parse the patch for GUI elements
-			PdParser p = new PdParser();
-			// p.printAtoms(p.parsePatch(path));
-			patchview.buildUI(p, p.parsePatch(path));
-			// start the audio thread
-			String name = res.getString(R.string.app_name);
-			pdService.startAudio(new Intent(this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
-		} catch (IOException e) {
-			post(e.toString() + "; exiting now");
-			finish();
-		}
+		}.start();
+
 	}
 	
 	// close the app and exit
