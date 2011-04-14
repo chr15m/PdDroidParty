@@ -21,7 +21,6 @@ import android.os.IBinder;
 import android.widget.Toast;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.opengl.GLSurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -29,17 +28,15 @@ import cx.mccormick.pddroidparty.PdParser;
 
 public class PdDroidParty extends Activity {
 
-	public GLSurfaceView view = null;
+	public PdDroidPatchView patchview = null;
 	public static final String PATCH = "PATCH";
 	private static final String PD_CLIENT = "PdDroidParty";
+	private static final String TAG = "PdDroidParty";
 	private static final int SAMPLE_RATE = 22050;
 	private String path;
 	private PdService pdService = null;
 	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
-	public int width;
-	public int height;
-	ArrayList<Widget> widgets = new ArrayList<Widget>();
-	
+		
 	// receive messages and prints back from Pd
 	private final PdReceiver receiver = new PdReceiver() {
 		@Override public void receiveSymbol(String source, String symbol) {}
@@ -118,99 +115,61 @@ public class PdDroidParty extends Activity {
 		PdBase.sendList(dest, ol);
 	}
 	
-	// if we receive a touch even
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		// osc1
-		// osc2
-		Log.e("EV:", event.getX() + ", " + event.getY());
-		PdBase.sendFloat("osc1", event.getX());
-		PdBase.sendFloat("osc2", event.getY());
-		// TODO: for down/move events, loop through all sliders and test
-		if (widgets != null) {
-			for (Widget widget: widgets) {
-				widget.touch(event);
-			}
-		}
-
-		return true;
-	}
-	
 	// initialise the GUI with the OpenGL rendering engine
 	private void initGui() {
 		//setContentView(R.layout.main);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		view = new GLSurfaceView(this);
-		view.setRenderer(new OpenGLRenderer(widgets));
-		setContentView(view);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		patchview = new PdDroidPatchView(this, this);
+		setContentView(patchview);
+		patchview.requestFocus();
 	}
 	
 	// initialise Pd asking for the desired sample rate, parameters, etc.
 	private void initPd() {
-		if (AudioParameters.suggestSampleRate() < SAMPLE_RATE) {
-			post("required sample rate not available; exiting");
-			finish();
-			return;
+		int sRate = AudioParameters.suggestSampleRate();
+		Log.e(TAG, "suggested sample rate: " + sRate);
+		if (sRate < SAMPLE_RATE) {
+			Log.e(TAG, "warning: sample rate is only " + sRate);
 		}
+		// clamp it
+		sRate = Math.min(sRate, SAMPLE_RATE);
+		Log.e(TAG, "actual sample rate: " + sRate);
+		
 		int nIn = Math.min(AudioParameters.suggestInputChannels(), 1);
+		Log.e(TAG, "input channels: " + nIn);
 		if (nIn == 0) {
-			post("warning: audio input not available");
+			Log.e(TAG, "warning: audio input not available");
 		}
+		
 		int nOut = Math.min(AudioParameters.suggestOutputChannels(), 2);
+		Log.e(TAG, "output channels: " + nOut);
 		if (nOut == 0) {
-			post("audio output not available; exiting");
+			Log.e(TAG, "audio output not available; exiting");
 			finish();
 			return;
 		}
+		
 		Resources res = getResources();
 		PdBase.setReceiver(receiver);
 		try {
-			pdService.initAudio(SAMPLE_RATE, nIn, nOut, -1);   // negative values default to PdService preferences
+			try {
+				pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
+			} catch (IOException e) {
+				Log.e(TAG, e.toString());
+				finish();
+			}
 			patch = PdUtils.openPatch(path);
 			// parse the patch for GUI elements
 			PdParser p = new PdParser();
 			// p.printAtoms(p.parsePatch(path));
-			buildUI(p, p.parsePatch(path));
+			patchview.buildUI(p, p.parsePatch(path));
 			// start the audio thread
 			String name = res.getString(R.string.app_name);
 			pdService.startAudio(new Intent(this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
 		} catch (IOException e) {
 			post(e.toString() + "; exiting now");
 			finish();
-		}
-	}
-	
-	// build a user interface using the stuff found in the patch
-	private void buildUI(PdParser p, ArrayList<String[]> atomlines) {
-		//ArrayList<String> canvases = new ArrayList<String>();
-		int level = 0;
-		
-		for (String[] line: atomlines) {
-			if (line.length >= 4) {
-				// find canvas begin and end lines
-				if (line[1].equals("canvas")) {
-					/*if (canvases.length == 0) {
-						canvases.add(0, "self");
-					} else {
-						canvases.add(0, line[6]);
-					}*/
-					width = Integer.parseInt(line[4]);
-					height = Integer.parseInt(line[5]);
-					level += 1;
-				} else if (line[1].equals("restore")) {
-					//canvases.remove(0);
-					level -= 1;
-				// find different types of UI element in the top level patch
-				} else if (level == 1) {
-					if (line[4].equals("vsl")) {
-						p.printAtom(line);
-					} else if (line[4].equals("hsl")) {
-						widgets.add(new Slider(this, line));
-					} else if (line[4].equals("tgl")) {
-						p.printAtom(line);
-					}
-				}
-			}
 		}
 	}
 	

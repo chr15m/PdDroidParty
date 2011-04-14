@@ -1,7 +1,7 @@
 package cx.mccormick.pddroidparty;
 
-import javax.microedition.khronos.opengles.GL10;
-
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.view.MotionEvent;
 
 public class Widget {
@@ -10,14 +10,14 @@ public class Widget {
 	
 	/**
 	 * Generic draw method for all widgets.
-	 * @param gl
+	 * @param canvas
 	 */
-	public void draw(GL10 gl) {
+	public void draw(Canvas canvas, Paint paint) {
 	}
 	
 	/**
 	 * Generic touch method for a hit test.
-	 * @param gl
+	 * @param event
 	 */	
 	public void touch(MotionEvent event) {
 	}
