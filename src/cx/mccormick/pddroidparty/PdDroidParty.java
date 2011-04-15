@@ -3,6 +3,9 @@ package cx.mccormick.pddroidparty;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
@@ -10,7 +13,6 @@ import org.puredata.core.PdBase;
 import org.puredata.core.PdReceiver;
 import org.puredata.core.utils.PdUtils;
 import org.puredata.core.utils.PdDispatcher;
-
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -29,7 +31,6 @@ import android.view.WindowManager;
 import cx.mccormick.pddroidparty.PdParser;
 
 public class PdDroidParty extends Activity {
-
 	public PdDroidPatchView patchview = null;
 	public static final String PATCH = "PATCH";
 	private static final String PD_CLIENT = "PdDroidParty";
@@ -39,6 +40,7 @@ public class PdDroidParty extends Activity {
 	private PdService pdService = null;
 	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
 	private final Object lock = new Object();
+	Map<String, DroidPartyReceiver> receivemap = new HashMap<String, DroidPartyReceiver>();
 	
 	private final PdDispatcher dispatcher = new PdDispatcher() {
 		@Override
@@ -47,14 +49,6 @@ public class PdDroidParty extends Activity {
 		}
 	};
 	
-	/*private final PdListener overlayListener = new PdListener.Adapter() {
-		@Override
-		public void receiveList(Object... args) {
-			String key = (String) args[0];
-			String cmd = (String) args[1];
-		}
-	}*/
-
 	// post a 'toast' alert to the Android UI
 	private void post(final String msg) {
 		runOnUiThread(new Runnable() {
@@ -127,6 +121,17 @@ public class PdDroidParty extends Activity {
 		PdBase.sendList(dest, ol);
 	}
 	
+	public void registerReceiver(String name, Widget w) {
+		DroidPartyReceiver r = receivemap.get(name);
+		if (r == null) {
+			r = new DroidPartyReceiver(patchview, w);
+			receivemap.put(name, r);
+			dispatcher.addListener(name, r.listener);
+		} else {
+			r.addWidget(w);
+		}
+	}
+	
 	// initialise the GUI with the OpenGL rendering engine
 	private void initGui() {
 		//setContentView(R.layout.main);
@@ -167,7 +172,7 @@ public class PdDroidParty extends Activity {
 				
 				Resources res = getResources();
 				PdBase.setReceiver(dispatcher);
-				//dispatcher.addListener(, overlayListener);
+				//dispatcher.addListener(RJ_IMAGE_ANDROID, overlayListener);
 				//dispatcher.addListener(RJ_TEXT_ANDROID, overlayListener);
 				
 				try {

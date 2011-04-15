@@ -45,6 +45,9 @@ public class Slider extends Widget {
 		labl = atomline[13];
 		val = (Float.parseFloat(atomline[21]) / 100) / w;
 		
+		// listen out for floats from Pd
+		parent.app.registerReceiver(recv, this);
+		
 		// graphics setup
 		
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
@@ -53,7 +56,6 @@ public class Slider extends Widget {
 	}
 	
 	public void draw(Canvas canvas) {
-		Log.e(TAG, "rectangle: " + dRect.toString());
 		canvas.drawRoundRect(dRect, 2, 2, paint);
 		canvas.drawLine(Math.round(x + val * w), Math.round(y + 2), Math.round(x + val * w), Math.round(y + h - 2), paint);
 	}
@@ -63,12 +65,16 @@ public class Slider extends Widget {
 		float ey = event.getY();
 		if (inside(ex, ey)) {
 			val = (((ex - x) / w) * (max - min) + min);
-			Log.e(TAG, "touch:" + val);
+			//Log.e(TAG, "touch:" + val);
 			if (event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) {
 				parent.app.send(send, "" + val);
 			} else if (event.getAction() == event.ACTION_UP) {
 			}
 		}
+	}
+	
+	public void receiveFloat(float x) {
+		val = Math.min(max, Math.max(x, min));
 	}
 }
 

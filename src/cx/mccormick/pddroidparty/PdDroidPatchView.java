@@ -55,10 +55,19 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 			}
 		}
 		invalidate();
-		Log.d(TAG, "touch: " + event.getX() + " " + event.getY());
+		//Log.d(TAG, "touch: " + event.getX() + " " + event.getY());
 		return true;
 	}
 	
+	public void threadSafeInvalidate() {
+		final PdDroidPatchView me = this;
+		app.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				me.invalidate();
+			}
+		});
+	}
 	// build a user interface using the stuff found in the patch
 	public void buildUI(PdParser p, ArrayList<String[]> atomlines) {
 		//ArrayList<String> canvases = new ArrayList<String>();
@@ -93,5 +102,6 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 				}
 			}
 		}
+		threadSafeInvalidate();
 	}
 }

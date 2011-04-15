@@ -3,9 +3,9 @@ package cx.mccormick.pddroidparty;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
+import android.util.Log;
 
 public class Widget {
-	
 	float x, y, w, h;
 	
 	/**
@@ -20,6 +20,21 @@ public class Widget {
 	 * @param event
 	 */	
 	public void touch(MotionEvent event) {
+	}
+	
+	public void receiveList(Object... args) {
+	}
+	
+	public void receiveMessage(String symbol, Object... args) {
+	}
+	
+	public void receiveSymbol(String symbol) {
+	}
+	
+	public void receiveFloat(float x) {
+	}
+	
+	public void receiveBang() {
 	}
 	
 	public boolean inside(float ex, float ey) {
