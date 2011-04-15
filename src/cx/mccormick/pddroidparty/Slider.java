@@ -47,7 +47,7 @@ public class Slider extends Widget {
 		
 		// graphics setup
 		
-		dRect = new RectF(x, y, x + w, y + h);
+		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Paint.Style.STROKE);
 	}
@@ -55,7 +55,7 @@ public class Slider extends Widget {
 	public void draw(Canvas canvas) {
 		Log.e(TAG, "rectangle: " + dRect.toString());
 		canvas.drawRoundRect(dRect, 2, 2, paint);
-		canvas.drawLine(x + val * w, y + 2, x + val * w, y + h - 2, paint);
+		canvas.drawLine(Math.round(x + val * w), Math.round(y + 2), Math.round(x + val * w), Math.round(y + h - 2), paint);
 	}
 	
 	public void touch(MotionEvent event) {
