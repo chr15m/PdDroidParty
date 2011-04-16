@@ -63,11 +63,11 @@ public class Slider extends Widget {
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawRoundRect(dRect, 3, 3, paint);
+		canvas.drawRoundRect(dRect, 1, 1, paint);
 		if (orientation_horizontal) {
 			canvas.drawLine(Math.round(x + (val / (max - min)) * w), Math.round(y + 2), Math.round(x + (val / (max - min)) * w), Math.round(y + h - 2), paint);
 		} else {
-			canvas.drawLine(Math.round(x + 2), screenheight - Math.round(y + (val / (max - min)) * h), Math.round(x + w - 2), screenheight - Math.round(y + (val / (max - min)) * h), paint);
+			canvas.drawLine(Math.round(x + 2), Math.round((y + h) - (val / (max - min)) * h), Math.round(x + w - 2), Math.round((y + h) - (val / (max - min)) * h), paint);
 		}
 	}
 	
@@ -85,7 +85,7 @@ public class Slider extends Widget {
 				if (orientation_horizontal) {
 					val = (((ex - x) / w) * (max - min) + min);
 				} else {
-					val = ((((screenheight - ey) - y) / h) * (max - min) + min);
+					val = (((h - (ey - y)) / h) * (max - min) + min);
 				}
 				// clamp the value
 				val = Math.min(max, Math.max(min, val));
