@@ -14,13 +14,9 @@ import android.util.Log;
 
 public class Slider extends Widget {
 	private static final String TAG = "Slider";
-	private PdDroidPatchView parent;
-	private int screenwidth;
-	private int screenheight;
 	
 	float min, max, val;
-	int log, init;
-	String send, recv, labl;
+	int log;
 	
 	RectF dRect;
 	Paint paint = new Paint();
@@ -28,11 +24,9 @@ public class Slider extends Widget {
 	boolean down = false;
 	
 	public Slider(PdDroidPatchView app, String[] atomline, boolean horizontal) {
-		parent = app;
-		orientation_horizontal = horizontal;
+		super(app);
 		
-		screenwidth = parent.getWidth();
-		screenheight = parent.getHeight();
+		orientation_horizontal = horizontal;
 		
 		x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
 		y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
@@ -43,19 +37,29 @@ public class Slider extends Widget {
 		max = Float.parseFloat(atomline[8]);
 		log = Integer.parseInt(atomline[9]);
 		init = Integer.parseInt(atomline[10]);
-		send = atomline[11];
-		recv = atomline[12];
-		labl = atomline[13];
-		val = (Float.parseFloat(atomline[21]) / 100) / w;
+		sendname = atomline[11];
+		receivename = atomline[12];
+		label = atomline[13];
+		if (init != 0) {
+			val = (Float.parseFloat(atomline[21]) / 100) / w;
+		} else {
+			val = min;
+		}
 		
 		// listen out for floats from Pd
-		parent.app.registerReceiver(recv, this);
+		if (receivename != null && !receivename.equals("")) {
+			parent.app.registerReceiver(receivename, this);
+		}
 		
 		// graphics setup
-		
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Paint.Style.STROKE);
+		
+		// send initial value if we have one
+		if (init != 0) {
+			send("" + val);
+		}
 	}
 	
 	public void draw(Canvas canvas) {
@@ -86,7 +90,7 @@ public class Slider extends Widget {
 				// clamp the value
 				val = Math.min(max, Math.max(min, val));
 				// send the result to Pd
-				parent.app.send(send, "" + val);
+				send("" + val);
 			} else if (event.getAction() == event.ACTION_UP) {
 				down = false;
 			}

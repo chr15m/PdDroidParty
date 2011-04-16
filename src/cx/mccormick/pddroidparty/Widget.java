@@ -6,7 +6,28 @@ import android.view.MotionEvent;
 import android.util.Log;
 
 public class Widget {
+	int screenwidth=0;
+	int screenheight=0;
+	
 	float x, y, w, h;
+	
+	int init = 0;
+	String sendname = null;
+	String receivename = null;
+	String label = null;
+	PdDroidPatchView parent=null;
+	
+	public Widget(PdDroidPatchView app) {
+		parent = app;
+		screenwidth = parent.getWidth();
+		screenheight = parent.getHeight();
+	}
+	
+	public void send(String msg) {
+		if (sendname != null && !sendname.equals("")) {
+			parent.app.send(sendname, msg);
+		}
+	}
 	
 	/**
 	 * Generic draw method for all widgets.
