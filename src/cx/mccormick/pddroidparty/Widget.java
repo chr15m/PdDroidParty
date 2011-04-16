@@ -11,6 +11,7 @@ public class Widget {
 	
 	float x, y, w, h;
 	
+	float val = 0;
 	int init = 0;
 	String sendname = null;
 	String receivename = null;
@@ -24,8 +25,29 @@ public class Widget {
 	}
 	
 	public void send(String msg) {
-		if (sendname != null && !sendname.equals("")) {
+		if (sendname != null && !sendname.equals("") && !sendname.equals("empty")) {
 			parent.app.send(sendname, msg);
+		}
+	}
+
+	public void setupreceive() {
+		// listen out for floats from Pd
+		if (receivename != null && !receivename.equals("") && !receivename.equals("empty")) {
+			parent.app.registerReceiver(receivename, this);
+		}
+	}
+	
+	public void setval(float v, float alt) {
+		if (init != 0) {
+			val = v;
+		} else {
+			val = alt;
+		}
+	}
+	
+	public void initval() {
+		if (init != 0) {
+			send("" + val);
 		}
 	}
 	

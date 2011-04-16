@@ -15,7 +15,7 @@ import android.util.Log;
 public class Slider extends Widget {
 	private static final String TAG = "Slider";
 	
-	float min, max, val;
+	float min, max;
 	int log;
 	
 	RectF dRect;
@@ -40,26 +40,19 @@ public class Slider extends Widget {
 		sendname = atomline[11];
 		receivename = atomline[12];
 		label = atomline[13];
-		if (init != 0) {
-			val = (Float.parseFloat(atomline[21]) / 100) / w;
-		} else {
-			val = min;
-		}
+		
+		setval((Float.parseFloat(atomline[21]) / 100) / w, min);
 		
 		// listen out for floats from Pd
-		if (receivename != null && !receivename.equals("")) {
-			parent.app.registerReceiver(receivename, this);
-		}
+		setupreceive();
+		
+		// send initial value if we have one
+		initval();
 		
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Paint.Style.STROKE);
-		
-		// send initial value if we have one
-		if (init != 0) {
-			send("" + val);
-		}
 	}
 	
 	public void draw(Canvas canvas) {
