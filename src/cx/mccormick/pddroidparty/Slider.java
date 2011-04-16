@@ -58,9 +58,9 @@ public class Slider extends Widget {
 	public void draw(Canvas canvas) {
 		canvas.drawRoundRect(dRect, 1, 1, paint);
 		if (orientation_horizontal) {
-			canvas.drawLine(Math.round(x + (val / (max - min)) * w), Math.round(y + 2), Math.round(x + (val / (max - min)) * w), Math.round(y + h - 2), paint);
+			canvas.drawLine(Math.round(x + ((val - min) / (max - min)) * w), Math.round(y + 2), Math.round(x + ((val - min) / (max - min)) * w), Math.round(y + h - 2), paint);
 		} else {
-			canvas.drawLine(Math.round(x + 2), Math.round((y + h) - (val / (max - min)) * h), Math.round(x + w - 2), Math.round((y + h) - (val / (max - min)) * h), paint);
+			canvas.drawLine(Math.round(x + 2), Math.round((y + h) - ((val - min) / (max - min)) * h), Math.round(x + w - 2), Math.round((y + h) - ((val - min) / (max - min)) * h), paint);
 		}
 	}
 	
