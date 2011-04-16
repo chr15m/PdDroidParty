@@ -25,6 +25,7 @@ public class Slider extends Widget {
 	RectF dRect;
 	Paint paint = new Paint();
 	boolean orientation_horizontal = true;
+	boolean down = false;
 	
 	public Slider(PdDroidPatchView app, String[] atomline, boolean horizontal) {
 		parent = app;
@@ -69,16 +70,25 @@ public class Slider extends Widget {
 	public void touch(MotionEvent event) {
 		float ex = event.getX();
 		float ey = event.getY();
-		if (inside(ex, ey)) {
-			if (orientation_horizontal) {
-				val = (((ex - x) / w) * (max - min) + min);
-			} else {
-				val = ((((screenheight - ey) - y) / h) * (max - min) + min);
-			}
+		if (event.getAction() == event.ACTION_DOWN && inside(ex, ey)) {
+			down = true;
+		}
+		
+		if (down) {
 			//Log.e(TAG, "touch:" + val);
 			if (event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) {
+				// calculate the new value based on touch
+				if (orientation_horizontal) {
+					val = (((ex - x) / w) * (max - min) + min);
+				} else {
+					val = ((((screenheight - ey) - y) / h) * (max - min) + min);
+				}
+				// clamp the value
+				val = Math.min(max, Math.max(min, val));
+				// send the result to Pd
 				parent.app.send(send, "" + val);
 			} else if (event.getAction() == event.ACTION_UP) {
+				down = false;
 			}
 		}
 	}
