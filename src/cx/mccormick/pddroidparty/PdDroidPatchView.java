@@ -59,6 +59,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		return true;
 	}
 	
+	/** Lets us invalidate this view from the audio thread */
 	public void threadSafeInvalidate() {
 		final PdDroidPatchView me = this;
 		app.runOnUiThread(new Runnable() {
@@ -68,7 +69,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 			}
 		});
 	}
-	// build a user interface using the stuff found in the patch
+	
+	/** build a user interface using the lines of atoms found in the patch by the pd file parser */
 	public void buildUI(PdParser p, ArrayList<String[]> atomlines) {
 		//ArrayList<String> canvases = new ArrayList<String>();
 		int level = 0;
@@ -93,9 +95,9 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 				// find different types of UI element in the top level patch
 				} else if (level == 1) {
 					if (line[4].equals("vsl")) {
-						p.printAtom(line);
+						widgets.add(new Slider(this, line, false));
 					} else if (line[4].equals("hsl")) {
-						widgets.add(new Slider(this, line));
+						widgets.add(new Slider(this, line, true));
 					} else if (line[4].equals("tgl")) {
 						p.printAtom(line);
 					}

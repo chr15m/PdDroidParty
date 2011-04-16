@@ -24,9 +24,11 @@ public class Slider extends Widget {
 	
 	RectF dRect;
 	Paint paint = new Paint();
+	boolean orientation_horizontal = true;
 	
-	public Slider(PdDroidPatchView app, String[] atomline) {
+	public Slider(PdDroidPatchView app, String[] atomline, boolean horizontal) {
 		parent = app;
+		orientation_horizontal = horizontal;
 		
 		screenwidth = parent.getWidth();
 		screenheight = parent.getHeight();
@@ -56,15 +58,23 @@ public class Slider extends Widget {
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawRoundRect(dRect, 2, 2, paint);
-		canvas.drawLine(Math.round(x + val * w), Math.round(y + 2), Math.round(x + val * w), Math.round(y + h - 2), paint);
+		canvas.drawRoundRect(dRect, 3, 3, paint);
+		if (orientation_horizontal) {
+			canvas.drawLine(Math.round(x + (val / (max - min)) * w), Math.round(y + 2), Math.round(x + (val / (max - min)) * w), Math.round(y + h - 2), paint);
+		} else {
+			canvas.drawLine(Math.round(x + 2), Math.round(y + (val / (max - min)) * h), Math.round(x + w - 2), Math.round(y + (val / (max - min)) * h), paint);
+		}
 	}
 	
 	public void touch(MotionEvent event) {
 		float ex = event.getX();
 		float ey = event.getY();
 		if (inside(ex, ey)) {
-			val = (((ex - x) / w) * (max - min) + min);
+			if (orientation_horizontal) {
+				val = (((ex - x) / w) * (max - min) + min);
+			} else {
+				val = (((ey - y) / h) * (max - min) + min);
+			}
 			//Log.e(TAG, "touch:" + val);
 			if (event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) {
 				parent.app.send(send, "" + val);
@@ -73,8 +83,8 @@ public class Slider extends Widget {
 		}
 	}
 	
-	public void receiveFloat(float x) {
-		val = Math.min(max, Math.max(x, min));
+	public void receiveFloat(float v) {
+		val = Math.min(max, Math.max(v, min));
 	}
 }
 

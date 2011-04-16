@@ -28,7 +28,6 @@ public class DroidPartyReceiver {
 			patchview.threadSafeInvalidate();
 		}
 		
-		// the remaining methods will never be called
 		@Override
 		public void receiveMessage(String symbol, Object... args) {
 			if (widgets != null) {
