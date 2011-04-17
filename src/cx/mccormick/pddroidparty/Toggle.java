@@ -49,7 +49,10 @@ public class Toggle extends Widget {
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawRoundRect(dRect, 1, 1, paint);
+		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right, dRect.top, paint);
+		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
+		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
+		canvas.drawLine(dRect.right, dRect.top + 1, dRect.right, dRect.bottom, paint);
 		if (val != 0) {
 			canvas.drawLine(Math.round(x + 2), Math.round(y + 2), Math.round(x + w - 2), Math.round(y + h - 2), paint);
 			canvas.drawLine(Math.round(x + 2), Math.round(y + h - 2), Math.round(x + w - 2), Math.round(y + 2), paint);
