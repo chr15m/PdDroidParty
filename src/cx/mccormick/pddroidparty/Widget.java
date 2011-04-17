@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.util.Log;
 
 public class Widget {
+	private static final String TAG = "Widget";
 	int screenwidth=0;
 	int screenheight=0;
 	
@@ -47,6 +48,7 @@ public class Widget {
 	
 	public void initval() {
 		if (init != 0) {
+			Log.e(TAG, "SENT: " + val);
 			send("" + val);
 		}
 	}
@@ -66,18 +68,23 @@ public class Widget {
 	}
 	
 	public void receiveList(Object... args) {
+		Log.e(TAG, "dropped list");
 	}
 	
 	public void receiveMessage(String symbol, Object... args) {
+		Log.e(TAG, "dropped message");
 	}
 	
 	public void receiveSymbol(String symbol) {
+		Log.e(TAG, "dropped symbol");
 	}
 	
 	public void receiveFloat(float x) {
+		Log.e(TAG, "dropped float");
 	}
 	
 	public void receiveBang() {
+		Log.e(TAG, "dropped bang");
 	}
 	
 	public boolean inside(float ex, float ey) {
