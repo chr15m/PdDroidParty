@@ -34,7 +34,7 @@ public class Toggle extends Widget {
 		receivename = atomline[8];
 		label = atomline[9];
 		
-		setval((Float.parseFloat(atomline[17]) / 100) / w, 0);
+		setval(Float.parseFloat(atomline[17]), 0);
 		
 		// listen out for floats from Pd
 		setupreceive();
