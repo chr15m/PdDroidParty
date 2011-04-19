@@ -1,0 +1,10 @@
+#N canvas 223 162 450 300 10;
+#X obj 18 14 r tick;
+#X obj 18 35 tabread \$1;
+#X obj 18 56 sel 1;
+#X obj 18 77 tabplay~ \$2;
+#X obj 18 98 outlet~;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
