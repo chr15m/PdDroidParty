@@ -41,6 +41,7 @@ public class PdDroidParty extends Activity {
 	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
 	private final Object lock = new Object();
 	Map<String, DroidPartyReceiver> receivemap = new HashMap<String, DroidPartyReceiver>();
+	ArrayList<String[]> atomlines = null;
 	
 	private final PdDispatcher dispatcher = new PdDispatcher() {
 		@Override
@@ -176,6 +177,17 @@ public class PdDroidParty extends Activity {
 				//dispatcher.addListener(RJ_TEXT_ANDROID, overlayListener);
 				
 				try {
+					// parse the patch for GUI elements
+					PdParser p = new PdParser();
+					// p.printAtoms(p.parsePatch(path));
+					// get the actual lines of atoms from the patch
+					atomlines = p.parsePatch(path);
+					// some devices don't have a mic and might be buggy
+					// so don't create the audio in unless we really need it
+					if (!hasADC(atomlines)) {
+						nIn = 0;
+					}
+					// go ahead and intialise the audio
 					try {
 						pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
 					} catch (IOException e) {
@@ -183,10 +195,7 @@ public class PdDroidParty extends Activity {
 						finish();
 					}
 					patch = PdUtils.openPatch(path);
-					// parse the patch for GUI elements
-					PdParser p = new PdParser();
-					// p.printAtoms(p.parsePatch(path));
-					patchview.buildUI(p, p.parsePatch(path));
+					patchview.buildUI(p, atomlines);
 					// start the audio thread
 					String name = res.getString(R.string.app_name);
 					pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
@@ -197,6 +206,19 @@ public class PdDroidParty extends Activity {
 			}
 		}.start();
 
+	}
+	
+	public boolean hasADC(ArrayList<String[]> al) {
+		boolean has = false;
+		for (String[] line: al) {
+			if (line.length >= 5) {
+				// find canvas begin and end lines
+				if (line[4].equals("adc~")) {
+					has = true;
+				}
+			}
+		}
+		return has;
 	}
 	
 	// close the app and exit
