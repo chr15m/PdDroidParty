@@ -2,6 +2,7 @@ package cx.mccormick.pddroidparty;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Color;
 import android.view.MotionEvent;
 import android.util.Log;
 
@@ -12,17 +13,23 @@ public class Widget {
 	
 	float x, y, w, h;
 	
+	Paint paint = new Paint();
+	
 	float val = 0;
 	int init = 0;
 	String sendname = null;
 	String receivename = null;
 	String label = null;
+	float[] labelpos = new float[2];
 	PdDroidPatchView parent=null;
 	
 	public Widget(PdDroidPatchView app) {
 		parent = app;
 		screenwidth = parent.getWidth();
 		screenheight = parent.getHeight();
+		
+		paint.setColor(Color.BLACK);
+		paint.setStyle(Paint.Style.STROKE);
 	}
 	
 	public void send(String msg) {
@@ -50,6 +57,13 @@ public class Widget {
 		if (init != 0) {
 			Log.e(TAG, "SENT: " + val);
 			send("" + val);
+		}
+	}
+	
+	/* Draw the label */	
+	public void drawLabel(Canvas canvas) {
+		if (label != null) {
+			canvas.drawText(label, x + labelpos[0], y + labelpos[1], paint);
 		}
 	}
 	

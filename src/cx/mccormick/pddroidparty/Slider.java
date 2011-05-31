@@ -8,7 +8,6 @@ import java.nio.ShortBuffer;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.graphics.Paint;
-import android.graphics.Color;
 import android.view.MotionEvent;
 import android.util.Log;
 
@@ -19,7 +18,6 @@ public class Slider extends Widget {
 	int log;
 	
 	RectF dRect;
-	Paint paint = new Paint();
 	boolean orientation_horizontal = true;
 	boolean down = false;
 	
@@ -40,6 +38,8 @@ public class Slider extends Widget {
 		sendname = atomline[11];
 		receivename = atomline[12];
 		label = atomline[13];
+		labelpos[0] = Float.parseFloat(atomline[14]);
+		labelpos[1] = Float.parseFloat(atomline[15]);
 		
 		setval((Float.parseFloat(atomline[21]) / 100) / w, min);
 		
@@ -51,8 +51,6 @@ public class Slider extends Widget {
 		
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
-		paint.setColor(Color.BLACK);
-		paint.setStyle(Paint.Style.STROKE);
 	}
 	
 	public void draw(Canvas canvas) {
@@ -65,6 +63,7 @@ public class Slider extends Widget {
 		} else {
 			canvas.drawLine(Math.round(x + 2), Math.round((y + h) - ((val - min) / (max - min)) * h), Math.round(x + w - 2), Math.round((y + h) - ((val - min) / (max - min)) * h), paint);
 		}
+		drawLabel(canvas);
 	}
 	
 	public void touch(MotionEvent event) {
