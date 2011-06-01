@@ -38,8 +38,8 @@ public class Slider extends Widget {
 		sendname = atomline[11];
 		receivename = atomline[12];
 		label = atomline[13];
-		labelpos[0] = Float.parseFloat(atomline[14]);
-		labelpos[1] = Float.parseFloat(atomline[15]);
+		labelpos[0] = Float.parseFloat(atomline[14]) / parent.patchwidth * screenwidth;
+		labelpos[1] = Float.parseFloat(atomline[15]) / parent.patchheight * screenheight;
 		
 		setval((Float.parseFloat(atomline[21]) / 100) / w, min);
 		

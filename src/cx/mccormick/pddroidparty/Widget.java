@@ -3,6 +3,7 @@ package cx.mccormick.pddroidparty;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.util.Log;
 
@@ -22,6 +23,7 @@ public class Widget {
 	String label = null;
 	float[] labelpos = new float[2];
 	PdDroidPatchView parent=null;
+	Typeface font = Typeface.create("Courier", Typeface.BOLD);
 	
 	public Widget(PdDroidPatchView app) {
 		parent = app;
@@ -30,6 +32,8 @@ public class Widget {
 		
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Paint.Style.STROKE);
+		paint.setTypeface(font);
+		paint.setTextSize((int)((float)parent.fontsize / parent.patchheight * screenheight) - 2);
 	}
 	
 	public void send(String msg) {
@@ -63,7 +67,7 @@ public class Widget {
 	/* Draw the label */	
 	public void drawLabel(Canvas canvas) {
 		if (label != null) {
-			canvas.drawText(label, x + labelpos[0], y + labelpos[1], paint);
+			canvas.drawText(label, x + labelpos[0] + 2, y + labelpos[1] + 4, paint);
 		}
 	}
 	

@@ -18,6 +18,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	Paint paint = new Paint();
 	public int patchwidth;
 	public int patchheight;
+	public int fontsize;
 	ArrayList<Widget> widgets = new ArrayList<Widget>();
 	public PdDroidParty app;
 	
@@ -88,6 +89,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 					if (level == 1) {
 						patchwidth = Integer.parseInt(line[4]);
 						patchheight = Integer.parseInt(line[5]);
+						fontsize = Integer.parseInt(line[6]);
 					}
 				} else if (line[1].equals("restore")) {
 					//canvases.remove(0);
