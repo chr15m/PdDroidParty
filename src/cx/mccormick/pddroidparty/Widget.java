@@ -6,11 +6,15 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.util.Log;
+import android.text.StaticLayout;
+import android.text.Layout;
+import android.text.TextPaint;
 
 public class Widget {
 	private static final String TAG = "Widget";
 	int screenwidth=0;
 	int screenheight=0;
+	int WRAPWIDTH = 360;
 	
 	float x, y, w, h;
 	
@@ -23,17 +27,21 @@ public class Widget {
 	String label = null;
 	float[] labelpos = new float[2];
 	PdDroidPatchView parent=null;
+	
 	Typeface font = Typeface.create("Courier", Typeface.BOLD);
+	int fontsize = 0;
+	StaticLayout textLayout = null;
 	
 	public Widget(PdDroidPatchView app) {
 		parent = app;
 		screenwidth = parent.getWidth();
 		screenheight = parent.getHeight();
+		fontsize = (int)((float)parent.fontsize / parent.patchheight * screenheight) - 2;
 		
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setTypeface(font);
-		paint.setTextSize((int)((float)parent.fontsize / parent.patchheight * screenheight) - 2);
+		paint.setTextSize(fontsize);
 	}
 	
 	public void send(String msg) {
@@ -67,7 +75,13 @@ public class Widget {
 	/* Draw the label */	
 	public void drawLabel(Canvas canvas) {
 		if (label != null) {
-			canvas.drawText(label, x + labelpos[0] + 2, y + labelpos[1] + 4, paint);
+			if (textLayout == null) {
+				textLayout = new StaticLayout((CharSequence)label, new TextPaint(paint), (int)((float)WRAPWIDTH / parent.patchwidth * screenwidth), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
+			}
+			canvas.save();
+			canvas.translate(x + labelpos[0] + 2, y + labelpos[1] + 4);
+			textLayout.draw(canvas);
+			canvas.restore();
 		}
 	}
 	

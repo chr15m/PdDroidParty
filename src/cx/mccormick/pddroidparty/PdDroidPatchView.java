@@ -102,6 +102,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 						widgets.add(new Slider(this, line, true));
 					} else if (line[4].equals("tgl")) {
 						widgets.add(new Toggle(this, line));
+					} else if (line[1].equals("text")) {
+						widgets.add(new Comment(this, line));
 					}
 				}
 			}
