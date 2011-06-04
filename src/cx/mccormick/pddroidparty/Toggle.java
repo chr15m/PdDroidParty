@@ -31,8 +31,8 @@ public class Toggle extends Widget {
 		sendname = atomline[7];
 		receivename = atomline[8];
 		label = atomline[9];
-		labelpos[0] = Float.parseFloat(atomline[14]);
-		labelpos[1] = Float.parseFloat(atomline[15]);
+		labelpos[0] = Float.parseFloat(atomline[10]) / parent.patchwidth * screenwidth;
+		labelpos[1] = Float.parseFloat(atomline[11]) / parent.patchheight * screenheight;
 
 		setval(Float.parseFloat(atomline[17]), 0);
 		
