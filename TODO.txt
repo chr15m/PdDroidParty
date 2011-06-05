@@ -1,4 +1,5 @@
  * write up a help doc on modifying your patches
+ * loading indicator when you are waiting for a patch to load
  * config option comment -> noadc
  * ability to click on .pd files from a file browser (association)
  * patch GUI

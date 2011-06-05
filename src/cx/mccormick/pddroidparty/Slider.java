@@ -37,7 +37,7 @@ public class Slider extends Widget {
 		init = Integer.parseInt(atomline[10]);
 		sendname = atomline[11];
 		receivename = atomline[12];
-		label = atomline[13];
+		label = setLabel(atomline[13]);
 		labelpos[0] = Float.parseFloat(atomline[14]) / parent.patchwidth * screenwidth;
 		labelpos[1] = Float.parseFloat(atomline[15]) / parent.patchheight * screenheight;
 		

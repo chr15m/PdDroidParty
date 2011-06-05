@@ -79,9 +79,18 @@ public class Widget {
 				textLayout = new StaticLayout((CharSequence)label, new TextPaint(paint), (int)((float)WRAPWIDTH / parent.patchwidth * screenwidth), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
 			}
 			canvas.save();
-			canvas.translate(x + labelpos[0] + 2, y + labelpos[1] + 4);
+			canvas.translate(x + labelpos[0] + 2, y + labelpos[1] + 2 - fontsize / 2);
 			textLayout.draw(canvas);
 			canvas.restore();
+		}
+	}
+	
+	/* Set the label (checking for special null values) */
+	public String setLabel(String incoming) {
+		if (incoming.equals("-") || incoming.equals("empty")) {
+			return null;
+		} else {
+			return incoming;
 		}
 	}
 	
