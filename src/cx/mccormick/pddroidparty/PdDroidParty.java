@@ -15,6 +15,7 @@ import org.puredata.core.utils.PdUtils;
 import org.puredata.core.utils.PdDispatcher;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -36,6 +37,8 @@ public class PdDroidParty extends Activity {
 	private static final String PD_CLIENT = "PdDroidParty";
 	private static final String TAG = "PdDroidParty";
 	private static final int SAMPLE_RATE = 22050;
+	private static final int DIALOG_NUMBERBOX = 1;
+	
 	private String path;
 	private PdService pdService = null;
 	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
@@ -239,6 +242,24 @@ public class PdDroidParty extends Activity {
 		} catch (IllegalArgumentException e) {
 			// already unbound
 			pdService = null;
+		}
+	}
+	
+	public void launchNumberboxDialog() {
+		Intent it = new Intent(this, NumberboxDialog.class);
+		//it.putExtra(Intent.BLAH, (int)xxxxx);
+		startActivityForResult(it, DIALOG_NUMBERBOX);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data); 
+		if (requestCode == DIALOG_NUMBERBOX) {
+			if (resultCode == RESULT_OK) {
+				// int x = data.getIntExtra(Intent.BLAH, BLA);
+			} else if (resultCode == RESULT_CANCELED) {
+				
+			}
 		}
 	}
 }

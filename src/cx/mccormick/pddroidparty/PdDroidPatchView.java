@@ -15,6 +15,7 @@ import android.view.View.OnTouchListener;
 
 public class PdDroidPatchView extends View implements OnTouchListener {
 	private static final String TAG = "PdDroidPatchView";
+	
 	Paint paint = new Paint();
 	public int patchwidth;
 	public int patchheight;

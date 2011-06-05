@@ -47,6 +47,16 @@ public class Numberbox extends Widget {
 		paint.getTextBounds(calclen.toString(), 0, calclen.length(), dRect);
 		dRect.sort();
 		dRect.offset((int)x, (int)y + fontsize);
+		dRect.top -= 3;
+		dRect.bottom += 3;
+		dRect.left -= 3;
+		dRect.right += 3;
+		
+		x = dRect.left;
+		y = dRect.top;
+		w = dRect.width();
+		h = dRect.height();
+		
 		//Log.e("RECT", dRect.toString());
 		// Rect(1, -9 - 30, 0)
 		//w = Float.parseFloat(atomline[4]) * ;
@@ -77,25 +87,27 @@ public class Numberbox extends Widget {
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawLine(dRect.left + 1, dRect.top - 3, dRect.right - 5, dRect.top - 3, paint);
-		canvas.drawLine(dRect.left + 1, dRect.bottom + 3, dRect.right, dRect.bottom + 3, paint);
-		canvas.drawLine(dRect.left, dRect.top - 2, dRect.left, dRect.bottom + 3, paint);
-		canvas.drawLine(dRect.right, dRect.top + 2, dRect.right, dRect.bottom + 3, paint);
-		canvas.drawLine(dRect.right - 5, dRect.top - 3, dRect.right, dRect.top + 2, paint);
-		canvas.drawText(fmt.format(val), x + 3, y + fontsize / 2 + 4, paint);
+		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
+		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
+		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
+		canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
+		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
+		canvas.drawText(fmt.format(val), x + 3, y + fontsize + 3, paint);
 	}
 	
-	/*public void touch(MotionEvent event) {
+	public void touch(MotionEvent event) {
 		float ex = event.getX();
 		float ey = event.getY();
-		if (event.getAction() == event.ACTION_DOWN && inside(ex, ey)) {
-			down = true;
+		if (event.getAction() == event.ACTION_UP && inside(ex, ey)) {
+			down = false;
+			//parent.
+			parent.app.launchNumberboxDialog();
 		}
 		
-		if (down) {
+		/*if (down) {
 			//Log.e(TAG, "touch:" + val);
 			if (event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) {
-				// calculate the new value based on touch
+				// calculate the new valimport com.csipsimple.R;ue based on touch
 				if (orientation_horizontal) {
 					val = (((ex - x) / w) * (max - min) + min);
 				} else {
@@ -108,8 +120,8 @@ public class Numberbox extends Widget {
 			} else if (event.getAction() == event.ACTION_UP) {
 				down = false;
 			}
-		}
-	}*/
+		}*/
+	}
 	
 	public void receiveFloat(float v) {
 		if (min != 0 || max != 0) {
@@ -119,5 +131,4 @@ public class Numberbox extends Widget {
 		}
 	}
 }
-
 

@@ -1,7 +1,4 @@
  * write up a help doc on modifying your patches
- * loading indicator when you are waiting for a patch to load
- * config option comment -> noadc
- * ability to click on .pd files from a file browser (association)
  * patch GUI
    * renderers for each type of GUI
      + toggle
@@ -16,8 +13,11 @@
      * vradio / hradio
      * numberbox2
      * canvas
- * 9-patch graphics for named objects
  * svg graphics for named objects
+ * config option comment -> noadc
+ * loading indicator when you are waiting for a patch to load
+ * 9-patch graphics for named objects
+ * ability to click on .pd files from a file browser (association)
 
 DONE
 ----
