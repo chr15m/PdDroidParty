@@ -11,13 +11,14 @@
      + comment
      * bang!
      * vradio / hradio
-     * numberbox2
-     * canvas
  * svg graphics for named objects
+   http://code.google.com/p/svg-android/wiki/Tutorial
  * config option comment -> noadc
  * loading indicator when you are waiting for a patch to load
  * 9-patch graphics for named objects
  * ability to click on .pd files from a file browser (association)
+ * implement numberbox2 widget
+ * implement "canvas" widget
 
 DONE
 ----
