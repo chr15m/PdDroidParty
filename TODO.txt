@@ -11,7 +11,10 @@
        * up/down is whole numbers
        * left/right is decimal point with starting threshold
        * tap to launch input dialog
-     * comment
+     + comment
+     * bang!
+     * vradio / hradio
+     * numberbox2
      * canvas
  * 9-patch graphics for named objects
  * svg graphics for named objects
