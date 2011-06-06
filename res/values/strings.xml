@@ -2,4 +2,6 @@
 <resources>
 	<string name="app_name">PdDroid Party</string>
 	<string name="path_to_patch">/sdcard/pd/test/_main.pd</string>
+	<string name="okbutton">ok</string>
+	<string name="cancelbutton">cancel</string>
 </resources>

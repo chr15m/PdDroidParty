@@ -101,7 +101,7 @@ public class Numberbox extends Widget {
 		if (event.getAction() == event.ACTION_UP && inside(ex, ey)) {
 			down = false;
 			//parent.
-			parent.app.launchNumberboxDialog();
+			parent.app.launchNumberboxDialog(this);
 		}
 		
 		/*if (down) {

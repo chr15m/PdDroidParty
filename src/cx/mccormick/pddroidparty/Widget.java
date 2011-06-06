@@ -72,6 +72,15 @@ public class Widget {
 		}
 	}
 	
+	public float getval() {
+		return val;
+	}
+	
+	public void setandsend(float x) {
+		val = x;
+		send("" + x);
+	}
+	
 	/* Draw the label */	
 	public void drawLabel(Canvas canvas) {
 		if (label != null) {

@@ -16,9 +16,8 @@
 			android:paddingLeft="8dip"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"/>
- 
+ 	
 	</LinearLayout>
-
 	
 	<LinearLayout 
 		android:id="@+id/content"
@@ -34,7 +33,7 @@
 			android:padding="5dip"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"/>
- 
+ 	
 	</LinearLayout>
 	
 	<LinearLayout 
@@ -43,19 +42,23 @@
 		android:layout_height="wrap_content">
 		
 		<Button 
-			android:id="@+id/positiveButton"
+			android:id="@+id/ok"
 			android:layout_marginTop="3dip"
 			android:layout_width="0dip"
 			android:layout_weight="1"
 			android:layout_height="wrap_content"
+			android:text="@string/okbutton"
 			android:singleLine="true"/>
 		
 		<Button 
-			android:id="@+id/negativeButton"
+			android:id="@+id/cancel"
 			android:layout_marginTop="3dip"
 			android:layout_width="0dip"
 			android:layout_weight="1"
 			android:layout_height="wrap_content"
+			android:text="@string/cancelbutton"
 			android:singleLine="true"/>
+	
 	</LinearLayout>
+
 </LinearLayout>

@@ -45,10 +45,12 @@ public class PdDroidParty extends Activity {
 	private final Object lock = new Object();
 	Map<String, DroidPartyReceiver> receivemap = new HashMap<String, DroidPartyReceiver>();
 	ArrayList<String[]> atomlines = null;
+	Numberbox nbxpopped = null;
 	
 	private final PdDispatcher dispatcher = new PdDispatcher() {
 		@Override
 		public void print(String s) {
+			// TODO: hmmm, maybe just log this?
 			post(s);
 		}
 	};
@@ -245,9 +247,10 @@ public class PdDroidParty extends Activity {
 		}
 	}
 	
-	public void launchNumberboxDialog() {
+	public void launchNumberboxDialog(Numberbox which) {
+		nbxpopped = which;
 		Intent it = new Intent(this, NumberboxDialog.class);
-		//it.putExtra(Intent.BLAH, (int)xxxxx);
+		it.putExtra("number", which.getval());
 		startActivityForResult(it, DIALOG_NUMBERBOX);
 	}
 	
@@ -256,10 +259,12 @@ public class PdDroidParty extends Activity {
 		super.onActivityResult(requestCode, resultCode, data); 
 		if (requestCode == DIALOG_NUMBERBOX) {
 			if (resultCode == RESULT_OK) {
-				// int x = data.getIntExtra(Intent.BLAH, BLA);
-			} else if (resultCode == RESULT_CANCELED) {
-				
+				if (nbxpopped != null) {
+					nbxpopped.setandsend(data.getFloatExtra("number", 0));
+				}
 			}
+			nbxpopped = null;
+			patchview.invalidate();
 		}
 	}
 }
