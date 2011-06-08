@@ -189,9 +189,10 @@ public class PdDroidParty extends Activity {
 					atomlines = p.parsePatch(path);
 					// some devices don't have a mic and might be buggy
 					// so don't create the audio in unless we really need it
-					if (!hasADC(atomlines)) {
-						nIn = 0;
-					}
+					// TODO: check a config option for this
+					//if (!hasADC(atomlines)) {
+					//	nIn = 0;
+					//}
 					// go ahead and intialise the audio
 					try {
 						pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
