@@ -260,7 +260,8 @@ public class PdDroidParty extends Activity {
 		if (requestCode == DIALOG_NUMBERBOX) {
 			if (resultCode == RESULT_OK) {
 				if (nbxpopped != null) {
-					nbxpopped.setandsend(data.getFloatExtra("number", 0));
+					nbxpopped.receiveFloat(data.getFloatExtra("number", 0));
+					nbxpopped.send("" + nbxpopped.getval());
 				}
 			}
 			nbxpopped = null;
