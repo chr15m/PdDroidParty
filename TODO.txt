@@ -1,16 +1,12 @@
  * write up a help doc on modifying your patches
  * patch GUI
-   * renderers for each type of GUI
-     + toggle
-     + slider
-     * numberbox 
-       * logarithmic slide
+   * bang!
+   * vradio / hradio
+   * slider log mode
+   * numberbox extras:
+     * logarithmic finger dragging
        * up/down is whole numbers
        * left/right is decimal point with starting threshold
-       * tap to launch input dialog
-     + comment
-     * bang!
-     * vradio / hradio
  * svg graphics for named objects
    http://code.google.com/p/svg-android/wiki/Tutorial
  * config option comment -> noadc
@@ -28,4 +24,10 @@ DONE
    + test duplicate receivers in patch and in PdClient
    + make 2D OpenGL renderer
    + integrate patch parser
+ + basic GUIs
+   + toggle
+   + slider
+   + numberbox 
+     + tap to launch input dialog
+   + comment
 

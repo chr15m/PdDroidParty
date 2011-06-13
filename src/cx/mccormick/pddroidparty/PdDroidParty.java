@@ -50,8 +50,7 @@ public class PdDroidParty extends Activity {
 	private final PdDispatcher dispatcher = new PdDispatcher() {
 		@Override
 		public void print(String s) {
-			// TODO: hmmm, maybe just log this?
-			post(s);
+			Log.e("Pd [print]", s);
 		}
 	};
 	
