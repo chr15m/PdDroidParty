@@ -132,6 +132,9 @@ public class Widget {
 		Log.e(TAG, "dropped bang");
 	}
 	
+	public void receiveAny() {
+	}
+	
 	public boolean inside(float ex, float ey) {
 		return !(ex < x || ex > x + w || ey < y || ey > y + h);
 	}

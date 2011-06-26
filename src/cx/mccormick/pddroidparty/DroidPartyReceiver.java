@@ -23,6 +23,7 @@ public class DroidPartyReceiver {
 			if (widgets != null) {
 				for (Widget widget: widgets) {
 					widget.receiveList(args);
+					widget.receiveAny();
 				}
 			}
 			patchview.threadSafeInvalidate();
@@ -33,6 +34,7 @@ public class DroidPartyReceiver {
 			if (widgets != null) {
 				for (Widget widget: widgets) {
 					widget.receiveMessage(symbol, args);
+					widget.receiveAny();
 				}
 			}
 			patchview.threadSafeInvalidate();
@@ -42,6 +44,7 @@ public class DroidPartyReceiver {
 			if (widgets != null) {
 				for (Widget widget: widgets) {
 					widget.receiveSymbol(symbol);
+					widget.receiveAny();
 				}
 			}
 			patchview.threadSafeInvalidate();
@@ -51,6 +54,7 @@ public class DroidPartyReceiver {
 			if (widgets != null) {
 				for (Widget widget: widgets) {
 					widget.receiveFloat(x);
+					widget.receiveAny();
 				}
 			}
 			patchview.threadSafeInvalidate();
@@ -60,6 +64,7 @@ public class DroidPartyReceiver {
 			if (widgets != null) {
 				for (Widget widget: widgets) {
 					widget.receiveBang();
+					widget.receiveAny();
 				}
 			}
 			patchview.threadSafeInvalidate();

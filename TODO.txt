@@ -2,19 +2,25 @@
  * patch GUI
    * bang!
    * vradio / hradio
+   * message boxen?
    * slider log mode
    * numberbox extras:
      * logarithmic finger dragging
        * up/down is whole numbers
        * left/right is decimal point with starting threshold
+   * numberbox2
+   * "canvas" widget
+   * menubang
+   * load-gui-bang
+   * save-gui-bang
  * svg graphics for named objects
    http://code.google.com/p/svg-android/wiki/Tutorial
  * config option comment -> noadc
+ * config option loadmenu
+ * config option savemenu
  * loading indicator when you are waiting for a patch to load
  * 9-patch graphics for named objects
  * ability to click on .pd files from a file browser (association)
- * implement numberbox2 widget
- * implement "canvas" widget
 
 DONE
 ----

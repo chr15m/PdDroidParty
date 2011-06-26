@@ -11,8 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-// http://marakana.com/tutorials/android/2d-graphics-example.html
-
 public class PdDroidPatchView extends View implements OnTouchListener {
 	private static final String TAG = "PdDroidPatchView";
 	
@@ -103,6 +101,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 						widgets.add(new Slider(this, line, true));
 					} else if (line[4].equals("tgl")) {
 						widgets.add(new Toggle(this, line));
+					} else if (line[4].equals("bng")) {
+						widgets.add(new Bang(this, line));
 					} else if (line[1].equals("text")) {
 						widgets.add(new Comment(this, line));
 					} else if (line[1].equals("floatatom")) {
