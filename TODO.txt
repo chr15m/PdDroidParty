@@ -1,25 +1,25 @@
- * write up a help doc on modifying your patches
  * patch GUI
-   * bang!
    * vradio / hradio
-   * message boxen?
    * slider log mode
    * numberbox extras:
      * logarithmic finger dragging
        * up/down is whole numbers
        * left/right is decimal point with starting threshold
    * numberbox2
+   * message boxen? or some kind of wordbutton abstraction?
    * "canvas" widget
    * menubang
    * load-gui-bang
    * save-gui-bang
+   * "touch" 2d surface - 0,0 means finger-lifted
+   * 1d swipe - start -> end datastructure - 0,0 means finger-lifted
  * svg graphics for named objects
    http://code.google.com/p/svg-android/wiki/Tutorial
+ * 9-patch graphics for named objects
  * config option comment -> noadc
  * config option loadmenu
  * config option savemenu
  * loading indicator when you are waiting for a patch to load
- * 9-patch graphics for named objects
  * ability to click on .pd files from a file browser (association)
 
 DONE
@@ -36,4 +36,6 @@ DONE
    + numberbox 
      + tap to launch input dialog
    + comment
+   + bang!
+ + write up a help doc on modifying your patches
 
