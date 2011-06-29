@@ -1,16 +1,17 @@
-#N struct 1009template-marker float a float b;
+#N struct 1005template-marker float a float b;
 #N canvas 39 34 997 472 10;
 #N canvas 874 279 450 300 \$0template-marker 0;
 #X obj 8 74 outlet;
 #X obj 8 52 struct \$0template-marker float a float b;
-#X obj 8 -23 filledpolygon 0 0 1 a(0:100)(0:100) b(0:100)(0:100) a(0:100)(10:110)
-b(0:100)(0:100) a(0:100)(10:110) b(0:100)(10:110) a(0:100)(0:100) b(0:100)(10:110)
-;
+#X obj 8 -23 filledpolygon 0 0 1 a(0:100)(0:100) 0 a(0:100)(0:100)
+25 a(0:100)(0:100) 50 a(0:100)(0:100) 75 a(0:100)(0:100) 100 b(0:100)(2:102)
+100 b(0:100)(2:102) 75 b(0:100)(2:102) 50 b(0:100)(2:102) 25 b(0:100)(2:102)
+0;
 #X connect 1 0 0 0;
 #X restore 354 16 pd \$0template-marker;
 #N canvas 0 0 613 616 \$0data-marker 0;
-#X scalar 1009template-marker 10 10 \;;
-#X coords 0 0 110 110 100 100 1;
+#X scalar 1005template-marker 0 100 \;;
+#X coords 0 0 102 100 150 25 1;
 #X restore 0 0 pd \$0data-marker;
 #X text 352 -1 args: width height sender;
 #X obj 354 37 route change;
@@ -31,20 +32,19 @@ b(0:100)(0:100) a(0:100)(10:110) b(0:100)(10:110) a(0:100)(0:100) b(0:100)(10:11
 #X obj 730 262 t b b b b;
 #X obj 234 339 pack \$0 \$1 \$2;
 #X obj 827 13 namecanvas pd-\$0-self;
-#X msg 234 362 \; pd-\$1data-marker donecanvasdialog 1 1 2 0 0 110
-110 \$2 \$3 0 0 1 1 1 \; pd-\$1data-marker dirty 0 \; pd-\$1-self donecanvasdialog
-1 1 2 0 0 1 1 \$2 \$3 0 0 1 1 1 \; pd-\$1-self dirty 0 \;;
 #X obj 354 80 / 100;
 #X obj 501 80 / 100;
-#X obj 519 9 loadbang;
-#X msg 519 30 0;
-#X obj 519 51 t f f;
-#X msg 706 393 0;
-#X msg 624 393 0;
+#X msg 706 415 0;
+#X msg 624 415 0;
+#X obj 526 16 loadbang;
+#X msg 526 37 0;
+#X msg 234 362 \; pd-\$1data-marker donecanvasdialog 1 1 2 0 0 102
+100 \$2 \$3 0 0 1 1 1 \; pd-\$1data-marker dirty 0 \; pd-\$1-self donecanvasdialog
+1 1 2 0 0 1 1 \$2 \$3 0 0 1 1 1 \; pd-\$1-self dirty 0 \;;
 #X connect 0 0 3 0;
 #X connect 3 0 4 0;
-#X connect 4 0 22 0;
-#X connect 4 1 23 0;
+#X connect 4 0 21 0;
+#X connect 4 1 22 0;
 #X connect 5 0 6 0;
 #X connect 7 0 10 0;
 #X connect 8 0 12 0;
@@ -57,16 +57,15 @@ b(0:100)(0:100) a(0:100)(10:110) b(0:100)(10:110) a(0:100)(0:100) b(0:100)(10:11
 #X connect 16 0 7 0;
 #X connect 17 0 19 0;
 #X connect 18 0 17 0;
-#X connect 18 1 28 0;
-#X connect 18 2 27 0;
+#X connect 18 1 24 0;
+#X connect 18 2 23 0;
 #X connect 18 3 7 0;
-#X connect 19 0 21 0;
-#X connect 22 0 5 0;
-#X connect 23 0 5 1;
-#X connect 24 0 25 0;
+#X connect 19 0 27 0;
+#X connect 21 0 5 0;
+#X connect 22 0 5 1;
+#X connect 23 0 14 1;
+#X connect 24 0 14 0;
 #X connect 25 0 26 0;
 #X connect 26 0 22 0;
-#X connect 26 1 23 0;
-#X connect 27 0 14 1;
-#X connect 28 0 14 0;
-#X coords 0 0 1 1 100 100 2 0 0;
+#X connect 26 0 21 0;
+#X coords 0 0 1 1 150 25 2 0 0;

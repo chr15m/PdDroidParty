@@ -1,6 +1,7 @@
-#N struct 1063template-marker float a float b;
-#N struct 1064template-marker float a float b;
-#N canvas 232 126 686 300 10;
+#N struct 1009template-marker float a float b;
+#N struct 1010template-marker float a float b;
+#N struct 1011template-marker float a float b;
+#N canvas 97 463 686 300 10;
 #X obj 10 91 print;
 #X text 79 43 <- "menubang hello";
 #X obj 10 39 menubang hello;
@@ -11,10 +12,16 @@
 #X obj 365 131 r twosie;
 #X obj 365 152 print twosie;
 #X obj 241 40 touch 100 100 onesie;
-#X obj 365 74 touch 50 50 twosie;
 #X text 424 72 <- 50x50;
 #X text 239 13 touch - 2d touch surface in PdDroidParty;
 #X text 9 13 menubang - Android menu item;
+#X obj 11 146 ribbon 150 25 ribbonone;
+#X obj 11 176 r ribbonone;
+#X obj 11 197 print ribbonone;
+#X obj 365 74 touch 50 50 twosie;
+#X text 5 129 "ribbon 150 25 ribbonone";
+#X text 11 116 ribbon - dragable touch ribbon;
 #X connect 3 0 0 0;
 #X connect 5 0 4 0;
 #X connect 7 0 8 0;
+#X connect 14 0 15 0;
