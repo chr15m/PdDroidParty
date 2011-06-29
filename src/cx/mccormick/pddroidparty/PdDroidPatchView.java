@@ -95,18 +95,22 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 					level -= 1;
 				// find different types of UI element in the top level patch
 				} else if (level == 1) {
-					if (line[4].equals("vsl")) {
-						widgets.add(new Slider(this, line, false));
-					} else if (line[4].equals("hsl")) {
-						widgets.add(new Slider(this, line, true));
-					} else if (line[4].equals("tgl")) {
-						widgets.add(new Toggle(this, line));
-					} else if (line[4].equals("bng")) {
-						widgets.add(new Bang(this, line));
-					} else if (line[1].equals("text")) {
-						widgets.add(new Comment(this, line));
-					} else if (line[1].equals("floatatom")) {
-						widgets.add(new Numberbox(this, line));
+					if (line.length >= 5) {
+						if (line[4].equals("vsl")) {
+							widgets.add(new Slider(this, line, false));
+						} else if (line[4].equals("hsl")) {
+							widgets.add(new Slider(this, line, true));
+						} else if (line[4].equals("tgl")) {
+							widgets.add(new Toggle(this, line));
+						} else if (line[4].equals("bng")) {
+							widgets.add(new Bang(this, line));
+						}
+					} else if (line.length >= 2) {
+						if (line[1].equals("text")) {
+							widgets.add(new Comment(this, line));
+						} else if (line[1].equals("floatatom")) {
+							widgets.add(new Numberbox(this, line));
+						}
 					}
 				}
 			}
