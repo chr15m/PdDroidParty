@@ -104,6 +104,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 							widgets.add(new Toggle(this, line));
 						} else if (line[4].equals("bng")) {
 							widgets.add(new Bang(this, line));
+						} else if (line[4].equals("nbx")) {
+							widgets.add(new Numberbox2(this, line));
 						}
 					} else if (line.length >= 2) {
 						if (line[1].equals("text")) {

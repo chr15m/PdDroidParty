@@ -26,7 +26,7 @@ public class Widget {
 	String receivename = null;
 	String label = null;
 	float[] labelpos = new float[2];
-	PdDroidPatchView parent=null;
+	PdDroidPatchView parent = null;
 	
 	Typeface font = Typeface.create("Courier", Typeface.BOLD);
 	int fontsize = 0;

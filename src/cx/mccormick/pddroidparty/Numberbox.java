@@ -86,6 +86,10 @@ public class Numberbox extends Widget {
 		paint.setStyle(Paint.Style.STROKE);
 	}
 	
+	public Numberbox(PdDroidPatchView app) {
+		super(app);
+	}
+	
 	public void draw(Canvas canvas) {
 		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
 		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
