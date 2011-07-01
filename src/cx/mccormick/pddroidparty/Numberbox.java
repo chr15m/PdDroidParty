@@ -57,11 +57,6 @@ public class Numberbox extends Widget {
 		w = dRect.width();
 		h = dRect.height();
 		
-		//Log.e("RECT", dRect.toString());
-		// Rect(1, -9 - 30, 0)
-		//w = Float.parseFloat(atomline[4]) * ;
-		//h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
-		
 		min = Float.parseFloat(atomline[5]);
 		max = Float.parseFloat(atomline[6]);
 		sendname = atomline[10];
@@ -70,20 +65,10 @@ public class Numberbox extends Widget {
 		labelpos[0] = x;
 		labelpos[1] = y;
 		
-		//setval((Float.parseFloat(atomline[21]) / 100) / (dRect.right - dRect.left), min);
 		setval(0, 0);
 		
 		// listen out for floats from Pd
 		setupreceive();
-		
-		// send initial value if we have one
-		//initval();
-		
-		// graphics setup
-		//dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
-		
-		paint.setColor(Color.BLACK);
-		paint.setStyle(Paint.Style.STROKE);
 	}
 	
 	public Numberbox(PdDroidPatchView app) {
