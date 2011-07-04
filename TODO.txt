@@ -1,9 +1,16 @@
+ * put the logo on the website
  * patch GUI
    * numberbox2
    * "canvas" widget
    * "wordbutton"
    * "menubang"
    * "loadsave"
+ * svg graphic for background
+   http://code.google.com/p/svg-android/wiki/Tutorial
+ * 9-patch graphics for named objects
+ * loading indicator when you are waiting for a patch to load
+
+ * more patch GUIs
    * vradio / hradio
    * slider log mode
    * numberbox extras:
@@ -14,10 +21,7 @@
    * "ribbon" 1d = start -> end datastructure - 0,0 means finger-lifted
  * svg graphics for named objects
    http://code.google.com/p/svg-android/wiki/Tutorial
- * svg graphic for background
- * 9-patch graphics for named objects
  * config option comment -> noadc
- * loading indicator when you are waiting for a patch to load
  * ability to click on .pd files from a file browser (association)
 
 DONE

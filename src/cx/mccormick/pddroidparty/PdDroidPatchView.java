@@ -111,6 +111,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 								widgets.add(new Bang(this, line));
 							} else if (line[4].equals("nbx")) {
 								widgets.add(new Numberbox2(this, line));
+							} else if (line[4].equals("cnv")) {
+								widgets.add(new Canvasrect(this, line));
 							}
 						}
 					}
