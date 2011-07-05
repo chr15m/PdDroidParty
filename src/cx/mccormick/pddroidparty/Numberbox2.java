@@ -35,7 +35,7 @@ public class Numberbox2 extends Numberbox {
 			}
 		}
 		fmt = new DecimalFormat(calclen.toString());
-		paint.getTextBounds(calclen.toString(), 0, calclen.length(), dRect);
+		paint.getTextBounds(">" + calclen.toString(), 0, calclen.length() + 1, dRect);
 		dRect.sort();
 		dRect.offset((int)x, (int)y + fontsize);
 		dRect.top -= 3;
@@ -72,6 +72,15 @@ public class Numberbox2 extends Numberbox {
 		
 		// send initial value if we have one
 		initval();
+	}
+	
+	public void draw(Canvas canvas) {
+		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
+		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
+		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
+		canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
+		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
+		canvas.drawText(">" + fmt.format(val), x + 3, y + h / 2 + fontsize / 2 + 3, paint);
 	}
 }
 
