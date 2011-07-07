@@ -1,8 +1,5 @@
  * put the logo on the website
  * patch GUI
-   * numberbox2
-   * "canvas" widget
-   * "wordbutton"
    * "menubang"
    * "loadsave"
  * svg graphic for background
@@ -10,6 +7,9 @@
  * 9-patch graphics for named objects
  * loading indicator when you are waiting for a patch to load
 
+ * write something on the website about the abstractions
+ * script to package the tests + demos into the sdcard
+ * copy the tests to the sdcard
  * more patch GUIs
    * vradio / hradio
    * slider log mode
@@ -39,5 +39,10 @@ DONE
      + tap to launch input dialog
    + comment
    + bang!
+   + numberbox2
+   + "canvas" widget
+   + numberbox-fixed abstraction
+   + "wordbutton" abstraction
+   + "touch" abstraction
  + write up a help doc on modifying your patches
 
