@@ -28,6 +28,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import cx.mccormick.pddroidparty.PdParser;
 
@@ -43,9 +45,13 @@ public class PdDroidParty extends Activity {
 	private PdService pdService = null;
 	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
 	private final Object lock = new Object();
+	public Menu ourmenu = null;
 	Map<String, DroidPartyReceiver> receivemap = new HashMap<String, DroidPartyReceiver>();
 	ArrayList<String[]> atomlines = null;
 	Numberbox nbxpopped = null;
+	
+	private MenuItem menuabout = null;
+	private MenuItem menuexit = null;
 	
 	private final PdDispatcher dispatcher = new PdDispatcher() {
 		@Override
@@ -107,6 +113,40 @@ public class PdDroidParty extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		cleanup();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		return true;
+	}
+	
+	// menu launch yeah
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		// about menu item
+		menuabout = menu.add(0, Menu.FIRST + menu.size(), 0, "About");
+		menuabout.setIcon(android.R.drawable.ic_menu_info_details); 
+		// add the menu bang menu items
+		MenuBang.setMenu(menu);
+		// TODO: preferences = ic_menu_preferences
+		// exit menu item
+		menuexit = menu.add(0, Menu.FIRST + menu.size(), 0, "Exit");
+		menuexit.setIcon(android.R.drawable.ic_menu_close_clear_cancel); 
+		return super.onPrepareOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item == menuabout) {
+			// TODO: launch about webkit pane
+		} else if (item == menuexit) {
+			finish();
+		} else {
+			// pass the menu selection through to the MenuBang manager
+			MenuBang.hit(item);
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	// send a Pd atom-string 's' to a particular receiver 'dest'

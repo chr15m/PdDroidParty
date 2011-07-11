@@ -115,6 +115,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 								widgets.add(new Canvasrect(this, line));
 							} else if (line[4].equals("wordbutton")) {
 								widgets.add(new Wordbutton(this, line));
+							} else if (line[4].equals("menubang")) {
+								new MenuBang(this, line);
 							} else if (line[4].equals("numberbox")) {
 								widgets.add(new Numberboxfixed(this, line));
 							} else if (line[4].equals("touch")) {
