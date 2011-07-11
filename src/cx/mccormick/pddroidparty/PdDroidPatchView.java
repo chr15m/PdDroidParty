@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Picture;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +21,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	public int fontsize;
 	ArrayList<Widget> widgets = new ArrayList<Widget>();
 	public PdDroidParty app;
+	private Picture background = null;
 	
 	public PdDroidPatchView(Context context, PdDroidParty parent) {
 		super(context);
@@ -33,11 +35,17 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		
 		paint.setColor(Color.WHITE);
 		paint.setAntiAlias(true);
+		
+		// load the background image
+		background = SVGLoader.getPicture(this, "background");
 	}
 	
 	@Override
 	public void onDraw(Canvas canvas) {
 		canvas.drawPaint(paint);
+		if (background != null) {
+			canvas.drawPicture(background);
+		}
 		// draw all widgets
 		if (widgets != null) {
 			for (Widget widget: widgets) {

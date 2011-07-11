@@ -6,11 +6,13 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.Picture;
 import android.view.MotionEvent;
 import android.util.Log;
 import android.text.StaticLayout;
 import android.text.Layout;
 import android.text.TextPaint;
+import android.util.Log;
 
 import org.puredata.core.PdBase;
 
@@ -153,7 +155,8 @@ public class Widget {
 	public boolean inside(float ex, float ey) {
 		return !(ex < x || ex > x + w || ey < y || ey > y + h);
 	}
+	
+	public Picture getPicture(String name) {
+		return SVGLoader.getPicture(parent, name);
+	}
 }
-
-
-

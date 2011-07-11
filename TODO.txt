@@ -1,13 +1,12 @@
+ * 'about' webkit window loads static about.html in a webkit popup
  * patch GUI
    * "loadsave" - emulates openpanel and savepanel in an android way
    * "choicebox" lets the user choose from a list/dropdown
- * 9-patch graphics for named objects
- * loading indicator when you are waiting for a patch to load
- * 'about' webkit window loads static about.html in a webkit popup
-
- * work out multitouch support
- * svg graphic for background
+ * svg graphics for background + named objects
    http://code.google.com/p/svg-android/wiki/Tutorial
+ 
+ * loading indicator when you are waiting for a patch to load
+ * work out multitouch support
  * write something on the website about the abstractions
  * script to package the tests + demos + abstractions to the sdcard
  * more patch GUIs
@@ -19,10 +18,9 @@
        * up/down is whole numbers
        * left/right is decimal point with starting threshold
    * "ribbon" 1d = start -> end datastructure - 0,0 means finger-lifted
- * svg graphics for named objects
-   http://code.google.com/p/svg-android/wiki/Tutorial
  * config option comment -> noadc
  * ability to click on .pd files from a file browser (association)
+ * 9-patch graphics for named objects
 
 DONE
 ----
