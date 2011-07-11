@@ -1,5 +1,7 @@
 package cx.mccormick.pddroidparty;
 
+import java.io.File;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Color;
@@ -39,6 +41,11 @@ public class Widget {
 		screenwidth = parent.getWidth();
 		screenheight = parent.getHeight();
 		fontsize = (int)((float)parent.fontsize / parent.patchheight * screenheight) - 2;
+		
+		File f = new File(parent.app.getPatchFile().getParent() + "/font.ttf");
+		if (f.exists() && f.canRead() && f.isFile()) {
+			font = Typeface.createFromFile(f);
+		}
 		
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Paint.Style.STROKE);

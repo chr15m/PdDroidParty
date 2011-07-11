@@ -1,7 +1,6 @@
  * patch GUI
    * "loadsave" - emulates openpanel and savepanel in an android way
    * "choicebox" lets the user choose from a list/dropdown
- * custom font load
  * 9-patch graphics for named objects
  * loading indicator when you are waiting for a patch to load
  * 'about' webkit window loads static about.html in a webkit popup
@@ -48,4 +47,5 @@ DONE
    + "menubang"
  + write up a help doc on modifying your patches
  + put the logo on the website
+ + custom font load
 
