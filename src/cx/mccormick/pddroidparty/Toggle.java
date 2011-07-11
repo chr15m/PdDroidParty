@@ -33,7 +33,7 @@ public class Toggle extends Widget {
 		label = setLabel(atomline[9]);
 		labelpos[0] = Float.parseFloat(atomline[10]) / parent.patchwidth * screenwidth;
 		labelpos[1] = Float.parseFloat(atomline[11]) / parent.patchheight * screenheight;
-
+		
 		setval(Float.parseFloat(atomline[17]), 0);
 		
 		// listen out for floats from Pd
@@ -76,7 +76,7 @@ public class Toggle extends Widget {
 	}
 	
 	public void receiveFloat(float v) {
-		toggle();
+		val = v;
 		send("" + val);
 	}
 	
