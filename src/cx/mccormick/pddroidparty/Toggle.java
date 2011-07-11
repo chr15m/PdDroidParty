@@ -66,22 +66,28 @@ public class Toggle extends Widget {
 		}
 	}
 	
+	public void initval() {
+		if (init != 0) {
+			sendFloat(val);
+		}
+	}
+	
 	public void touch(MotionEvent event) {
 		float ex = event.getX();
 		float ey = event.getY();
 		if (event.getAction() == event.ACTION_DOWN && inside(ex, ey)) {
 			toggle();
-			send("" + val);
+			sendFloat(val);
 		}
 	}
 	
 	public void receiveFloat(float v) {
 		val = v;
-		send("" + val);
+		sendFloat(val);
 	}
 	
 	public void receiveBang() {
 		toggle();
-		send("" + val);
+		sendFloat(val);
 	}
 }

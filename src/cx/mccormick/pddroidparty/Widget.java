@@ -10,6 +10,8 @@ import android.text.StaticLayout;
 import android.text.Layout;
 import android.text.TextPaint;
 
+import org.puredata.core.PdBase;
+
 public class Widget {
 	private static final String TAG = "Widget";
 	int screenwidth=0;
@@ -47,6 +49,12 @@ public class Widget {
 	public void send(String msg) {
 		if (sendname != null && !sendname.equals("") && !sendname.equals("empty")) {
 			parent.app.send(sendname, msg);
+		}
+	}
+	
+	public void sendFloat(float f) {
+		if (sendname != null && !sendname.equals("") && !sendname.equals("empty")) {
+			PdBase.sendFloat(sendname, f);
 		}
 	}
 

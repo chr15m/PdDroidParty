@@ -39,7 +39,17 @@ public class MenuBang {
 			//    72x72 for high-density
 			//    96x96 for extra high-density
 			Bitmap b = BitmapFactory.decodeFile(f.toString());
-			b.setDensity(DisplayMetrics.DENSITY_HIGH);
+			// set the density according to the size of bitmap they have used
+			if (b.getWidth() <= 36) {
+				b.setDensity(DisplayMetrics.DENSITY_LOW);
+			} else if (b.getWidth() <= 48) {
+				b.setDensity(DisplayMetrics.DENSITY_MEDIUM);
+			} else {
+				b.setDensity(DisplayMetrics.DENSITY_HIGH);
+			}
+			//} else {
+			//	b.setDensity(DisplayMetrics.DENSITY_XHIGH);
+			//}
 			icon = new BitmapDrawable(parent.app.getResources(), b);
 		}
 		// remember a list of MenuBangs

@@ -1,5 +1,6 @@
  * patch GUI
-   * "loadsave"
+   * "loadsave" - emulates openpanel and savepanel in an android way
+   * "choicebox" lets the user choose from a list/dropdown
  * custom font load
  * 9-patch graphics for named objects
  * loading indicator when you are waiting for a patch to load
@@ -14,10 +15,10 @@
    * vradio / hradio
    * slider log mode
    * numberbox extras:
+     * option to allow limited range with spinner
      * logarithmic finger dragging
        * up/down is whole numbers
        * left/right is decimal point with starting threshold
-   * "touch" 2d surface - 0,0 means finger-lifted
    * "ribbon" 1d = start -> end datastructure - 0,0 means finger-lifted
  * svg graphics for named objects
    http://code.google.com/p/svg-android/wiki/Tutorial
@@ -43,7 +44,7 @@ DONE
    + "canvas" widget
    + numberbox-fixed abstraction
    + "wordbutton" abstraction
-   + "touch" abstraction
+   + "touch" 2d surface - 0,0 means finger-lifted
    + "menubang"
  + write up a help doc on modifying your patches
  + put the logo on the website
