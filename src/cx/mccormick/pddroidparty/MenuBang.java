@@ -2,14 +2,15 @@ package cx.mccormick.pddroidparty;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.ArrayList;
+import java.io.File;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.graphics.Bitmap;
-// import android.graphics.BitmapFactory;
-// import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
+import android.util.DisplayMetrics;
 
 import org.puredata.core.PdBase;
 
@@ -24,36 +25,52 @@ public class MenuBang {
 	private PdDroidPatchView parent = null;
 	private String name = null;
 	private String sendname = null;
-	private Bitmap bitmap = null;
+	private BitmapDrawable icon = null;
 	
 	public MenuBang(PdDroidPatchView app, String[] atomline) {
 		parent = app;
 		name = atomline[5];
 		sendname = "menubang-" + name;
+		// find an icon for us
+		File f = new File(parent.app.getPatchFile().getParent() + "/menubang-" + name + ".png");
+		if (f.exists() && f.canRead() && f.isFile()) {
+			//    36x36 for low-density
+			//    48x48 for medium-density
+			//    72x72 for high-density
+			//    96x96 for extra high-density
+			Bitmap b = BitmapFactory.decodeFile(f.toString());
+			b.setDensity(DisplayMetrics.DENSITY_HIGH);
+			icon = new BitmapDrawable(parent.app.getResources(), b);
+		}
+		// remember a list of MenuBangs
 		names.put(name, this);
 	}
 	
-	public void clear() {
-		all.clear();
+	public BitmapDrawable getIcon() {
+		return icon;
 	}
 	
 	public void send() {
 		PdBase.sendBang(sendname);
 	}
 	
+	// forget all menubangs we have created and start afresh
+	public static void clear() {
+		all.clear();
+		names.clear();
+	}
+	
 	// called as a classmethod to add all MenuBangs to the actual menu
 	public static void setMenu(Menu menu) {
 		for(String key: names.keySet()) {
-			MenuItem i = menu.add(0, Menu.FIRST + menu.size(), 0, key);
-			// TODO: if there is a bitmap, use it
-			// java.io.File
-			// File f = new File("/blah/blah/blah");
-			// f.exists() f.canRead() f.isFile()
-			
-			// Bitmap bitmap = BitmapFactory.decodeFile(imageInSD);
-			// BitmapDrawable(Resources res, Bitmap bitmap)
-			// i.setIcon(Drawable icon);
-			all.put(i, names.get(key));
+			MenuItem i = menu.add(0, Menu.FIRST + menu.size(), 0, key.replace("_", " "));
+			MenuBang mb = names.get(key);
+			// if there is a bitmap, use it
+			if (mb.getIcon() != null) {
+				i.setIcon(mb.getIcon());
+			}
+			// add this to our list of all known MenuBangs
+			all.put(i, mb);
 		}
 	}
 	

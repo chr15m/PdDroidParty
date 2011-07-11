@@ -1,5 +1,4 @@
  * patch GUI
-   * "menubang"
    * "loadsave"
  * custom font load
  * 9-patch graphics for named objects
@@ -45,6 +44,7 @@ DONE
    + numberbox-fixed abstraction
    + "wordbutton" abstraction
    + "touch" abstraction
+   + "menubang"
  + write up a help doc on modifying your patches
  + put the logo on the website
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
+import java.io.File;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
@@ -185,6 +186,7 @@ public class PdDroidParty extends Activity {
 		patchview = new PdDroidPatchView(this, this);
 		setContentView(patchview);
 		patchview.requestFocus();
+		MenuBang.clear();
 	}
 	
 	// initialise Pd asking for the desired sample rate, parameters, etc.
@@ -264,6 +266,10 @@ public class PdDroidParty extends Activity {
 			}
 		}
 		return has;
+	}
+	
+	public File getPatchFile() {
+		return new File(path);
 	}
 	
 	// close the app and exit
