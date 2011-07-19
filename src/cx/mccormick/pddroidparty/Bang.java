@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.lang.Math;
 
 import android.graphics.Canvas;
 import android.graphics.RectF;
@@ -50,13 +51,14 @@ public class Bang extends Widget {
 		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
 		canvas.drawLine(dRect.right, dRect.top + 1, dRect.right, dRect.bottom, paint);
 		if (bang) {
+			// TODO: only set this back after the set time
 			bang = false;
 			paint.setStyle(Paint.Style.FILL);
 			parent.threadSafeInvalidate();
 		} else {
 			paint.setStyle(Paint.Style.STROKE);
 		}
-		canvas.drawCircle(dRect.centerX(), dRect.centerY(), w / 2, paint);
+		canvas.drawCircle(dRect.centerX(), dRect.centerY(), Math.min(w, h) / 2, paint);
 		drawLabel(canvas);
 	}
 	
