@@ -11,6 +11,8 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.util.Log;
 
+import org.puredata.core.PdBase;
+
 public class Bang extends Widget {
 	private static final String TAG = "Bang";
 	
@@ -60,7 +62,7 @@ public class Bang extends Widget {
 	
 	private void bang() {
 		bang = true;
-		send("bang");
+		PdBase.sendBang(sendname);
 	}
 	
 	public void touch(MotionEvent event) {
