@@ -1,9 +1,19 @@
- * 'about' webkit window loads static about.html in a webkit popup
+ * 'about' webkit window loads static assets/about.html in a webkit popup
  * patch GUI
    * "loadsave" - emulates openpanel and savepanel in an android way
    * "choicebox" lets the user choose from a list/dropdown
  * svg graphics for background + named objects
    http://code.google.com/p/svg-android/wiki/Tutorial
+ * unzip any zips in res
+ * if patch.zip exists in res, unzip and load that - don't show patch selector
+ * if splash.png exists in assets, show that on startup
+ * CanOfBeats - superclass main droidparty class for derivatives
+
+ * AB patch fixes:
+   * bang should send an actual bang
+   * bang circle should fit inside rectangle
+   * sliders are drawing wrong for fractional amounts
+ * fix $0 replacement in GUI send/receives
  
  * loading indicator when you are waiting for a patch to load
  * work out multitouch support

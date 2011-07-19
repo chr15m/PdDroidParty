@@ -1,6 +1,6 @@
 package cx.mccormick.pddroidparty;
 
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import android.graphics.Canvas;
 import android.graphics.RectF;
@@ -11,10 +11,17 @@ import android.text.StaticLayout;
 import android.view.MotionEvent;
 import android.util.Log;
 
-public class Numberboxfixed extends Numberbox {
-	private static final String TAG = "Numberboxfixed";
+import org.puredata.core.PdBase;
+
+public class Taplist extends Widget {
+	private static final String TAG = "Taplist";
 	
-	public Numberboxfixed(PdDroidPatchView app, String[] atomline) {
+	String longest = null;
+	ArrayList<String> atoms = new ArrayList<String>();
+	
+	Rect dRect = new Rect();
+	
+	public Taplist(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
 		x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
@@ -23,36 +30,24 @@ public class Numberboxfixed extends Numberbox {
 		h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
 		
 		fontsize = (int)(h * 0.8);
-		
-		// calculate screen bounds for the numbers that can fit
-		numwidth = 3;
-		StringBuffer calclen = new StringBuffer();
-		for (int s=0; s<numwidth; s++) {
-			if (s == 1) {
-				calclen.append(".");
-			} else {
-				calclen.append("#");
-			}
+
+		// get list atoms
+		for (int a=9; a<atomline.length; a++) {
+			atoms.add(atomline[a]);
+			paint.getTextBounds(atomline[a], 0, atomline[a].length(), dRect);
+			Log.e("RECT", dRect.toString());
 		}
-		fmt = new DecimalFormat(calclen.toString());
 		
 		paint.setTextSize(fontsize);
 		paint.setTextAlign(Paint.Align.CENTER);
 		
-		min = Float.parseFloat(atomline[9]);
-		max = Float.parseFloat(atomline[10]);
-		init = 1;
 		sendname = atomline[8];
 		receivename = atomline[7];
 		
-		// set the value to the init value if possible
-		setval(Float.parseFloat(atomline[11]), 0);
+		setval(0, 0);
 		
 		// listen out for floats from Pd
 		setupreceive();
-		
-		// send initial value if we have one
-		initval();
 	}
 	
 	public void draw(Canvas canvas) {
@@ -60,7 +55,26 @@ public class Numberboxfixed extends Numberbox {
 		canvas.drawLine(x + 1, y + h, x + w - 1, y + h, paint);
 		canvas.drawLine(x, y + 1, x, y + h - 1, paint);
 		canvas.drawLine(x + w, y, x + w, y + h, paint);
-		canvas.drawText(fmt.format(val), x + w / 2, (int)(y + h * 0.8), paint);
+		canvas.drawText(atoms.get((int)val), x + w / 2, (int)(y + h * 0.8), paint);
+	}
+	
+	private void doSend() {
+		parent.app.send(sendname, atoms.get((int)val));
+		PdBase.sendFloat(sendname + "/idx", val);
+	}
+	
+	public void touch(MotionEvent event) {
+		float ex = event.getX();
+		float ey = event.getY();
+		if (event.getAction() == event.ACTION_DOWN && inside(ex, ey)) {
+			// go to the next item in our list
+			val = (val + 1) % atoms.size();
+			doSend();
+		}
+	}
+	
+	public void receiveFloat(float v) {
+		val = v % atoms.size();
+		doSend();
 	}
 }
-

@@ -1,7 +1,7 @@
-#N struct 1005template-marker float a float b;
-#N struct 1006template-marker float a float b;
-#N struct 1007template-marker float a float b;
-#N canvas 39 407 1054 401 10;
+#N struct 1021template-marker float a float b;
+#N struct 1022template-marker float a float b;
+#N struct 1023template-marker float a float b;
+#N canvas 144 227 1054 401 10;
 #X obj 10 111 print;
 #X text 79 63 <- "menubang hello";
 #X obj 10 59 menubang hello;
@@ -37,11 +37,11 @@
 -1 -1;
 #X text 506 44 wordbutton - a button with a word on it;
 #X text 500 56 "wordbutton 100 25 testing";
-#X msg 12 216 these are my words;
-#X obj 12 258 s output;
-#X text 13 192 display - show text output;
-#X text 14 336 "display 150 50 output";
-#X obj 12 283 display 150 50 output;
+#X msg 12 260 these are my words;
+#X obj 12 302 s output;
+#X text 13 243 display - show text output;
+#X text 14 380 "display 150 50 output";
+#X obj 12 327 display 150 50 output;
 #X obj 227 189 unpack f f;
 #X floatatom 227 211 5 0 0 0 - - -;
 #X floatatom 284 211 5 0 0 0 - - -;
@@ -51,12 +51,18 @@
 #X obj 251 337 unpack f f;
 #X floatatom 251 359 5 0 0 0 - - -;
 #X floatatom 308 359 5 0 0 0 - - -;
-#X msg 22 237 hello 32 f;
+#X msg 22 281 hello 32 f;
 #X obj 507 248 r numsend;
 #X floatatom 507 270 5 0 0 0 - - -;
 #X obj 506 208 numberbox 80 30 numreceive numsend 0 10;
 #X text 514 191 numberbox - fixed size number I/O;
 #X text 498 285 "numberbox 80 30 numreceive numsend 0 10";
+#X obj 13 161 taplist 100 16 pick-notes note C C# D D# E F F# G G#
+A A# B;
+#X obj 13 195 r note;
+#X text 10 141 taplist - tap through list items;
+#X text 4 178 "taplist 100 16 n note C C# D...";
+#X symbolatom 13 216 10 0 0 0 - - -;
 #X connect 3 0 0 0;
 #X connect 4 0 36 0;
 #X connect 6 0 39 0;
@@ -72,3 +78,4 @@
 #X connect 42 1 44 0;
 #X connect 45 0 32 0;
 #X connect 46 0 47 0;
+#X connect 52 0 55 0;
