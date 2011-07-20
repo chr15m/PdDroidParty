@@ -12,6 +12,8 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.util.Log;
 
+import org.puredata.core.PdBase;
+
 public class Wordbutton extends Bang {
 	private static final String TAG = "Wordbutton";
 	
@@ -47,7 +49,7 @@ public class Wordbutton extends Bang {
 		float ex = event.getX();
 		float ey = event.getY();
 		if (event.getAction() == event.ACTION_DOWN && inside(ex, ey)) {
-			send("bang");
+			PdBase.sendBang(sendname);
 		}
 	}
 }
