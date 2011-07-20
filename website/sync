@@ -1,0 +1,6 @@
+#!/bin/bash
+
+zip -r droidparty-demos.zip ../droidparty-demos
+zip -r droidparty-tests.zip ../droidparty-tests
+zip -r droidparty-abstractions.zip ../abstractions
+rsync -avz . mccormick.cx:~/mccormick.cx/projects/PdDroidParty/
