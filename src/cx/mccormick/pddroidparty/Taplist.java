@@ -35,7 +35,6 @@ public class Taplist extends Widget {
 		for (int a=9; a<atomline.length; a++) {
 			atoms.add(atomline[a]);
 			paint.getTextBounds(atomline[a], 0, atomline[a].length(), dRect);
-			Log.e("RECT", dRect.toString());
 		}
 		
 		paint.setTextSize(fontsize);

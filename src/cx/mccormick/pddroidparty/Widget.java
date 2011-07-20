@@ -84,7 +84,6 @@ public class Widget {
 	
 	public void initval() {
 		if (init != 0) {
-			Log.e(TAG, "SENT: " + val);
 			send("" + val);
 		}
 	}
