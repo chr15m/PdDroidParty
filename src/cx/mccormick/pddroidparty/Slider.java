@@ -41,7 +41,7 @@ public class Slider extends Widget {
 		labelpos[0] = Float.parseFloat(atomline[14]) / parent.patchwidth * screenwidth;
 		labelpos[1] = Float.parseFloat(atomline[15]) / parent.patchheight * screenheight;
 		
-		setval((float)(Float.parseFloat(atomline[21]) * 0.01 * (max - min) / (Float.parseFloat(atomline[5]) - 1) + min), min);
+		setval((float)(Float.parseFloat(atomline[21]) * 0.01 * (max - min) / ((horizontal ? Float.parseFloat(atomline[5]) : Float.parseFloat(atomline[6])) - 1) + min), min);
 		
 		// listen out for floats from Pd
 		setupreceive();
