@@ -6,11 +6,17 @@
 			margin-top: 20px;
 			font-family: Arial;
 			background-image: url('pattern.gif');
+			color: #333333;
 		}
 		
 		div#inner {
-			width: 948;
-			margin: auto;
+			margin-left: 50px;
+			margin-right: auto;
+		}
+	
+		img#logo {
+			float: right;
+			margin-right: 50px;
 		}
 	</style>
 <script type="text/javascript">
@@ -32,58 +38,58 @@
 <div id='outer'>
 <div id='inner'>
 <h1>PdDroidParty <img src='icon.png'/></h1>
-<pre>
-Run your Pure Data patches on Android with native GUIs emulated.
+<p>Run your Pure Data patches on Android with native GUIs emulated.</p>
 
 <h3>Download</h3>
-<a href='PdDroidParty-debug-72.apk'>PddDroidParty-debug-72.apk</a>
-<a href='droidparty-tests.zip'>droidparty-tests.zip</a>
-<a href='droidparty-abstractions.zip'>droidparty-abstractions.zip</a>
-<a href='drum-machine.zip'>drum-machine.zip</a>
+<ul>
+<li><a href='PdDroidParty-debug-72.apk'>PdDroidParty-debug-72.apk</a></li>
+<li><a href='droidparty-tests.tgz'>droidparty-tests.tgz</a></li>
+<li><a href='droidparty-abstractions.tgz'>droidparty-abstractions.tgz</a></li>
+<li><a href='drum-machine.tgz'>drum-machine.tgz</a></li>
+</ul>
 
-(Unzip the zip files onto your device's sdcard e.g. into /sdcard/pd/)
+<p>(Unzip the tgz files onto your device's sdcard e.g. into /sdcard/pd/)</p>
 
-<img src='PdDroidParty.png'>
+<img id='logo' src='PdDroidParty.png'>
 
 <h3>How to make patches for PdDroidParty</h3>
 
- 1. Create a new Pd patch called droidparty_main.pd in a subdirectory. This
+<p>1. Create a new Pd patch called droidparty_main.pd in a subdirectory. This
 patch will contain your GUI objects like sliders, toggles, numberboxes etc. If
 you have an existing patch you want to run with PdDroidParty you can create the
-droidparty_main.pd patch in the same directory.
+droidparty_main.pd patch in the same directory.</p>
 
- 2. PdDroidParty GUI patches will be scaled to fit the screen of the device.
+<p>2. PdDroidParty GUI patches will be scaled to fit the screen of the device.
 Your patches should have the rough dimensions of a phone/tablet in landscape
 mode (e.g. 3:2 aspect ratio or e.g. 480x320 should usually work well). If it's
-not exact it doesn't matter - the GUI elements will be scaled.
+not exact it doesn't matter - the GUI elements will be scaled.</p>
 
- 3. Numberboxes, Sliders, Toggles, Comments are currently rendered by
-PdDroidParty. Check out the GUI abstractions in the droidparty-abstractions.zip
+<p>3. Numberboxes, Sliders, Toggles, Comments are currently rendered by
+PdDroidParty. Check out the GUI abstractions in the droidparty-abstractions.tgz
 file - these are also supported natively, like the 2d touch surface for
-example.
+example.</p>
 
- 4. All GUI elements should communicate with the main audio patches using send
+<p>4. All GUI elements should communicate with the main audio patches using send
 and receive only. You can usually set send and receive for each GUI by right
 clicking on the object and choosing 'properties' in Pd. Do not directly connect
 cables to the GUI elements as they won't work. It helps to keep the GUIs on
 their own in the droidparty_main.pd file and have it include the logic of your
 patch as an abstraction or subpatch containing senders and receivers for
 interfacing with GUI elements. This is good patch design practice anyway as it
-is basically a model-view-controller methodology.
+is basically a model-view-controller methodology.</p>
 
- 5. Copy the entire directory containing your droidparty_main.pd somewhere onto
+<p>5. Copy the entire directory containing your droidparty_main.pd somewhere onto
 the sdcard of your device. You can usually do this over USB with most phones
 and tablets by mounting your device as a hard drive on your computer. One good
 place to copy it is to e.g. /sdcard/pd/MyPdPatch 5. Run PdDroidParty and you
-will find an entry named after your subdirectory. Tap it to load your patch.
+will find an entry named after your subdirectory. Tap it to load your patch.</p>
 
 <h3>Source code (GPLv3)</h3>
 
-Get the source with <a href='http://bazaar.canonical.com/en/'>bazaar</a>:
-	bzr co http://mccormick.cx/dev/PdDroidParty/
+<p>Get the source with <a href='http://bazaar.canonical.com/en/'>bazaar</a>:</p>
+<pre><code>	bzr co http://mccormick.cx/dev/PdDroidParty/</code></pre>
 
-Made with <a href='http://gitorious.org/pdlib/'>libpd</a>
-</pre>
+<p>Made with <a href='http://gitorious.org/pdlib/'>libpd</a>.</p>
 </div>
 </div>
 </body>
