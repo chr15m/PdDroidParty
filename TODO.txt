@@ -1,4 +1,3 @@
- * 'about' webkit window loads static assets/about.html in a webkit popup
  * patch GUI
    * "loadsave" - emulates openpanel and savepanel in an android way
  * svg graphics for background + named objects
@@ -9,13 +8,14 @@
    * unzip and load patch.zip if it doesn't exist
    * don't show patch selector
  * if splash.png exists in assets, show that on startup (while patch loads?)
+ * 'about' webkit window loads static assets/about.html in a webkit popup
  * CanOfBeats - superclass main droidparty class for derivatives
 
  * fix $0 replacement in GUI send/receives
  * loading indicator when you are waiting for a patch to load
  * work out multitouch support
  * write something on the website about the abstractions
- * script to package the tests + demos + abstractions to the sdcard
+ * script to package the demos + abstractions to the sdcard
  * more patch GUIs
    * vradio / hradio
    * slider log mode

@@ -1,4 +1,4 @@
-#N canvas 401 108 365 181 10;
+#N canvas 401 108 643 181 10;
 #X obj 13 33 r \$1;
 #X obj 13 98 openpanel;
 #X obj 138 98 savepanel;
@@ -9,7 +9,8 @@
 #X text 11 9 args: send/receive-name;
 #X obj 13 160 s \$1-filename;
 #X obj 138 119 list prepend save;
-#X msg 13 119 list prepend load;
+#X obj 13 119 list prepend load;
+#X obj 13 140 list trim;
 #X connect 0 0 3 0;
 #X connect 1 0 10 0;
 #X connect 2 0 9 0;
@@ -17,5 +18,6 @@
 #X connect 3 1 6 0;
 #X connect 5 0 1 0;
 #X connect 6 0 2 0;
-#X connect 9 0 8 0;
-#X connect 10 0 8 0;
+#X connect 9 0 11 0;
+#X connect 10 0 11 0;
+#X connect 11 0 8 0;
