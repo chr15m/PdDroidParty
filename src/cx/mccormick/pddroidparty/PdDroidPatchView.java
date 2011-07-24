@@ -104,11 +104,13 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 				// find different types of UI element in the top level patch
 				} else if (level == 1) {
 					if (line.length >= 2) {
+						// builtin pd things
 						if (line[1].equals("text")) {
 							widgets.add(new Comment(this, line));
 						} else if (line[1].equals("floatatom")) {
 							widgets.add(new Numberbox(this, line));
 						} else if (line.length >= 5) {
+							// pd objects
 							if (line[4].equals("vsl")) {
 								widgets.add(new Slider(this, line, false));
 							} else if (line[4].equals("hsl")) {
@@ -121,16 +123,20 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 								widgets.add(new Numberbox2(this, line));
 							} else if (line[4].equals("cnv")) {
 								widgets.add(new Canvasrect(this, line));
+							// special PdDroidParty abstractions
 							} else if (line[4].equals("wordbutton")) {
 								widgets.add(new Wordbutton(this, line));
-							} else if (line[4].equals("menubang")) {
-								new MenuBang(this, line);
 							} else if (line[4].equals("numberbox")) {
 								widgets.add(new Numberboxfixed(this, line));
 							} else if (line[4].equals("taplist")) {
 								widgets.add(new Taplist(this, line));
 							} else if (line[4].equals("touch")) {
 								widgets.add(new Touch(this, line));
+							// things that aren't widgets
+							} else if (line[4].equals("menubang")) {
+								new MenuBang(this, line);
+							} else if (line[4].equals("loadsave")) {
+								new LoadSave(this, line);
 							}
 						}
 					}

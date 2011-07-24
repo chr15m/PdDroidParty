@@ -89,10 +89,10 @@ public class Numberbox extends Widget {
 		float ey = event.getY();
 		if (event.getAction() == event.ACTION_UP && inside(ex, ey)) {
 			down = false;
-			//parent.
-			parent.app.launchNumberboxDialog(this);
+			parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
 		}
 		
+		// TODO: allow dragging to set the number
 		/*if (down) {
 			//Log.e(TAG, "touch:" + val);
 			if (event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) {

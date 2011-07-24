@@ -40,7 +40,9 @@ public class PdDroidParty extends Activity {
 	private static final String PD_CLIENT = "PdDroidParty";
 	private static final String TAG = "PdDroidParty";
 	private static final int SAMPLE_RATE = 22050;
-	private static final int DIALOG_NUMBERBOX = 1;
+	public static final int DIALOG_NUMBERBOX = 1;
+	public static final int DIALOG_SAVE = 2;
+	public static final int DIALOG_LOAD = 3;
 	
 	private String path;
 	private PdService pdService = null;
@@ -49,7 +51,7 @@ public class PdDroidParty extends Activity {
 	public Menu ourmenu = null;
 	Map<String, DroidPartyReceiver> receivemap = new HashMap<String, DroidPartyReceiver>();
 	ArrayList<String[]> atomlines = null;
-	Numberbox nbxpopped = null;
+	Widget widgetpopped = null;
 	
 	private MenuItem menuabout = null;
 	private MenuItem menuexit = null;
@@ -219,8 +221,6 @@ public class PdDroidParty extends Activity {
 				
 				Resources res = getResources();
 				PdBase.setReceiver(dispatcher);
-				//dispatcher.addListener(RJ_IMAGE_ANDROID, overlayListener);
-				//dispatcher.addListener(RJ_TEXT_ANDROID, overlayListener);
 				
 				try {
 					// parse the patch for GUI elements
@@ -293,25 +293,37 @@ public class PdDroidParty extends Activity {
 		}
 	}
 	
-	public void launchNumberboxDialog(Numberbox which) {
-		nbxpopped = which;
-		Intent it = new Intent(this, NumberboxDialog.class);
-		it.putExtra("number", which.getval());
-		startActivityForResult(it, DIALOG_NUMBERBOX);
+	public void launchDialog(Widget which, int type) {
+		widgetpopped = which;
+		if (type == DIALOG_NUMBERBOX) {
+			Intent it = new Intent(this, NumberboxDialog.class);
+			it.putExtra("number", which.getval());
+			startActivityForResult(it, DIALOG_NUMBERBOX);
+		} else if (type == DIALOG_SAVE) {
+			Intent it = new Intent(this, SaveDialog.class);
+			it.putExtra("filename", ((LoadSave)which).getFilename());
+			it.putExtra("directory", ((LoadSave)which).getDirectory());
+			it.putExtra("extension", ((LoadSave)which).getExtension());
+			startActivityForResult(it, DIALOG_SAVE);
+		}
 	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data); 
-		if (requestCode == DIALOG_NUMBERBOX) {
-			if (resultCode == RESULT_OK) {
-				if (nbxpopped != null) {
-					nbxpopped.receiveFloat(data.getFloatExtra("number", 0));
-					nbxpopped.send("" + nbxpopped.getval());
+		if (resultCode == RESULT_OK) {
+			if (widgetpopped != null) {
+				if (requestCode == DIALOG_NUMBERBOX) {
+					widgetpopped.receiveFloat(data.getFloatExtra("number", 0));
+					widgetpopped.send("" + widgetpopped.getval());
+				} else if (requestCode == DIALOG_SAVE) {
+					((LoadSave)widgetpopped).gotFilename("save", data.getStringExtra("filename"));
 				}
+				// we're done with our originating widget and dialog
+				widgetpopped = null;
+				// force a redraw
+				patchview.invalidate();
 			}
-			nbxpopped = null;
-			patchview.invalidate();
 		}
 	}
 }

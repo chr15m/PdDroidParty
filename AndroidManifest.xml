@@ -20,6 +20,7 @@
 			android:label="@string/app_name" android:screenOrientation="landscape">
 		</activity>
 		<activity android:name=".NumberboxDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Numberbox"></activity>
+		<activity android:name=".SaveDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Save"></activity>
 		<service android:name="org.puredata.android.service.PdService" />
 	</application>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="7" />
