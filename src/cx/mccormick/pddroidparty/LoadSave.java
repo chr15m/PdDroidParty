@@ -19,10 +19,6 @@ public class LoadSave extends Widget {
 		parent.app.registerReceiver(sendreceive, this);
 	}
 	
-	public void receiveList(Object... args) {
-		Log.e(TAG, args[0] + " " + args[1] + " " + args[2]);
-	}
-	
 	public String getFilename() {
 		return filename;
 	}
@@ -39,6 +35,8 @@ public class LoadSave extends Widget {
 		int type = 0;
 		if (symbol.equals("save")) {
 			type = PdDroidParty.DIALOG_SAVE;
+		} else if (symbol.equals("load")) {
+			type = PdDroidParty.DIALOG_LOAD;
 		}
 		directory = args.length > 0 ? (String)args[0] : ".";
 		extension = args.length > 1 ? (String)args[1] : "";
@@ -47,12 +45,6 @@ public class LoadSave extends Widget {
 	
 	public void gotFilename(String type, String newname) {
 		filename = newname;
-		String root = parent.app.getPatchFile().getParent();
-		if (directory.equals(".")) {
-			directory = root;
-		} else if (directory.charAt(0) != '/') {
-			directory = root + "/" + directory;
-		}
-		PdBase.sendSymbol(sendreceive + "-" + type, directory + "/" + filename + "." + extension);
+		PdBase.sendSymbol(sendreceive + "-" + type, parent.app.getPatchRelativePath(directory) + "/" + filename + "." + extension);
 	}
 }

@@ -47,7 +47,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		intent.putExtra(PdDroidParty.PATCH, patches.get(name));
 		startActivity(intent);
 	}
-
+	
 	private void initGui() {
 		setContentView(R.layout.patch_selector);
 		patchList = (ListView) findViewById(R.id.patch_selector);

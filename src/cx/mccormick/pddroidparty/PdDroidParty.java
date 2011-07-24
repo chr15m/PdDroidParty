@@ -305,6 +305,23 @@ public class PdDroidParty extends Activity {
 			it.putExtra("directory", ((LoadSave)which).getDirectory());
 			it.putExtra("extension", ((LoadSave)which).getExtension());
 			startActivityForResult(it, DIALOG_SAVE);
+		} else if (type == DIALOG_LOAD) {
+			Intent it = new Intent(this, LoadDialog.class);
+			it.putExtra("filename", ((LoadSave)which).getFilename());
+			it.putExtra("directory", getPatchRelativePath(((LoadSave)which).getDirectory()));
+			it.putExtra("extension", ((LoadSave)which).getExtension());
+			startActivityForResult(it, DIALOG_LOAD);
+		}
+	}
+	
+	public String getPatchRelativePath(String dir) {
+		String root = getPatchFile().getParent();
+		if (dir.equals(".")) {
+			return root;
+		} else if (dir.charAt(0) != '/') {
+			return root + "/" + dir;
+		} else {
+			return dir;
 		}
 	}
 	
@@ -318,6 +335,8 @@ public class PdDroidParty extends Activity {
 					widgetpopped.send("" + widgetpopped.getval());
 				} else if (requestCode == DIALOG_SAVE) {
 					((LoadSave)widgetpopped).gotFilename("save", data.getStringExtra("filename"));
+				} else if (requestCode == DIALOG_LOAD) {
+					((LoadSave)widgetpopped).gotFilename("load", data.getStringExtra("filename"));
 				}
 				// we're done with our originating widget and dialog
 				widgetpopped = null;
