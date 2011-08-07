@@ -44,7 +44,10 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	public void onDraw(Canvas canvas) {
 		canvas.drawPaint(paint);
 		if (background != null) {
+			canvas.save();
+			canvas.scale((float)this.getWidth() / background.getWidth(), (float)this.getHeight() / background.getHeight());
 			canvas.drawPicture(background);
+			canvas.restore();
 		}
 		// draw all widgets
 		if (widgets != null) {
