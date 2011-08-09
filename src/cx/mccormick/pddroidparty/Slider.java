@@ -17,7 +17,6 @@ public class Slider extends Widget {
 	float min, max;
 	int log;
 	
-	RectF dRect;
 	boolean orientation_horizontal = true;
 	boolean down = false;
 	
@@ -26,10 +25,10 @@ public class Slider extends Widget {
 		
 		orientation_horizontal = horizontal;
 		
-		x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
-		h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
+		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
+		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
 		
 		min = Float.parseFloat(atomline[7]);
 		max = Float.parseFloat(atomline[8]);
@@ -59,9 +58,9 @@ public class Slider extends Widget {
 		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
 		canvas.drawLine(dRect.right, dRect.top + 1, dRect.right, dRect.bottom, paint);
 		if (orientation_horizontal) {
-			canvas.drawLine(Math.round(x + ((val - min) / (max - min)) * w), Math.round(y + 2), Math.round(x + ((val - min) / (max - min)) * w), Math.round(y + h - 2), paint);
+			canvas.drawLine(Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.top + 2), Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.bottom - 2), paint);
 		} else {
-			canvas.drawLine(Math.round(x + 2), Math.round((y + h) - ((val - min) / (max - min)) * h), Math.round(x + w - 2), Math.round((y + h) - ((val - min) / (max - min)) * h), paint);
+			canvas.drawLine(Math.round(dRect.left + 2), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), Math.round(dRect.right - 2), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), paint);
 		}
 		drawLabel(canvas);
 	}
@@ -69,7 +68,7 @@ public class Slider extends Widget {
 	public void touch(MotionEvent event) {
 		float ex = event.getX();
 		float ey = event.getY();
-		if (event.getAction() == event.ACTION_DOWN && inside(ex, ey)) {
+		if (event.getAction() == event.ACTION_DOWN && dRect.contains(ex, ey)) {
 			down = true;
 		}
 		
@@ -78,9 +77,9 @@ public class Slider extends Widget {
 			if (event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) {
 				// calculate the new value based on touch
 				if (orientation_horizontal) {
-					val = (((ex - x) / w) * (max - min) + min);
+					val = (((ex - dRect.left) / dRect.width()) * (max - min) + min);
 				} else {
-					val = (((h - (ey - y)) / h) * (max - min) + min);
+					val = (((dRect.height() - (ey - dRect.top)) / dRect.height()) * (max - min) + min);
 				}
 				// clamp the value
 				val = Math.min(max, Math.max(min, val));

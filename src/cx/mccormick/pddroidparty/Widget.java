@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.Picture;
+import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.util.Log;
 import android.text.StaticLayout;
@@ -22,7 +23,7 @@ public class Widget {
 	int screenheight=0;
 	int WRAPWIDTH = 360;
 	
-	float x, y, w, h;
+	RectF dRect = new RectF();
 	
 	Paint paint = new Paint();
 	
@@ -99,7 +100,7 @@ public class Widget {
 				textLayout = new StaticLayout((CharSequence)label, new TextPaint(paint), (int)((float)WRAPWIDTH / parent.patchwidth * screenwidth), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
 			}
 			canvas.save();
-			canvas.translate(x + labelpos[0] + 2, y + labelpos[1] + 2 - fontsize / 2);
+			canvas.translate(dRect.left + labelpos[0] + 2, dRect.top + labelpos[1] + 2 - fontsize / 2);
 			textLayout.draw(canvas);
 			canvas.restore();
 		}
@@ -149,13 +150,5 @@ public class Widget {
 	}
 	
 	public void receiveAny() {
-	}
-	
-	public boolean inside(float ex, float ey) {
-		return !(ex < x || ex > x + w || ey < y || ey > y + h);
-	}
-	
-	public Picture getPicture(String name) {
-		return SVGLoader.getPicture(parent, name);
 	}
 }

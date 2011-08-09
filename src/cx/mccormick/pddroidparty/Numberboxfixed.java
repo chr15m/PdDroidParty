@@ -17,12 +17,12 @@ public class Numberboxfixed extends Numberbox {
 	public Numberboxfixed(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
-		h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
+		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
+		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
 		
-		fontsize = (int)(h * 0.8);
+		fontsize = (int)(h * 0.75);
 		
 		// calculate screen bounds for the numbers that can fit
 		numwidth = 3;
@@ -53,14 +53,16 @@ public class Numberboxfixed extends Numberbox {
 		
 		// send initial value if we have one
 		initval();
+		
+		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawLine(x + 1, y, x + w - 1, y, paint);
-		canvas.drawLine(x + 1, y + h, x + w - 1, y + h, paint);
-		canvas.drawLine(x, y + 1, x, y + h - 1, paint);
-		canvas.drawLine(x + w, y, x + w, y + h, paint);
-		canvas.drawText(fmt.format(val), x + w / 2, (int)(y + h * 0.8), paint);
+		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
+		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1, dRect.bottom, paint);
+		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);
+		canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom, paint);
+		canvas.drawText(fmt.format(val), dRect.left + dRect.width() / 2, (int)(dRect.top + dRect.height() * 0.75), paint);
 	}
 }
 

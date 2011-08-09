@@ -21,8 +21,9 @@ public class Numberbox2 extends Numberbox {
 	public Numberbox2(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
+		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		Rect tRect = new Rect();
 		
 		// calculate screen bounds for the numbers that can fit
 		numwidth = Integer.parseInt(atomline[5]);
@@ -35,7 +36,8 @@ public class Numberbox2 extends Numberbox {
 			}
 		}
 		fmt = new DecimalFormat(calclen.toString());
-		paint.getTextBounds(">" + calclen.toString(), 0, calclen.length() + 1, dRect);
+		paint.getTextBounds(">" + calclen.toString(), 0, calclen.length() + 1, tRect);
+		dRect.set(tRect);
 		dRect.sort();
 		dRect.offset((int)x, (int)y + fontsize);
 		dRect.top -= 3;
@@ -43,17 +45,12 @@ public class Numberbox2 extends Numberbox {
 		dRect.left -= 3;
 		dRect.right += 3;
 		
-		h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
+		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
 		float diff = h - dRect.height();
 		if (diff > 0) {
 			dRect.bottom += diff / 2;
 			dRect.top -= diff / 2;
 		}
-		
-		x = dRect.left;
-		y = dRect.top;
-		w = dRect.width();
-		h = dRect.height();
 		
 		min = Float.parseFloat(atomline[7]);
 		max = Float.parseFloat(atomline[8]);
@@ -80,7 +77,7 @@ public class Numberbox2 extends Numberbox {
 		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
 		canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
 		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
-		canvas.drawText(">" + fmt.format(val), x + 3, y + h / 2 + fontsize / 2 + 3, paint);
+		canvas.drawText(">" + fmt.format(val), dRect.left + 3, dRect.bottom / 2 + fontsize / 2 + 3, paint);
 	}
 }
 

@@ -19,26 +19,29 @@ public class Touch extends Widget {
 	public Touch(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
-		h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
+		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
+		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
+		
+		// graphics setup
+		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
 		sendname = atomline[7];
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawLine(x + 1, y, x + w - 1, y, paint);
-		canvas.drawLine(x + 1, y + h, x + w - 1, y + h, paint);
-		canvas.drawLine(x, y + 1, x, y + h - 1, paint);
-		canvas.drawLine(x + w, y, x + w, y + h, paint);
+		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
+		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1, dRect.bottom, paint);
+		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);
+		canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom, paint);
 	}
 	
 	public void touch(MotionEvent event) {
 		float ex = event.getX();
 		float ey = event.getY();
-		if ((event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) && inside(ex, ey)) {
-			send(((ex - x) / w) + " " + ((ey - y) / h));
+		if ((event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) && dRect.contains(ex, ey)) {
+			send(((ex - dRect.left) / dRect.width()) + " " + ((ey - dRect.top) / dRect.height()));
 			down = true;
 		}
 		if (event.getAction() == event.ACTION_UP && down) {

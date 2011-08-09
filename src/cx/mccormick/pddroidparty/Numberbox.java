@@ -21,17 +21,16 @@ public class Numberbox extends Widget {
 	float min, max;
 	int numwidth;
 	
-	Rect dRect = new Rect();
-	Paint paint = new Paint();
 	boolean down = false;
 	StaticLayout numLayout = null;
 	DecimalFormat fmt = null;
+	Rect tRect = new Rect();
 	
 	public Numberbox(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
+		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
 		
 		// calculate screen bounds for the numbers that can fit
 		numwidth = Integer.parseInt(atomline[4]);
@@ -44,18 +43,14 @@ public class Numberbox extends Widget {
 			}
 		}
 		fmt = new DecimalFormat(calclen.toString());
-		paint.getTextBounds(calclen.toString(), 0, calclen.length(), dRect);
+		paint.getTextBounds(calclen.toString(), 0, calclen.length(), tRect);
+		dRect.set(tRect);
 		dRect.sort();
 		dRect.offset((int)x, (int)y + fontsize);
 		dRect.top -= 3;
 		dRect.bottom += 3;
 		dRect.left -= 3;
 		dRect.right += 3;
-		
-		x = dRect.left;
-		y = dRect.top;
-		w = dRect.width();
-		h = dRect.height();
 		
 		min = Float.parseFloat(atomline[5]);
 		max = Float.parseFloat(atomline[6]);
@@ -81,13 +76,13 @@ public class Numberbox extends Widget {
 		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
 		canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
 		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
-		canvas.drawText(fmt.format(val), x + 3, y + fontsize + 3, paint);
+		canvas.drawText(fmt.format(val), dRect.left + 3, dRect.top + fontsize + 3, paint);
 	}
 	
 	public void touch(MotionEvent event) {
 		float ex = event.getX();
 		float ey = event.getY();
-		if (event.getAction() == event.ACTION_UP && inside(ex, ey)) {
+		if (event.getAction() == event.ACTION_UP && dRect.contains(ex, ey)) {
 			down = false;
 			parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
 		}

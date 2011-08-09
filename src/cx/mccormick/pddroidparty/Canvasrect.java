@@ -7,8 +7,6 @@ import android.graphics.Color;
 import android.util.Log;
 
 public class Canvasrect extends Widget {
-	RectF r = new RectF();
-	
 	private static int IEM_GUI_MAX_COLOR = 30;
 	private static int iemgui_color_hex[] = {
 		16579836, 10526880, 4210752, 16572640, 16572608,
@@ -22,19 +20,16 @@ public class Canvasrect extends Widget {
 	public Canvasrect(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		w = Float.parseFloat(atomline[6]) / parent.patchwidth * screenwidth;
-		h = Float.parseFloat(atomline[7]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
+		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		float w = Float.parseFloat(atomline[6]) / parent.patchwidth * screenwidth;
+		float h = Float.parseFloat(atomline[7]) / parent.patchheight * screenheight;
 		
 		receivename = atomline[9];
 		setupreceive();
 		
 		// TODO: calculate and set fill colour
-		r.left = x;
-		r.top = y;
-		r.right = (x + w);
-		r.bottom = (y + h);
+		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
 		int iemcolor = Integer.parseInt(atomline[15]);
 		Log.e("ORIGINAL COLOR", "" + iemcolor);
@@ -79,18 +74,20 @@ public class Canvasrect extends Widget {
 		//paint.setStyle(Paint.Style.FILL);
 		//canvas.drawRect(41, 124, 152, 73, paint);
 		//Log.e("Canvasrect.draw()", r.left + ", " + r.top + ", " + r.right + ", " + r.bottom);
-		canvas.drawRect(r.left, r.top, r.right, r.bottom, paint); 
+		canvas.drawRect(dRect.left, dRect.top, dRect.right, dRect.bottom, paint); 
 		//canvas.drawCircle(110 + 50, 110 + 50, 50, paint); 
 	}
 	
 	public void receiveMessage(String symbol, Object... args) {
 		if (symbol.equals("pos")) {
 			if (args.length == 2) {
+				float w = dRect.width();
+				float h = dRect.height();
 				//Log.e("POS", args[0].toString() + ", " + args[1].toString());
-				r.left = x = Float.parseFloat(args[0].toString()) / parent.patchwidth * screenwidth;
-				r.top = y = Float.parseFloat(args[1].toString()) / parent.patchwidth * screenwidth;
-				r.right = (x + w);
-				r.bottom = (y + h);
+				dRect.left = Float.parseFloat(args[0].toString()) / parent.patchwidth * screenwidth;
+				dRect.top = Float.parseFloat(args[1].toString()) / parent.patchwidth * screenwidth;
+				dRect.right = dRect.left + w;
+				dRect.bottom = dRect.top + h;
 				//r.sort();
 			}
 		}

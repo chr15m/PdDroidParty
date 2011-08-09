@@ -6,24 +6,26 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import android.graphics.Canvas;
-import android.graphics.RectF;
 import android.graphics.Paint;
+import android.graphics.Picture;
+import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.util.Log;
 
 public class Toggle extends Widget {
 	private static final String TAG = "Toggle";
 	
-	RectF dRect;
 	float toggleval = 1;
+	Picture on = null;
+	Picture off = null;
 	
 	public Toggle(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
-		h = Float.parseFloat(atomline[5]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
+		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
+		float h = Float.parseFloat(atomline[5]) / parent.patchheight * screenheight;
 		
 		toggleval = Float.parseFloat(atomline[18]);
 		
@@ -52,8 +54,8 @@ public class Toggle extends Widget {
 		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
 		canvas.drawLine(dRect.right, dRect.top + 1, dRect.right, dRect.bottom, paint);
 		if (val != 0) {
-			canvas.drawLine(Math.round(x + 2), Math.round(y + 2), Math.round(x + w - 2), Math.round(y + h - 2), paint);
-			canvas.drawLine(Math.round(x + 2), Math.round(y + h - 2), Math.round(x + w - 2), Math.round(y + 2), paint);
+			canvas.drawLine(dRect.left + 2, dRect.top + 2, dRect.right - 2, dRect.bottom - 2, paint);
+			canvas.drawLine(dRect.left + 2, dRect.bottom - 2, dRect.right - 2, dRect.top + 2, paint);
 		}
 		drawLabel(canvas);
 	}
@@ -75,7 +77,7 @@ public class Toggle extends Widget {
 	public void touch(MotionEvent event) {
 		float ex = event.getX();
 		float ey = event.getY();
-		if (event.getAction() == event.ACTION_DOWN && inside(ex, ey)) {
+		if (event.getAction() == event.ACTION_DOWN && dRect.contains(ex, ey)) {
 			toggle();
 			sendFloat(val);
 		}

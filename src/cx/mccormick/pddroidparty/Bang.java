@@ -17,16 +17,15 @@ import org.puredata.core.PdBase;
 public class Bang extends Widget {
 	private static final String TAG = "Bang";
 	
-	RectF dRect;
 	boolean bang = false;
 	
 	public Bang(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
-		h = Float.parseFloat(atomline[5]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
+		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
+		float h = Float.parseFloat(atomline[5]) / parent.patchheight * screenheight;
 		
 		sendname = atomline[9];
 		receivename = atomline[10];
@@ -58,7 +57,7 @@ public class Bang extends Widget {
 		} else {
 			paint.setStyle(Paint.Style.STROKE);
 		}
-		canvas.drawCircle(dRect.centerX(), dRect.centerY(), Math.min(w, h) / 2, paint);
+		canvas.drawCircle(dRect.centerX(), dRect.centerY(), Math.min(dRect.width(), dRect.height()) / 2, paint);
 		drawLabel(canvas);
 	}
 	
@@ -70,7 +69,7 @@ public class Bang extends Widget {
 	public void touch(MotionEvent event) {
 		float ex = event.getX();
 		float ey = event.getY();
-		if (event.getAction() == event.ACTION_DOWN && inside(ex, ey)) {
+		if (event.getAction() == event.ACTION_DOWN && dRect.contains(ex, ey)) {
 			bang();
 		}
 	}
