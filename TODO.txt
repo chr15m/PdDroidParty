@@ -2,6 +2,7 @@
    http://code.google.com/p/svg-android/wiki/Tutorial
  * if splash.svg exists in assets, show that on startup (while patch loads?)
  * 'about' webkit window loads static assets/about.html in a webkit popup
+   http://stackoverflow.com/questions/3596102/how-to-show-a-webview-with-theme-dialog-style-in-android
  * unzip any zips in res
  * if patch.zip exists in res
    * check for unzipped directory with same version number textfile

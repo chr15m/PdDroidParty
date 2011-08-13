@@ -46,16 +46,25 @@ public class Toggle extends Widget {
 		
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
+		
+		// try and load SVGs
+		on = getPicture("toggle-" + label + "-on", "toggle-" + sendname + "-on", "toggle-on");
+		off = getPicture("toggle-" + label + "-off", "toggle-" + sendname + "-off", "toggle-off");
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right, dRect.top, paint);
-		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
-		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
-		canvas.drawLine(dRect.right, dRect.top + 1, dRect.right, dRect.bottom, paint);
+		if (drawPicture(canvas, off)) {
+			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right, dRect.top, paint);
+			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
+			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
+			canvas.drawLine(dRect.right, dRect.top + 1, dRect.right, dRect.bottom, paint);
+		}
+		
 		if (val != 0) {
-			canvas.drawLine(dRect.left + 2, dRect.top + 2, dRect.right - 2, dRect.bottom - 2, paint);
-			canvas.drawLine(dRect.left + 2, dRect.bottom - 2, dRect.right - 2, dRect.top + 2, paint);
+			if (drawPicture(canvas, on)) {
+				canvas.drawLine(dRect.left + 2, dRect.top + 2, dRect.right - 2, dRect.bottom - 2, paint);
+				canvas.drawLine(dRect.left + 2, dRect.bottom - 2, dRect.right - 2, dRect.top + 2, paint);
+			}
 		}
 		drawLabel(canvas);
 	}

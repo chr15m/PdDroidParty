@@ -151,4 +151,25 @@ public class Widget {
 	
 	public void receiveAny() {
 	}
+	
+	/***** Special SVG GUI drawing stuff *****/
+	
+	public Picture getPicture(Object... args) {
+		for (int a=0; a<args.length; a++) {
+			Picture svg = SVGLoader.getPicture(parent, (String)args[a]);
+			if (svg != null) {
+				return svg;
+			}
+		}
+		return null;
+	}
+	
+	public boolean drawPicture(Canvas c, Picture p) {
+		if (p != null) {
+			c.drawPicture(p, dRect);
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
