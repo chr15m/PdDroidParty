@@ -1,8 +1,15 @@
-#N canvas 137 104 480 320 10;
-#X text 17 9 this is a comment;
-#X text 96 104 hello! so is this! yeah it's a much longer one. very
-long indeed so it linewraps.;
-#X obj 34 38 tgl 32 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
+#N canvas 460 221 480 320 10;
+#X obj 14 28 tgl 32 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
 ;
-#X obj 78 38 tgl 32 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
+#X obj 58 28 tgl 32 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
 ;
+#X obj 102 28 tgl 32 0 sendtest empty empty 17 7 0 10 -262144 -1 -1
+0 1;
+#X obj 145 28 tgl 32 0 empty empty labeltest 17 7 0 10 -262144 -1 -1
+0 1;
+#X obj 189 28 tgl 32 0 send_test_1 empty empty 17 7 0 10 -262144 -1
+-1 0 1;
+#X obj 232 28 tgl 32 0 sendtest2 empty labeltest2 17 7 0 10 -262144
+-1 -1 0 1;
+#X obj 278 28 tgl 32 0 send_test_2 empty label_test_2 17 7 0 10 -262144
+-1 -1 0 1;

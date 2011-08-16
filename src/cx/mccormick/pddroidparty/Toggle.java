@@ -48,8 +48,8 @@ public class Toggle extends Widget {
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
 		// try and load SVGs
-		on = getPicture("toggle-" + label + "-on", "toggle-" + sendname + "-on", "toggle-on");
-		off = getPicture("toggle-" + label + "-off", "toggle-" + sendname + "-off", "toggle-off");
+		on = getPicture(TAG, "on", label, sendname);
+		off = getPicture(TAG, "off", label, sendname);
 	}
 	
 	public void draw(Canvas canvas) {

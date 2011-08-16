@@ -1,6 +1,7 @@
 package cx.mccormick.pddroidparty;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -9,10 +10,10 @@ import android.graphics.Typeface;
 import android.graphics.Picture;
 import android.graphics.RectF;
 import android.view.MotionEvent;
-import android.util.Log;
 import android.text.StaticLayout;
 import android.text.Layout;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.puredata.core.PdBase;
@@ -154,13 +155,45 @@ public class Widget {
 	
 	/***** Special SVG GUI drawing stuff *****/
 	
-	public Picture getPicture(Object... args) {
+	public Picture getPicture(String prefix, String suffix, Object... args) {
+		// split the string into parts on underscore, so we test on e.g.
+		// blah_x_y, blah, blah_x, blah_x_y
+		ArrayList<String> testnames = new ArrayList<String>();
+		ArrayList<String> parts = new ArrayList<String>();
+		if (prefix != null)
+			parts.add(prefix);
+		if (suffix != null)
+			parts.add(suffix);
+		testnames.add(TextUtils.join("-", parts));
+		
 		for (int a=0; a<args.length; a++) {
-			Picture svg = SVGLoader.getPicture(parent, (String)args[a]);
+			String teststring = (String)args[a];
+			if (teststring != null && !teststring.equals("null") && !teststring.equals("empty") && !teststring.equals("-")) {
+				String[] tries = teststring.split("_");
+				ArrayList<String> buffer = new ArrayList<String>();
+				for (int p=0; p<tries.length; p++) {
+					parts.clear();
+					buffer.add(tries[p]);
+					if (prefix != null)
+						parts.add(prefix);
+					parts.add(TextUtils.join("_", buffer));
+					if (suffix != null)
+						parts.add(suffix);
+					testnames.add(TextUtils.join("-", parts));
+				}
+				parts.clear();
+			}
+		}
+		
+		// now test every combination we have come up with
+		// we want to check from most specific to least specific
+		for (int s = testnames.size() - 1; s >= 0; s--) {
+			Picture svg = SVGLoader.getPicture(parent, testnames.get(s));
 			if (svg != null) {
 				return svg;
 			}
 		}
+		
 		return null;
 	}
 	
