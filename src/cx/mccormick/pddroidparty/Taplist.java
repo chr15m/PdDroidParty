@@ -7,6 +7,7 @@ import android.graphics.RectF;
 import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.Picture;
 import android.text.StaticLayout;
 import android.view.MotionEvent;
 import android.util.Log;
@@ -18,6 +19,11 @@ public class Taplist extends Widget {
 	
 	String longest = null;
 	ArrayList<String> atoms = new ArrayList<String>();
+	
+	Picture on = null;
+	Picture off = null;
+	
+	boolean down = false;
 	
 	public Taplist(PdDroidPatchView app, String[] atomline) {
 		super(app);
@@ -50,10 +56,18 @@ public class Taplist extends Widget {
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
-		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1, dRect.bottom, paint);
-		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);
-		canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom, paint);
+		if (down) {
+			paint.setStrokeWidth(2);
+		} else {
+			paint.setStrokeWidth(1);
+		}
+		
+		if (down ? drawPicture(canvas, on) : drawPicture(canvas, off)) {
+			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
+			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1, dRect.bottom, paint);
+			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);
+			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom, paint);
+		}
 		canvas.drawText(atoms.get((int)val), dRect.left + dRect.width() / 2, (int)(dRect.top + dRect.height() * 0.75), paint);
 	}
 	
@@ -69,6 +83,11 @@ public class Taplist extends Widget {
 			// go to the next item in our list
 			val = (val + 1) % atoms.size();
 			doSend();
+			down = true;
+		}
+		
+		if (event.getAction() == event.ACTION_UP && down) {
+			down = false;
 		}
 	}
 	

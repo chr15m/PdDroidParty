@@ -46,13 +46,14 @@ public class Widget {
 		screenheight = parent.getHeight();
 		fontsize = (int)((float)parent.fontsize / parent.patchheight * screenheight) - 2;
 		
+		// set an aliased font
 		File f = new File(parent.app.getPatchFile().getParent() + "/font.ttf");
 		if (f.exists() && f.canRead() && f.isFile()) {
 			font = Typeface.createFromFile(f);
 		}
 		
 		paint.setColor(Color.BLACK);
-		paint.setStyle(Paint.Style.STROKE);
+		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		paint.setTypeface(font);
 		paint.setTextSize(fontsize);
 	}

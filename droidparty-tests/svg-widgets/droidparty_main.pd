@@ -1,15 +1,27 @@
-#N canvas 460 221 480 320 10;
+#N struct 1005template-marker float a float b;
+#N canvas 837 43 480 320 10;
 #X obj 14 28 tgl 32 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
 ;
 #X obj 58 28 tgl 32 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
 ;
 #X obj 102 28 tgl 32 0 sendtest empty empty 17 7 0 10 -262144 -1 -1
 0 1;
-#X obj 145 28 tgl 32 0 empty empty labeltest 17 7 0 10 -262144 -1 -1
+#X obj 145 28 tgl 32 0 empty empty labeltest 0 -5 0 10 -262144 -1 -1
 0 1;
 #X obj 189 28 tgl 32 0 send_test_1 empty empty 17 7 0 10 -262144 -1
 -1 0 1;
-#X obj 232 28 tgl 32 0 sendtest2 empty labeltest2 17 7 0 10 -262144
+#X obj 232 28 tgl 32 0 sendtest2 empty labeltest2 0 -5 0 10 -262144
 -1 -1 0 1;
-#X obj 278 28 tgl 32 0 send_test_2 empty label_test_2 17 7 0 10 -262144
+#X obj 278 28 tgl 32 0 send_test_2 empty empty 0 -5 0 10 -262144 -1
+-1 0 1;
+#X obj 324 28 tgl 32 0 send_test_2 empty label_test_2 0 -5 0 10 -262144
 -1 -1 0 1;
+#X obj 14 87 wordbutton 128 32 hello;
+#X obj 14 130 touch 128 128 touchs;
+#X obj 235 176 hsl 128 32 0 127 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 0 1;
+#X obj 169 89 vsl 32 128 0 127 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 0 1;
+#X obj 232 87 numberbox 64 32 numr nums 0 10 0;
+#X obj 232 130 taplist 64 32 notein noteout C C# D D$ E F F# G G# A
+A# B;

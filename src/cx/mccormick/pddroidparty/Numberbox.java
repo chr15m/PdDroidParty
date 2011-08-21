@@ -11,6 +11,7 @@ import android.graphics.RectF;
 import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.Picture;
 import android.text.StaticLayout;
 import android.view.MotionEvent;
 import android.util.Log;
@@ -21,10 +22,14 @@ public class Numberbox extends Widget {
 	float min, max;
 	int numwidth;
 	
-	boolean down = false;
 	StaticLayout numLayout = null;
 	DecimalFormat fmt = null;
 	Rect tRect = new Rect();
+	
+	Picture on = null;
+	Picture off = null;
+	
+	boolean down = false;
 	
 	public Numberbox(PdDroidPatchView app, String[] atomline) {
 		super(app);
@@ -64,6 +69,10 @@ public class Numberbox extends Widget {
 		
 		// listen out for floats from Pd
 		setupreceive();
+		
+		// try and load SVGs
+		on = getPicture(TAG, "on", label);
+		off = getPicture(TAG, "off", label);
 	}
 	
 	public Numberbox(PdDroidPatchView app) {
@@ -71,20 +80,35 @@ public class Numberbox extends Widget {
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
-		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
-		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
-		canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
-		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
+		if (down) {
+			paint.setStrokeWidth(2);
+		} else {
+			paint.setStrokeWidth(1);
+		}
+		
+		if (down ? drawPicture(canvas, on) : drawPicture(canvas, off)) {
+			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
+			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
+			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
+			canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
+			canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
+		}
 		canvas.drawText(fmt.format(val), dRect.left + 3, dRect.top + fontsize + 3, paint);
 	}
 	
 	public void touch(MotionEvent event) {
 		float ex = event.getX();
 		float ey = event.getY();
-		if (event.getAction() == event.ACTION_UP && dRect.contains(ex, ey)) {
+		
+		if (event.getAction() == event.ACTION_DOWN && dRect.contains(ex, ey)) {
+			down = true;
+		}
+		
+		if (event.getAction() == event.ACTION_UP) {
+			if (dRect.contains(ex, ey)) {
+				parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
+			}
 			down = false;
-			parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
 		}
 		
 		// TODO: allow dragging to set the number
