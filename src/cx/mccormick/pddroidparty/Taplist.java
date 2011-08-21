@@ -53,6 +53,10 @@ public class Taplist extends Widget {
 		
 		// listen out for floats from Pd
 		setupreceive();
+		
+		// try and load SVGs
+		on = getPicture(TAG, "on", label);
+		off = getPicture(TAG, "off", label);
 	}
 	
 	public void draw(Canvas canvas) {

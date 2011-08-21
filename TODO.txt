@@ -1,9 +1,10 @@
  * SVG widgets
-   * wordbutton
-   * numberbox
-   * touch
    * sliders
-   * taplist
+   * canvas
+   + numberbox
+   + wordbutton
+   + touch
+   + taplist
  * Set text colour using an SVG property
  * Set text antialiasing using an SVG property
  * if splash.svg exists in assets, show that on startup (while patch loads?)

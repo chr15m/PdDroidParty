@@ -1,4 +1,4 @@
-#N struct 1005template-marker float a float b;
+#N struct 1004template-marker float a float b;
 #N canvas 837 43 480 320 10;
 #X obj 14 28 tgl 32 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
 ;
@@ -23,5 +23,5 @@
 #X obj 169 89 vsl 32 128 0 127 0 0 empty empty empty 0 -9 0 10 -262144
 -1 -1 0 1;
 #X obj 232 87 numberbox 64 32 numr nums 0 10 0;
-#X obj 232 130 taplist 64 32 notein noteout C C# D D$ E F F# G G# A
+#X obj 232 134 taplist 64 32 notein noteout C C# D D# E FF# G G# A
 A# B;

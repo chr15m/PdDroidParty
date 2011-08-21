@@ -7,12 +7,16 @@ import android.graphics.RectF;
 import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.Picture;
 import android.text.StaticLayout;
 import android.view.MotionEvent;
 import android.util.Log;
 
 public class Numberboxfixed extends Numberbox {
-	private static final String TAG = "Numberboxfixed";
+	private static final String TAG = "Numberbox";
+	
+	Picture on = null;
+	Picture off = null;
 	
 	public Numberboxfixed(PdDroidPatchView app, String[] atomline) {
 		super(app);
@@ -55,13 +59,25 @@ public class Numberboxfixed extends Numberbox {
 		initval();
 		
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
+		
+		// try and load SVGs
+		on = getPicture(TAG, "on", label);
+		off = getPicture(TAG, "off", label);
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
-		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1, dRect.bottom, paint);
-		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);
-		canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom, paint);
+		if (down) {
+			paint.setStrokeWidth(2);
+		} else {
+			paint.setStrokeWidth(1);
+		}
+
+		if (down ? drawPicture(canvas, on) : drawPicture(canvas, off)) {
+			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
+			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1, dRect.bottom, paint);
+			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);
+			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom, paint);
+		}
 		canvas.drawText(fmt.format(val), dRect.left + dRect.width() / 2, (int)(dRect.top + dRect.height() * 0.75), paint);
 	}
 }

@@ -11,13 +11,12 @@ import android.graphics.RectF;
 import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.Picture;
 import android.text.StaticLayout;
 import android.view.MotionEvent;
 import android.util.Log;
 
 public class Numberbox extends Widget {
-	private static final String TAG = "Numberbox";
+	private static final String TAG = "Floatatom";
 	
 	float min, max;
 	int numwidth;
@@ -25,9 +24,6 @@ public class Numberbox extends Widget {
 	StaticLayout numLayout = null;
 	DecimalFormat fmt = null;
 	Rect tRect = new Rect();
-	
-	Picture on = null;
-	Picture off = null;
 	
 	boolean down = false;
 	
@@ -69,10 +65,6 @@ public class Numberbox extends Widget {
 		
 		// listen out for floats from Pd
 		setupreceive();
-		
-		// try and load SVGs
-		on = getPicture(TAG, "on", label);
-		off = getPicture(TAG, "off", label);
 	}
 	
 	public Numberbox(PdDroidPatchView app) {
@@ -80,20 +72,11 @@ public class Numberbox extends Widget {
 	}
 	
 	public void draw(Canvas canvas) {
-		if (down) {
-			paint.setStrokeWidth(2);
-		} else {
-			paint.setStrokeWidth(1);
-		}
-		
-		if (down ? drawPicture(canvas, on) : drawPicture(canvas, off)) {
-			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
-			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
-			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
-			canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
-			canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
-		}
-		canvas.drawText(fmt.format(val), dRect.left + 3, dRect.top + fontsize + 3, paint);
+		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
+		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
+		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
+		canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
+		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
 	}
 	
 	public void touch(MotionEvent event) {

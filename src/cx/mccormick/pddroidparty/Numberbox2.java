@@ -16,7 +16,7 @@ import android.view.MotionEvent;
 import android.util.Log;
 
 public class Numberbox2 extends Numberbox {
-	private static final String TAG = "Numberbox2";
+	private static final String TAG = "Nbx";
 	
 	public Numberbox2(PdDroidPatchView app, String[] atomline) {
 		super(app);
