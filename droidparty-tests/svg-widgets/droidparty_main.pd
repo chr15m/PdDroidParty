@@ -30,21 +30,21 @@ A# B;
 #X obj 38 47 metro 200;
 #X obj 38 68 f;
 #X obj 66 69 + 1;
-#X obj 38 89 mod 5;
 #X obj 38 110 * 34;
 #X obj 38 131 + 168;
 #X msg 38 152 \; hello pos \$1 226 \;;
 #X msg 104 16 bang;
 #X msg 226 43 \; hello pos 168 226 \;;
+#X obj 38 89 mod 8;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 2 0 3 0;
-#X connect 2 0 4 0;
+#X connect 2 0 9 0;
 #X connect 3 0 2 1;
 #X connect 4 0 5 0;
 #X connect 5 0 6 0;
-#X connect 6 0 7 0;
-#X connect 8 0 1 0;
+#X connect 7 0 1 0;
+#X connect 9 0 4 0;
 #X restore 161 278 pd canvas-move;
-#X obj 168 226 cnv 16 32 16 empty hello empty 20 12 0 14 -258113 -66577
+#X obj 406 226 cnv 16 32 16 empty hello empty 20 12 0 14 -258113 -66577
 0;

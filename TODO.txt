@@ -1,7 +1,7 @@
  * SVG widgets
    * hslider
    * vslider
-   * canvas
+   + canvas
    + numberbox
    + wordbutton
    + touch

@@ -189,9 +189,9 @@ public class Widget {
 		// now test every combination we have come up with
 		// we want to check from most specific to least specific
 		for (int s = testnames.size() - 1; s >= 0; s--) {
-			Picture svg = SVGLoader.getPicture(parent, testnames.get(s));
+			SVGRenderer svg = SVGRenderer.getSVGRenderer(parent, testnames.get(s));
 			if (svg != null) {
-				return svg;
+				return svg.getPicture();
 			}
 		}
 		
