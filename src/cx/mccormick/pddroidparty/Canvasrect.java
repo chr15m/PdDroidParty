@@ -4,9 +4,14 @@ import android.graphics.RectF;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Color;
+import android.graphics.Picture;
 import android.util.Log;
 
 public class Canvasrect extends Widget {
+	private static final String TAG = "Canvas";
+	
+	Picture vis = null;
+	
 	private static int IEM_GUI_MAX_COLOR = 30;
 	private static int iemgui_color_hex[] = {
 		16579836, 10526880, 4210752, 16572640, 16572608,
@@ -52,6 +57,7 @@ public class Canvasrect extends Widget {
 		paint.setStyle(Paint.Style.FILL);
 		//paint.setStyle(Paint.Style.STROKE);
 		//r.sort();
+		vis = getPicture(TAG, null, receivename);
 	}
 	
 	private int iemgui_modulo_color(int col) {
@@ -63,19 +69,9 @@ public class Canvasrect extends Widget {
 	}
 		
 	public void draw(Canvas canvas) {
-		//canvas.drawRect(r, paint);
-		//canvas.drawRoundRect(r, 5, 5, paint);
-		//canvas.drawLine(r.left, r.top, r.right, r.top, paint);
-		
-		//super.onDraw(canvas); 
-		//paint.setAntiAlias(true); 
-		//paint.setColor(android.graphics.Color.BLUE); 
-		//paint.setStyle(Paint.Style.FILL_AND_STROKE);
-		//paint.setStyle(Paint.Style.FILL);
-		//canvas.drawRect(41, 124, 152, 73, paint);
-		//Log.e("Canvasrect.draw()", r.left + ", " + r.top + ", " + r.right + ", " + r.bottom);
-		canvas.drawRect(dRect.left, dRect.top, dRect.right, dRect.bottom, paint); 
-		//canvas.drawCircle(110 + 50, 110 + 50, 50, paint); 
+		if (drawPicture(canvas, vis)) {
+			canvas.drawRect(dRect.left, dRect.top, dRect.right, dRect.bottom, paint); 
+		}
 	}
 	
 	public void receiveMessage(String symbol, Object... args) {
