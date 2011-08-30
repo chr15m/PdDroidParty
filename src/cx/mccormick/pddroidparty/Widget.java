@@ -58,6 +58,9 @@ public class Widget {
 		paint.setTextSize(fontsize);
 	}
 	
+	public void svgtextparams() {
+	}
+	
 	public void send(String msg) {
 		if (sendname != null && !sendname.equals("") && !sendname.equals("empty")) {
 			parent.app.send(sendname, msg);
@@ -156,7 +159,7 @@ public class Widget {
 	
 	/***** Special SVG GUI drawing stuff *****/
 	
-	public Picture getPicture(String prefix, String suffix, Object... args) {
+	public SVGRenderer getSVG(String prefix, String suffix, Object... args) {
 		// split the string into parts on underscore, so we test on e.g.
 		// blah_x_y, blah, blah_x, blah_x_y
 		ArrayList<String> testnames = new ArrayList<String>();
@@ -191,16 +194,16 @@ public class Widget {
 		for (int s = testnames.size() - 1; s >= 0; s--) {
 			SVGRenderer svg = SVGRenderer.getSVGRenderer(parent, testnames.get(s));
 			if (svg != null) {
-				return svg.getPicture();
+				return svg;
 			}
 		}
 		
 		return null;
 	}
 	
-	public boolean drawPicture(Canvas c, Picture p) {
+	public boolean drawPicture(Canvas c, SVGRenderer p) {
 		if (p != null) {
-			c.drawPicture(p, dRect);
+			c.drawPicture(p.getPicture(), dRect);
 			return false;
 		} else {
 			return true;

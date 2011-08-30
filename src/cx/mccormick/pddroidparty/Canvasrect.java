@@ -10,7 +10,7 @@ import android.util.Log;
 public class Canvasrect extends Widget {
 	private static final String TAG = "Canvas";
 	
-	Picture vis = null;
+	SVGRenderer vis = null;
 	
 	private static int IEM_GUI_MAX_COLOR = 30;
 	private static int iemgui_color_hex[] = {
@@ -57,7 +57,7 @@ public class Canvasrect extends Widget {
 		paint.setStyle(Paint.Style.FILL);
 		//paint.setStyle(Paint.Style.STROKE);
 		//r.sort();
-		vis = getPicture(TAG, null, receivename);
+		vis = getSVG(TAG, null, receivename);
 	}
 	
 	private int iemgui_modulo_color(int col) {

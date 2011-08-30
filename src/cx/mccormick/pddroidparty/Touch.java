@@ -15,8 +15,8 @@ import android.util.Log;
 public class Touch extends Widget {
 	private static final String TAG = "Touch";
 	
-	Picture on = null;
-	Picture off = null;
+	SVGRenderer on = null;
+	SVGRenderer off = null;
 	
 	boolean down = false;
 	
@@ -34,8 +34,8 @@ public class Touch extends Widget {
 		sendname = atomline[7];
 		
 		// try and load SVGs
-		on = getPicture(TAG, "on", label);
-		off = getPicture(TAG, "off", label);
+		on = getSVG(TAG, "on", label);
+		off = getSVG(TAG, "off", label);
 	}
 	
 	public void draw(Canvas canvas) {

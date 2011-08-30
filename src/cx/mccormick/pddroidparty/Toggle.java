@@ -16,8 +16,8 @@ public class Toggle extends Widget {
 	private static final String TAG = "Toggle";
 	
 	float toggleval = 1;
-	Picture on = null;
-	Picture off = null;
+	SVGRenderer on = null;
+	SVGRenderer off = null;
 	
 	public Toggle(PdDroidPatchView app, String[] atomline) {
 		super(app);
@@ -48,8 +48,8 @@ public class Toggle extends Widget {
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
 		// try and load SVGs
-		on = getPicture(TAG, "on", label, sendname);
-		off = getPicture(TAG, "off", label, sendname);
+		on = getSVG(TAG, "on", label, sendname);
+		off = getSVG(TAG, "off", label, sendname);
 	}
 	
 	public void draw(Canvas canvas) {

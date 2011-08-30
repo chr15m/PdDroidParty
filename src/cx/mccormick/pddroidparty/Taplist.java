@@ -20,8 +20,8 @@ public class Taplist extends Widget {
 	String longest = null;
 	ArrayList<String> atoms = new ArrayList<String>();
 	
-	Picture on = null;
-	Picture off = null;
+	SVGRenderer on = null;
+	SVGRenderer off = null;
 	
 	boolean down = false;
 	
@@ -55,8 +55,13 @@ public class Taplist extends Widget {
 		setupreceive();
 		
 		// try and load SVGs
-		on = getPicture(TAG, "on", label);
-		off = getPicture(TAG, "off", label);
+		on = getSVG(TAG, "on", label);
+		off = getSVG(TAG, "off", label);
+		
+		// turn on antialiasing for SVG renders
+		if (off != null) {
+			paint.setAntiAlias(true);
+		}
 	}
 	
 	public void draw(Canvas canvas) {

@@ -20,8 +20,8 @@ public class Wordbutton extends Bang {
 	
 	Rect tRect = new Rect();
 	
-	Picture on = null;
-	Picture off = null;
+	SVGRenderer on = null;
+	SVGRenderer off = null;
 	
 	boolean down = false;
 	
@@ -44,8 +44,13 @@ public class Wordbutton extends Bang {
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
 		// try and load SVGs
-		on = getPicture(TAG, "on", label);
-		off = getPicture(TAG, "off", label);
+		on = getSVG(TAG, "on", label);
+		off = getSVG(TAG, "off", label);
+		
+		// turn on antialiasing for SVG renders
+		if (off != null) {
+			paint.setAntiAlias(true);
+		}
 	}
 	
 	public void draw(Canvas canvas) {
