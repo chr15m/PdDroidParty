@@ -28,6 +28,7 @@ public class SVGManipulator {
 		System.out.println(x.toString());
 	}
 	
+	// constructor loads the SVG from a file
 	public SVGManipulator(File f) {
 		// load our document
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -39,6 +40,7 @@ public class SVGManipulator {
 		}
 	}
 	
+	// get an attribute on the SVG we have loaded
 	public String getAttribute(String s) {
 		if (doc != null) {
 			Node n = doc.getElementsByTagName("svg").item(0).getAttributes().getNamedItem(s);
@@ -49,6 +51,7 @@ public class SVGManipulator {
 		return null;
 	}
 	
+	// turn the document and it's subnodes recursively into a string
 	// hack from here: http://stackoverflow.com/questions/2290945/writing-xml-on-android
 	public String getStringFromNode(Node root) throws IOException {
 		StringBuilder result = new StringBuilder();
@@ -82,7 +85,8 @@ public class SVGManipulator {
 		}
 		return result.toString();
 	}
-
+	
+	// return the document as a string
 	public String toString() {
 		if (doc != null) {
 			try {

@@ -20,6 +20,7 @@ public class SVGRenderer {
 		original = new SVGManipulator(f);
 	}
 	
+	// only create an SVGRenderer if we can load the file name asked for
 	public static SVGRenderer getSVGRenderer(PdDroidPatchView parent, String name) {
 		// reads the SVG string from a file if the file with with name exists
 		// returns null if the file with name does not exist	
@@ -36,6 +37,11 @@ public class SVGRenderer {
 			cached = SVGParser.getSVGFromString(original.toString()).getPicture();
 		}
 		return cached;
+	}
+	
+	// proxy to SVGManipulator to get attributes of the SVG
+	public String getAttribute(String s) {
+		return original.getAttribute(s);
 	}
 	
 	// interpolate between two paths in the SVG, making the second one invisible
