@@ -37,7 +37,10 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		paint.setAntiAlias(true);
 		
 		// load the background image
-		background = SVGRenderer.getSVGRenderer(this, "background").getPicture();
+		SVGRenderer renderer = SVGRenderer.getSVGRenderer(this, "background");
+		if (renderer != null) {
+			background = renderer.getPicture();
+		}
 	}
 	
 	@Override
