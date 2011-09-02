@@ -58,7 +58,29 @@ public class Widget {
 		paint.setTextSize(fontsize);
 	}
 	
-	public void svgtextparams() {
+	public void setTextParametersFromSVG(SVGRenderer svg) {
+		if (svg != null) {
+			if (svg.getAttribute("textFont") != null) {
+				File f = new File(parent.app.getPatchFile().getParent() + "/" + svg.getAttribute("textFont") + ".ttf");
+				if (f.exists() && f.canRead() && f.isFile()) {
+					font = Typeface.createFromFile(f);
+				} else {
+					Log.e("PdDroidParty", "Bad font file: " + svg.getAttribute("textFont"));
+				}
+				paint.setTypeface(font);
+			}
+			if (svg.getAttribute("textColor") != null) {
+				try {
+					paint.setColor(Color.parseColor(svg.getAttribute("textColor")));
+				} catch (Exception e) {
+					// badly formatted color string - who cares?
+					Log.e("PdDroidParty", "Bad text color: " + svg.getAttribute("textColor"));
+				}
+			}
+			if (svg.getAttribute("textAntialias") != null) {
+				paint.setAntiAlias(true);
+			}
+		}
 	}
 	
 	public void send(String msg) {

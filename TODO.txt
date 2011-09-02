@@ -6,14 +6,6 @@
    + wordbutton
    + touch
    + taplist
- * Set text colour using an SVG property - modify SVGLoader
-   * numberbox
-   * wordbutton
-   * taplist
- * Set text antialiasing using an SVG property - modify SVGLoader
-   * numberbox
-   * wordbutton
-   * taplist
  * if splash.svg exists in assets, show that on startup (while patch loads?)
  * 'about' webkit window loads static assets/about.html in a webkit popup
    http://stackoverflow.com/questions/3596102/how-to-show-a-webview-with-theme-dialog-style-in-android
@@ -22,11 +14,12 @@
    * check for unzipped directory with same version number textfile
    * unzip and load patch.zip if it doesn't exist
    * don't show patch selector
+ * loading indicator when you are waiting for a patch to load
 
  * CanOfBeats - superclass main droidparty class for derivatives
 
  * fix $0 replacement in GUI send/receives
- * loading indicator when you are waiting for a patch to load
+ * accelerometer support (RjDj style?)
  * work out multitouch support
  * write something on the website about the abstractions - see email to berenger
  * script to package the demos + abstractions to the sdcard
@@ -76,4 +69,12 @@ DONE
    + sliders are drawing wrong for fractional amounts
  + svg graphics for background + named objects
    http://code.google.com/p/svg-android/wiki/Tutorial
+ + Set text colour using an SVG property - modify SVGLoader
+   + numberbox
+   + wordbutton
+   + taplist
+ + Set text antialiasing using an SVG property - modify SVGLoader
+   + numberbox
+   + wordbutton
+   + taplist
 

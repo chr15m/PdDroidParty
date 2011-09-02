@@ -33,6 +33,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		
 		this.setOnTouchListener(this);
 		
+		// default background color settings
 		paint.setColor(Color.WHITE);
 		paint.setAntiAlias(true);
 		

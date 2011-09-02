@@ -61,13 +61,11 @@ public class Numberboxfixed extends Numberbox {
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
 		// try and load SVGs
-		on = getSVG(TAG, "on", label);
-		off = getSVG(TAG, "off", label);
+		on = getSVG(TAG, "on", sendname, receivename);
+		off = getSVG(TAG, "off", sendname, receivename);
 		
-		// turn on antialiasing for SVG rendering
-		if (off != null) {
-			paint.setAntiAlias(true);
-		}
+		setTextParametersFromSVG(on);
+		setTextParametersFromSVG(off);
 	}
 	
 	public void draw(Canvas canvas) {

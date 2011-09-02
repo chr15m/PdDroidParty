@@ -23,8 +23,6 @@
 #X obj 169 89 vsl 32 128 0 127 0 0 empty empty empty 0 -9 0 10 -262144
 -1 -1 0 1;
 #X obj 232 87 numberbox 64 32 numr nums 0 10 0;
-#X obj 232 134 taplist 64 32 notein noteout C C# D D# E FF# G G# A
-A# B;
 #N canvas 0 0 450 300 canvas-move 0;
 #X obj 38 16 loadbang;
 #X obj 38 47 metro 200;
@@ -46,5 +44,10 @@ A# B;
 #X connect 7 0 1 0;
 #X connect 9 0 4 0;
 #X restore 161 278 pd canvas-move;
-#X obj 406 226 cnv 16 32 16 empty hello empty 20 12 0 14 -258113 -66577
+#X obj 236 226 cnv 16 32 16 empty hello empty 20 12 0 14 -258113 -66577
 0;
+#X obj 232 129 taplist 64 32 notein noteout C C# D D# E F F# G G# A
+A# B;
+#X obj 311 129 numberbox 64 32 xr xs 0 10 0;
+#X obj 375 129 taplist 64 32 yr ys A B C;
+#X obj 311 87 wordbutton 128 32 boom;

@@ -47,10 +47,8 @@ public class Wordbutton extends Bang {
 		on = getSVG(TAG, "on", label);
 		off = getSVG(TAG, "off", label);
 		
-		// turn on antialiasing for SVG renders
-		if (off != null) {
-			paint.setAntiAlias(true);
-		}
+		setTextParametersFromSVG(on);
+		setTextParametersFromSVG(off);
 	}
 	
 	public void draw(Canvas canvas) {

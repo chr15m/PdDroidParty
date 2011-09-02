@@ -55,13 +55,11 @@ public class Taplist extends Widget {
 		setupreceive();
 		
 		// try and load SVGs
-		on = getSVG(TAG, "on", label);
-		off = getSVG(TAG, "off", label);
+		on = getSVG(TAG, "on", sendname, receivename);
+		off = getSVG(TAG, "off", sendname, receivename);
 		
-		// turn on antialiasing for SVG renders
-		if (off != null) {
-			paint.setAntiAlias(true);
-		}
+		setTextParametersFromSVG(on);
+		setTextParametersFromSVG(off);
 	}
 	
 	public void draw(Canvas canvas) {
