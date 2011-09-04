@@ -14,9 +14,9 @@
    id="Layer_1"
    x="0px"
    y="0px"
-   width="128"
-   height="32"
-   viewBox="0 0 128 32"
+   width="256"
+   height="64"
+   viewBox="0 0 256 64"
    enable-background="new 0 0 500 500"
    xml:space="preserve"
    inkscape:version="0.48.1 r9760"
@@ -265,9 +265,9 @@
    inkscape:window-height="728"
    id="namedview8152"
    showgrid="false"
-   inkscape:zoom="4"
-   inkscape:cx="27.33377"
-   inkscape:cy="54.92959"
+   inkscape:zoom="2"
+   inkscape:cx="58.257693"
+   inkscape:cy="64.992218"
    inkscape:window-x="0"
    inkscape:window-y="16"
    inkscape:window-maximized="1"
@@ -278,7 +278,7 @@
    id="max_width__x2F__height"
    display="none"
    style="display:none"
-   transform="translate(0,-468)">
+   transform="translate(0,-436)">
 	<path
    display="inline"
    d="M 499.001,1 V 499 H 1 V 1 h 498.001 m 1,-1 H 0 V 500 H 500.001 V 0 l 0,0 z"
@@ -289,19 +289,19 @@
 
 <path
    style="fill:#008080;fill-opacity:1;stroke:none"
-   d="m 10,0 108,0 c 5.54,0 10,4.46 10,10 l 0,12 c 0,5.54 -4.46,10 -10,10 L 10,32 C 4.46,32 0,27.54 0,22 L 0,10 C 0,4.46 4.46,0 10,0 z"
+   d="m 10,0 236,0 c 5.54,0 10,4.46 10,10 l 0,44 c 0,5.54 -4.46,10 -10,10 L 10,64 C 4.46,64 0,59.54 0,54 L 0,10 C 0,4.46 4.46,0 10,0 z"
    id="rect3543"
    inkscape:connector-curvature="0"
    sodipodi:nodetypes="sssssssss" /><path
-   style="fill:#00ffff;fill-opacity:1;stroke:none"
-   d="m 10,0 108,0 c 5.54,0 10,4.46 10,10 l 0,12 c 0,5.54 -4.46,10 -10,10 L 10,32 C 4.46,32 0,27.54 0,22 L 0,10 C 0,4.46 4.46,0 10,0 z"
+   sodipodi:nodetypes="sssssssss"
+   inkscape:connector-curvature="0"
    id="open"
-   inkscape:connector-curvature="0"
-   sodipodi:nodetypes="sssssssss"
-   inkscape:label="#path3066" /><path
-   sodipodi:nodetypes="sssssssss"
-   inkscape:connector-curvature="0"
-   id="closed"
-   d="m 10,0 2,0 c 5.54,0 10,4.46 10,10 l 0,12 c 0,5.54 -4.46,10 -10,10 l -2,0 C 4.46,32 0,27.54 0,22 L 0,10 C 0,4.46 4.46,0 10,0 z"
+   d="M 10,0 246,0 C 251.54,0 256,4.46 256,10 L 256,54 C 256,59.54 251.54,64 246,64 L 10,64 C 4.46,64 0,59.54 0,54 L 0,10 C 0,4.46 4.46,0 10,0 z"
    style="fill:#00ffff;fill-opacity:1;stroke:none"
-   inkscape:label="#path3045" /></svg>
+   inkscape:label="#path3329" /><path
+   inkscape:label="#path3329"
+   style="fill:#00ffff;fill-opacity:1;stroke:none"
+   d="M 10,0 14,0 C 19.54,0 24,4.46 24,10 L 24,54 C 24,59.54 19.54,64 14,64 L 10,64 C 4.46,64 0,59.54 0,54 L 0,10 C 0,4.46 4.46,0 10,0 z"
+   id="closed"
+   inkscape:connector-curvature="0"
+   sodipodi:nodetypes="sssssssss" /></svg>

@@ -20,6 +20,8 @@ public class Slider extends Widget {
 	boolean orientation_horizontal = true;
 	boolean down = false;
 	
+	SVGRenderer svg = null;
+	
 	public Slider(PdDroidPatchView app, String[] atomline, boolean horizontal) {
 		super(app);
 		
@@ -50,19 +52,40 @@ public class Slider extends Widget {
 		
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
+		
+		// load up the SVG to use
+		if (horizontal) {
+			svg = getSVG(TAG, "horizontal", label, sendname);
+		} else {
+			svg = getSVG(TAG, "vertical", label, sendname);
+		}
+		
+		// interpolate the svg paths with ID "open" and "closed"
+		if (svg != null) {
+			svg.interpolate("closed", "open", 0.5);
+		}
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right, dRect.top, paint);
-		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
-		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
-		canvas.drawLine(dRect.right, dRect.top + 1, dRect.right, dRect.bottom, paint);
-		if (orientation_horizontal) {
-			canvas.drawLine(Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.top + 2), Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.bottom - 2), paint);
-		} else {
-			canvas.drawLine(Math.round(dRect.left + 2), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), Math.round(dRect.right - 2), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), paint);
+		if (drawPicture(canvas, svg)) {
+			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right, dRect.top, paint);
+			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
+			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
+			canvas.drawLine(dRect.right, dRect.top + 1, dRect.right, dRect.bottom, paint);
+			if (orientation_horizontal) {
+				canvas.drawLine(Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.top + 2), Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.bottom - 2), paint);
+			} else {
+				canvas.drawLine(Math.round(dRect.left + 2), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), Math.round(dRect.right - 2), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), paint);
+			}
+			drawLabel(canvas);
 		}
-		drawLabel(canvas);
+	}
+	
+	public void setVal(float v) {
+		val = Math.min(max, Math.max(min, v));
+		if (svg != null) {
+			svg.interpolate("closed", "open", (val - min) / (max - min));
+		}
 	}
 	
 	public void touch(MotionEvent event) {
@@ -82,7 +105,7 @@ public class Slider extends Widget {
 					val = (((dRect.height() - (ey - dRect.top)) / dRect.height()) * (max - min) + min);
 				}
 				// clamp the value
-				val = Math.min(max, Math.max(min, val));
+				setVal(val);
 				// send the result to Pd
 				send("" + val);
 			} else if (event.getAction() == event.ACTION_UP) {
@@ -104,7 +127,7 @@ public class Slider extends Widget {
 	}
 	
 	public void receiveFloat(float v) {
-		val = Math.min(max, Math.max(v, min));
+		setVal(v);
 	}
 }
 

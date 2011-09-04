@@ -6,22 +6,27 @@
    + wordbutton
    + touch
    + taplist
- * if splash.svg exists in assets, show that on startup (while patch loads?)
  * 'about' webkit window loads static assets/about.html in a webkit popup
    http://stackoverflow.com/questions/3596102/how-to-show-a-webview-with-theme-dialog-style-in-android
+ * loading indicator when you are waiting for a patch to load
+
+ * if splash.svg exists in assets, show that on startup (while patch loads?)
  * unzip any zips in res
  * if patch.zip exists in res
    * check for unzipped directory with same version number textfile
    * unzip and load patch.zip if it doesn't exist
    * don't show patch selector
- * loading indicator when you are waiting for a patch to load
 
  * CanOfBeats - superclass main droidparty class for derivatives
 
+ * document abstractions
+ * document SVG stuff
+   * File -> Inkscape Preferences -> SVG Output -> uncheck "Allow relative coordinates"
+ * package demos as a zip in the patch res directory
+
+ * work out multitouch support
  * fix $0 replacement in GUI send/receives
  * accelerometer support (RjDj style?)
- * work out multitouch support
- * write something on the website about the abstractions - see email to berenger
  * script to package the demos + abstractions to the sdcard
  * more patch GUIs
    * vradio / hradio
@@ -32,7 +37,6 @@
        * up/down is whole numbers
        * left/right is decimal point with starting threshold
    * "ribbon" 1d = start -> end datastructure - 0,0 means finger-lifted
-   * "choicebox" lets the user choose from a list/dropdown
  * config option comment -> noadc
  * ability to click on .pd files from a file browser (association)
  * 9-patch graphics for named objects

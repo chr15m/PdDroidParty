@@ -18,6 +18,8 @@ public class SVGRenderer {
 	
 	public SVGRenderer(File f) {
 		original = new SVGManipulator(f);
+		// cache it the first time
+		cached = SVGParser.getSVGFromString(original.toString()).getPicture();
 	}
 	
 	// only create an SVGRenderer if we can load the file name asked for
@@ -45,9 +47,10 @@ public class SVGRenderer {
 	}
 	
 	// interpolate between two paths in the SVG, making the second one invisible
-	public SVGRenderer interpolate(String startid, String endid, float amount) {
+	public SVGRenderer interpolate(String startid, String endid, double amount) {
 		// de-cache
 		cached = null;
+		original.interpolate(startid, endid, amount);
 		return this;
 	}
 }
