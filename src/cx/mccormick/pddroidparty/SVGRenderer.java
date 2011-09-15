@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.File;
+import java.util.HashMap;
 
 import android.util.Log;
 import android.graphics.Picture;
@@ -15,6 +16,7 @@ public class SVGRenderer {
 	SVGManipulator original = null;
 	// cached image so we don't keep regenerating it every frame
 	Picture cached = null;
+	HashMap<Integer, Picture> interpolated_cache = new HashMap<Integer, Picture>();
 	
 	public SVGRenderer(File f) {
 		original = new SVGManipulator(f);
@@ -48,9 +50,16 @@ public class SVGRenderer {
 	
 	// interpolate between two paths in the SVG, making the second one invisible
 	public SVGRenderer interpolate(String startid, String endid, double amount) {
-		// de-cache
-		cached = null;
-		original.interpolate(startid, endid, amount);
+		if (interpolated_cache.containsKey((int)(amount * 1000)) ) {
+			cached = interpolated_cache.get((int)(amount * 1000));
+			Log.e("SVGRenderer", "cache hit: " + ((int)(amount * 1000)));
+		} else {
+			// de-cache
+			cached = null;
+			original.interpolate(startid, endid, amount);
+			interpolated_cache.put((int)(amount * 1000), getPicture());
+			Log.e("SVGRenderer", "cached: " + ((int)(amount * 1000)));
+		}
 		return this;
 	}
 }

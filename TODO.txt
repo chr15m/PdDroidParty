@@ -19,15 +19,27 @@
 
  * CanOfBeats - superclass main droidparty class for derivatives
 
+ * BUG: allow any message to numberboxes (at the moment users are needing to pass through [float])
+ * BUG: canvas label can't be changed with a message
+ * BUG: canvas colours are inconsistent between PC and PdDroidParty
+ * BUG: Numberbox font size is not working properly
+ * BUG: touch abstraction has no black dot (make an option to show it?)
+
  * document abstractions
  * document SVG stuff
    * File -> Inkscape Preferences -> SVG Output -> uncheck "Allow relative coordinates"
  * package demos as a zip in the patch res directory
 
+ * add externals to the path
+   * copy externals from /sdcard/pd-externals to the phone because /sdcard is mounted noexec
  * work out multitouch support
  * fix $0 replacement in GUI send/receives
  * accelerometer support (RjDj style?)
- * script to package the demos + abstractions to the sdcard
+   (check ScenePlayer code)
+
+ * Toasting an info message android style
+
+ * include demos zip in the PdDroidParty apk under res
  * more patch GUIs
    * vradio / hradio
    * slider log mode

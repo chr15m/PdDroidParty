@@ -53,17 +53,27 @@ public class Slider extends Widget {
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
-		// load up the SVG to use
+		// load up the SVG to use and cache all positions
 		if (horizontal) {
 			svg = getSVG(TAG, "horizontal", label, sendname);
+			/*for (float sx = dRect.left; sx < dRect.left + dRect.width(); sx++) {
+				// hit the cache for this value
+				svg.interpolate("closed", "open", (sx - min) / (max - min));
+			}*/
 		} else {
 			svg = getSVG(TAG, "vertical", label, sendname);
+			/*for (float sy = dRect.top; sy < dRect.top + dRect.height(); sy++) {
+				// hit the cache for this value
+				svg.interpolate("closed", "open", (sy - min) / (max - min));
+			}*/
 		}
 		
+		slider_setval(val);
+		
 		// interpolate the svg paths with ID "open" and "closed"
-		if (svg != null) {
-			svg.interpolate("closed", "open", 0.5);
-		}
+		//if (svg != null) {
+		//	svg.interpolate("closed", "open", 0.5);
+		//}
 	}
 	
 	public void draw(Canvas canvas) {
@@ -81,11 +91,20 @@ public class Slider extends Widget {
 		}
 	}
 	
-	public void setVal(float v) {
+	public void slider_setval(float v) {
 		val = Math.min(max, Math.max(min, v));
 		if (svg != null) {
+			Log.e("Slider", "" + ((val - min) / (max - min)));
 			svg.interpolate("closed", "open", (val - min) / (max - min));
 		}
+	}
+	
+	public float get_horizontal_val(float x) {
+		return (((x - dRect.left) / dRect.width()) * (max - min) + min);
+	}
+	
+	public float get_vertical_val(float y) {
+		return (((dRect.height() - (y - dRect.top)) / dRect.height()) * (max - min) + min);
 	}
 	
 	public void touch(MotionEvent event) {
@@ -100,12 +119,12 @@ public class Slider extends Widget {
 			if (event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) {
 				// calculate the new value based on touch
 				if (orientation_horizontal) {
-					val = (((ex - dRect.left) / dRect.width()) * (max - min) + min);
+					val = get_horizontal_val(ex);
 				} else {
-					val = (((dRect.height() - (ey - dRect.top)) / dRect.height()) * (max - min) + min);
+					val = get_vertical_val(ey);
 				}
 				// clamp the value
-				setVal(val);
+				slider_setval(val);
 				// send the result to Pd
 				send("" + val);
 			} else if (event.getAction() == event.ACTION_UP) {
@@ -127,7 +146,7 @@ public class Slider extends Widget {
 	}
 	
 	public void receiveFloat(float v) {
-		setVal(v);
+		slider_setval(v);
 	}
 }
 

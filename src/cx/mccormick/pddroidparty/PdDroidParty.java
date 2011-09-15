@@ -284,6 +284,7 @@ public class PdDroidParty extends Activity {
 		// make sure to release all resources
 		if (pdService != null) pdService.stopAudio();
 		PdUtils.closePatch(patch);
+		send("pd", "quit bang");
 		PdBase.release();
 		try {
 			unbindService(serviceConnection);
