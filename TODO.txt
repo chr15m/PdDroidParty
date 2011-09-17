@@ -1,11 +1,3 @@
- * SVG widgets
-   * hslider
-   * vslider
-   + canvas
-   + numberbox
-   + wordbutton
-   + touch
-   + taplist
  * 'about' webkit window loads static assets/about.html in a webkit popup
    http://stackoverflow.com/questions/3596102/how-to-show-a-webview-with-theme-dialog-style-in-android
  * loading indicator when you are waiting for a patch to load
@@ -25,6 +17,7 @@
  * BUG: Numberbox font size is not working properly
  * BUG: touch abstraction has no black dot (make an option to show it?)
 
+ * Stop console errors for built-in abstractions (make passthrough abstractions)
  * document abstractions
  * document SVG stuff
    * File -> Inkscape Preferences -> SVG Output -> uncheck "Allow relative coordinates"
@@ -92,5 +85,13 @@ DONE
  + Set text antialiasing using an SVG property - modify SVGLoader
    + numberbox
    + wordbutton
+   + taplist
+ + SVG widgets
+   + hslider
+   + vslider
+   + canvas
+   + numberbox
+   + wordbutton
+   + touch
    + taplist
 

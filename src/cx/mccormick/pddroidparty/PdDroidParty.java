@@ -15,6 +15,7 @@ import org.puredata.core.PdReceiver;
 import org.puredata.core.utils.PdUtils;
 import org.puredata.core.utils.PdDispatcher;
 
+import android.app.ProgressDialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -193,6 +194,11 @@ public class PdDroidParty extends Activity {
 	
 	// initialise Pd asking for the desired sample rate, parameters, etc.
 	private void initPd() {
+		final ProgressDialog progress = new ProgressDialog(this);
+		progress.setMessage("Loading patch...");
+		progress.setCancelable(false);
+		progress.setIndeterminate(true);
+		progress.show();
 		new Thread() {
 			@Override
 			public void run() {
@@ -246,13 +252,13 @@ public class PdDroidParty extends Activity {
 					// start the audio thread
 					String name = res.getString(R.string.app_name);
 					pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
+					progress.dismiss();
 				} catch (IOException e) {
 					post(e.toString() + "; exiting now");
 					finish();
 				}
 			}
 		}.start();
-
 	}
 	
 	public boolean hasADC(ArrayList<String[]> al) {
@@ -284,7 +290,6 @@ public class PdDroidParty extends Activity {
 		// make sure to release all resources
 		if (pdService != null) pdService.stopAudio();
 		PdUtils.closePatch(patch);
-		send("pd", "quit bang");
 		PdBase.release();
 		try {
 			unbindService(serviceConnection);
