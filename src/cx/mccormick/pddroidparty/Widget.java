@@ -24,7 +24,7 @@ public class Widget {
 	int screenheight=0;
 	int WRAPWIDTH = 360;
 	
-	RectF dRect = new RectF();
+ 	RectF dRect = new RectF();
 	
 	Paint paint = new Paint();
 	
@@ -224,8 +224,12 @@ public class Widget {
 	}
 	
 	public boolean drawPicture(Canvas c, SVGRenderer p) {
+		return drawPicture(c, p, dRect);
+	}
+	
+	public boolean drawPicture(Canvas c, SVGRenderer p, RectF rect) {
 		if (p != null) {
-			c.drawPicture(p.getPicture(), dRect);
+			c.drawPicture(p.getPicture(), rect);
 			return false;
 		} else {
 			return true;
