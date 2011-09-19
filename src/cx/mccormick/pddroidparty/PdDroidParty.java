@@ -1,12 +1,14 @@
 package cx.mccormick.pddroidparty;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
@@ -18,20 +20,28 @@ import org.puredata.core.utils.PdDispatcher;
 import android.app.ProgressDialog;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.AlertDialog;
+import android.text.Html;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.widget.Toast;
+import android.widget.TextView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.text.Spanned;
+import android.text.util.Linkify;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 
 import cx.mccormick.pddroidparty.PdParser;
 
@@ -143,7 +153,34 @@ public class PdDroidParty extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item == menuabout) {
-			// TODO: launch about webkit pane
+			// load in the about dialog contents from assets/about.html
+			StringBuffer sb = new StringBuffer();
+			try {
+				AssetManager assets = getAssets();
+				InputStreamReader reader = new InputStreamReader(assets.open("about.html"), "UTF-8");
+				BufferedReader br = new BufferedReader(reader);
+				String line = br.readLine();
+				while(line != null) {
+					sb.append(line + "\n");
+					line = br.readLine();
+				}
+			} catch (java.io.IOException e) {
+				sb.append("Copyright Chris McCormick, 2011");
+			}
+			
+			// convert the string to HTML for the about dialog
+			final SpannableString s = new SpannableString(Html.fromHtml(sb.toString()));
+			Linkify.addLinks(s, Linkify.ALL);
+			
+			AlertDialog ab = new AlertDialog.Builder(this)
+			.setTitle("About")
+			.setIcon(android.R.drawable.ic_dialog_info)
+			.setMessage(s)
+			.setPositiveButton("ok", null)
+			.create();
+			ab.show();
+			// make the links clickable
+			((TextView)ab.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
 		} else if (item == menuexit) {
 			finish();
 		} else {
