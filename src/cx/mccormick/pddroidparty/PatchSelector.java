@@ -43,9 +43,41 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
 		TextView item = (TextView) v;
 		String name = item.getText().toString();
+		launchDroidParty(patches.get(name));
+	}
+	
+	private void launchDroidParty(String path) {
+		Log.e("PdDroidParty ************** PATCH", path);
 		Intent intent = new Intent(this, PdDroidParty.class);
-		intent.putExtra(PdDroidParty.PATCH, patches.get(name));
+		intent.putExtra(PdDroidParty.PATCH, path);
 		startActivity(intent);
+	}
+	
+	private String unpackBakedPatch() {
+		Resources res = getResources();
+		//File libDir = getFilesDir();
+		// if we have a patch zip
+		if (res.getIdentifier("patch", "raw", getPackageName()) != 0) {
+			//IoUtils.extractZipResource(res.openRawResource(R.raw.abstractions), libDir, false);
+			//IoUtils.extractZipResource(res.openRawResource(Properties.hasArmeabiV7a ? R.raw.externals_v7a : R.raw.externals), libDir, false);
+			// where we will be storing the patch on the sdcard
+			String basedir = "/sdcard/" + res.getString(res.getIdentifier("dirname", "string", getPackageName()));
+			// version file for the existing patch
+			File version = new File(basedir + "/patch/VERSION-" + res.getInteger(res.getIdentifier("revno", "integer", getPackageName())));
+			// if the version file does not exist
+			if (!version.exists()) {
+				try {
+					IoUtils.extractZipResource(getResources().openRawResource(res.getIdentifier("patch", "raw", getPackageName())), new File(basedir), false);
+				} catch (IOException e) {
+					// do nothing
+					return null;
+				}
+			}
+			//PdBase.addToSearchPath(libDir.getAbsolutePath());
+			PdBase.addToSearchPath(basedir + "/patch");
+			return basedir + "/patch/droidparty_main.pd";
+		}
+		return null;
 	}
 	
 	private void initGui() {
@@ -59,25 +91,31 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		new Thread() {
 			@Override
 			public void run() {
-				List<File> list = IoUtils.find(new File("/sdcard"), ".*droidparty_main\\.pd$");
-				for (File f: list) {
-					String[] parts = f.getParent().split("/");
-					patches.put(parts[parts.length - 1], f.getAbsolutePath());
+				// see if this is an app with a zip to unpack instead
+				String bakedpatch = unpackBakedPatch();
+				if (bakedpatch != null) {
+					launchDroidParty(bakedpatch);
+				} else {
+					List<File> list = IoUtils.find(new File("/sdcard"), ".*droidparty_main\\.pd$");
+					for (File f: list) {
+						String[] parts = f.getParent().split("/");
+						patches.put(parts[parts.length - 1], f.getAbsolutePath());
+					}
+					ArrayList<String> keyList = new ArrayList<String>(patches.keySet());
+					Collections.sort(keyList, new Comparator<String>() {
+						public int compare(String a, String b) {
+							return a.toLowerCase().compareTo(b.toLowerCase());
+						}
+					});
+					final ArrayAdapter<String> adapter = new ArrayAdapter<String>(PatchSelector.this, android.R.layout.simple_list_item_1, keyList);
+					patchList.getHandler().post(new Runnable() {
+						@Override
+						public void run() {
+							patchList.setAdapter(adapter);
+							progress.dismiss();
+						}
+					});
 				}
-				ArrayList<String> keyList = new ArrayList<String>(patches.keySet());
-				Collections.sort(keyList, new Comparator<String>() {
-					public int compare(String a, String b) {
-						return a.toLowerCase().compareTo(b.toLowerCase());
-					}
-				});
-				final ArrayAdapter<String> adapter = new ArrayAdapter<String>(PatchSelector.this, android.R.layout.simple_list_item_1, keyList);
-				patchList.getHandler().post(new Runnable() {
-					@Override
-					public void run() {
-						patchList.setAdapter(adapter);
-						progress.dismiss();
-					}
-				});
 			};
 		}.start();
 		patchList.setOnItemClickListener(this);

@@ -4,6 +4,7 @@ revno=`bzr revno`
 cwd=`pwd`
 dirname=`basename $cwd`
 
+rm patch/VERSION-*
 echo $revno > patch/VERSION-$revno
 zip -r res/raw/patch.zip patch
 echo -e "<?xml version='1.0' encoding='utf-8'?>\n<resources>\n\t<integer name='revno'>$revno</integer>\n\t<string name='dirname'>$dirname</string>\n</resources>" > res/values/patch.xml

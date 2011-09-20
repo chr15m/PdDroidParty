@@ -1,9 +1,6 @@
  * if splash.svg exists in assets, show that on startup (while patch loads?)
  * unzip any zips in res
- * if patch.zip exists in res
-   * check for unzipped directory with same version number textfile
-   * unzip and load patch.zip if it doesn't exist
-   * don't show patch selector
+ * fix back button for unpacked zips
 
  * CanOfBeats - superclass main droidparty class for derivatives
 
@@ -92,4 +89,9 @@ DONE
    + taplist
  + loading indicator when you are waiting for a patch to load
  + 'about' window loads static assets/about.html
+ + if patch.zip exists in res
+   + check for unzipped directory with same version number textfile
+   + unzip and load patch.zip if it doesn't exist
+   + don't show patch selector
+
 
