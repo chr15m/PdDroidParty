@@ -1,6 +1,4 @@
  * if splash.svg exists in assets, show that on startup (while patch loads?)
- * unzip any zips in res
- * fix back button for unpacked zips
 
  * CanOfBeats - superclass main droidparty class for derivatives
 
@@ -14,6 +12,7 @@
  * document abstractions
  * document SVG stuff
    * File -> Inkscape Preferences -> SVG Output -> uncheck "Allow relative coordinates"
+ * unzip any zips in res
  * package demos as a zip in the patch res directory
 
  * add externals to the path
@@ -93,5 +92,5 @@ DONE
    + check for unzipped directory with same version number textfile
    + unzip and load patch.zip if it doesn't exist
    + don't show patch selector
-
+ +  fix back button & exit button for unpacked zips
 

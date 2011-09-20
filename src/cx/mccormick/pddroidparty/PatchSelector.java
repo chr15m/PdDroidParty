@@ -94,7 +94,9 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 				// see if this is an app with a zip to unpack instead
 				String bakedpatch = unpackBakedPatch();
 				if (bakedpatch != null) {
+					finish();
 					launchDroidParty(bakedpatch);
+					stop();
 				} else {
 					List<File> list = IoUtils.find(new File("/sdcard"), ".*droidparty_main\\.pd$");
 					for (File f: list) {
