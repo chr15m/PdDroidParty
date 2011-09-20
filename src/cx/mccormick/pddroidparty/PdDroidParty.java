@@ -16,6 +16,7 @@ import org.puredata.core.PdBase;
 import org.puredata.core.PdReceiver;
 import org.puredata.core.utils.PdUtils;
 import org.puredata.core.utils.PdDispatcher;
+import org.puredata.core.utils.IoUtils;
 
 import android.app.ProgressDialog;
 import android.app.Activity;
@@ -164,7 +165,7 @@ public class PdDroidParty extends Activity {
 					sb.append(line + "\n");
 					line = br.readLine();
 				}
-			} catch (java.io.IOException e) {
+			} catch (IOException e) {
 				sb.append("Copyright Chris McCormick, 2011");
 			}
 			
@@ -229,6 +230,30 @@ public class PdDroidParty extends Activity {
 		MenuBang.clear();
 	}
 	
+	private void unpackResources() {
+		Resources res = getResources();
+		//File libDir = getFilesDir();
+		// if we have a patch zip
+		if (res.getIdentifier("patch", "raw", getPackageName()) != 0) {
+			//IoUtils.extractZipResource(res.openRawResource(R.raw.abstractions), libDir, false);
+			//IoUtils.extractZipResource(res.openRawResource(Properties.hasArmeabiV7a ? R.raw.externals_v7a : R.raw.externals), libDir, false);
+			// where we will be storing the patch on the sdcard
+			String basedir = "/sdcard/" + res.getString(res.getIdentifier("dirname", "string", getPackageName())) + "/patch/";
+			// version file for the existing patch
+			File version = new File(basedir + "VERSION-" + res.getInteger(res.getIdentifier("revno", "integer", getPackageName())));
+			// if the version file does not exist
+			if (!version.exists()) {
+				try {
+					IoUtils.extractZipResource(getResources().openRawResource(res.getIdentifier("patch", "raw", getPackageName())), new File("/sdcard/" + res.getString(R.string.dirname)), false);
+				} catch (IOException e) {
+					// do nothing
+				}
+			}
+			//PdBase.addToSearchPath(libDir.getAbsolutePath());
+			PdBase.addToSearchPath(basedir);
+		}
+	}
+	
 	// initialise Pd asking for the desired sample rate, parameters, etc.
 	private void initPd() {
 		final ProgressDialog progress = new ProgressDialog(this);
@@ -239,6 +264,7 @@ public class PdDroidParty extends Activity {
 		new Thread() {
 			@Override
 			public void run() {
+				unpackResources();
 				int sRate = AudioParameters.suggestSampleRate();
 				Log.e(TAG, "suggested sample rate: " + sRate);
 				if (sRate < SAMPLE_RATE) {

@@ -4,5 +4,4 @@
 	<string name="path_to_patch">/sdcard/pd/test/_main.pd</string>
 	<string name="okbutton">ok</string>
 	<string name="cancelbutton">cancel</string>
-	<string name="about_text"></string>
 </resources>

@@ -1,9 +1,3 @@
- * BUG: allow any message to numberboxes (at the moment users are needing to pass through [float])
- * BUG: canvas label can't be changed with a message
- * BUG: canvas colours are inconsistent between PC and PdDroidParty
- * BUG: Numberbox font size is not working properly
- * BUG: touch abstraction has no black dot (make an option to show it?)
-
  * if splash.svg exists in assets, show that on startup (while patch loads?)
  * unzip any zips in res
  * if patch.zip exists in res
@@ -12,6 +6,12 @@
    * don't show patch selector
 
  * CanOfBeats - superclass main droidparty class for derivatives
+
+ * BUG: allow any message to numberboxes (at the moment users are needing to pass through [float])
+ * BUG: canvas label can't be changed with a message
+ * BUG: canvas colours are inconsistent between PC and PdDroidParty
+ * BUG: Numberbox font size is not working properly
+ * BUG: touch abstraction has no black dot (make an option to show it?)
 
  * Stop console errors for built-in abstractions (make passthrough abstractions)
  * document abstractions

@@ -6,3 +6,5 @@ libs
 website/droidparty*.zip
 website/droidparty*.tgz
 website/PdDroidParty*.apk
+res/values/patch.xml
+res/raw/patch.zip
