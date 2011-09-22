@@ -7,4 +7,5 @@ then
 else
 	rpl -R pddroidparty $1 .
 	rpl -R "PdDroid Party" $2 .
+	bzr mv src/cx/mccormick/pddroidparty src/cx/mccormick/$1
 fi
