@@ -13,7 +13,7 @@ rm PdDroidParty-debug.apk
 cp ../bin/PdDroidParty-debug.apk PdDroidParty-debug-$nextrev.apk
 ln -s PdDroidParty-debug-$nextrev.apk PdDroidParty-debug.apk
 
-sed "s/PdDroidParty-debug-[0-9][0-9].apk*/PdDroidParty-debug-$nextrev.apk/g" index.html > index.html.tmp
+sed "s/PdDroidParty-debug-[0-9][0-9][0-9].apk*/PdDroidParty-debug-$nextrev.apk/g" index.html > index.html.tmp
 mv index.html.tmp index.html
 
 bzr commit -m 'Version bump for release v$nextrev'
