@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ "$2" == "" ]
+then
+	echo Usage: $0 new-app-short-name new-app-long-name
+	echo e.g. $0 mysynth \"My Synthesizer\"
+else
+	rpl -R pddroidparty $1 .
+	rpl -R "PdDroid Party" $2 .
+fi
