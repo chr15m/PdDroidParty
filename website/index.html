@@ -44,7 +44,7 @@
 
 <h3>Download</h3>
 <ul>
-<li><a href='PdDroidParty-debug-129.apk'>PdDroidParty-debug-129.apk</a></li>
+<li><a href='PdDroidParty-debug-131.apk'>PdDroidParty-debug-131.apk</a></li>
 <li><a href='droidparty-tests.tgz'>droidparty-tests.tgz</a></li>
 <li><a href='droidparty-abstractions.tgz'>droidparty-abstractions.tgz</a></li>
 <li><a href='droidparty-demos.tgz'>droidparty-demos.tgz</a></li>
@@ -54,31 +54,15 @@
 
 <h3>How to make patches for PdDroidParty</h3>
 
-<p>1. Create a new Pd patch called droidparty_main.pd in a subdirectory. This
-patch will contain your GUI objects like sliders, toggles, numberboxes etc. If
-you have an existing patch you want to run with PdDroidParty you can create the
-droidparty_main.pd patch in the same directory.</p>
+<p>1. Create a new Pd patch called droidparty_main.pd in a subdirectory. This patch will contain your GUI objects like sliders, toggles, numberboxes etc. If you have an existing patch you want to run with PdDroidParty you can create the droidparty_main.pd patch in the same directory.</p>
 
-<p>2. PdDroidParty GUI patches will be scaled to fit the screen of the device.
-Your patches should have the rough dimensions of a phone/tablet in landscape
-mode (e.g. 3:2 aspect ratio or e.g. 480x320 should usually work well). If it's
-not exact it doesn't matter - the GUI elements will be scaled.</p>
+<p>2. PdDroidParty GUI patches will be scaled to fit the screen of the device. Your patches should have the rough dimensions of a phone/tablet in landscape mode (e.g. 3:2 aspect ratio or e.g. 480x320 should usually work well). If it's not exact it doesn't matter - the GUI elements will be scaled.</p>
 
 <p>3. Numberbox, Sliders, Toggle, Comment, Bang, and Canvas are currently rendered by PdDroidParty, although not feature complete. Check out the GUI abstractions in the droidparty-abstractions.tgz file - these are also supported natively. See the Abstractions section below for more details.</p>
 
-<p>4. All GUI elements should communicate with the main audio patches using send
-and receive only. You can usually set send and receive for each GUI by right
-clicking on the object and choosing 'properties' in Pd. Do not directly connect
-cables to the GUI elements as they won't work. It helps to keep the GUIs on
-their own in the droidparty_main.pd file and have it include the logic of your
-patch as an abstraction or subpatch containing senders and receivers for
-interfacing with GUI elements. This is good patch design practice anyway as it
-is basically a model-view-controller methodology.</p>
+<p>4. All GUI elements should communicate with the main audio patches using send and receive only. You can usually set send and receive for each GUI by right clicking on the object and choosing 'properties' in Pd. Do not directly connect cables to the GUI elements as they won't work. It helps to keep the GUIs on their own in the droidparty_main.pd file and have it include the logic of your patch as an abstraction or subpatch containing senders and receivers for interfacing with GUI elements. This is good patch design practice anyway as it is basically a model-view-controller methodology.</p>
 
-<p>5. Copy the entire directory containing your droidparty_main.pd somewhere onto
-the sdcard of your device. You can usually do this over USB with most phones
-and tablets by mounting your device as a hard drive on your computer. One good
-place to copy it is to e.g. /sdcard/pd/MyPdPatch</p>
+<p>5. Copy the entire directory containing your droidparty_main.pd somewhere onto the sdcard of your device. You can usually do this over USB with most phones and tablets by mounting your device as a hard drive on your computer. One good place to copy it is to e.g. /sdcard/pd/MyPdPatch</p>
 
 <p>6. Run PdDroidParty and you will find an entry named after your subdirectory. Tap it to load your patch.</p>
 
@@ -94,6 +78,29 @@ place to copy it is to e.g. /sdcard/pd/MyPdPatch</p>
 	<li>[menubang] - Puts an entry into the menu which sends a bang when the user selects it. Optional icon is called menubang-xxxx.png where xxxx is the name of your menubang.</li>
 	<li>[loadsave] - Wraps and openpanel/savepanel type of interface into a single abstraction that lets the user specify or choose filenames using the Android interface.</li>
 </ul>
+
+<h3>SVG Widgets</h3>
+
+<p>It's possible to theme your patches with SVG images now. You can theme the following Pd GUI objects: canvas, numberbox (the abstraction), sliders, taplist (abstraction), toggle, touch (abstraction), wordbutton (abstraction).</p>
+
+<p>To theme e.g. the toggle, create an SVG called Toggle.svg in the directory holding your droidparty_main.pd patch. You can also have separate images for specific toggles by using their send name or label name in the SVG filename. For example a toggle with a send name of "mysend" could have an SVG called Toggle-mysend.svg which would override the default Toggle.svg image. Send and label names are split on the hyphen ("-") character so for example if you have two toggles with send names of mysend-1 and mysend-2 you could theme them separately with Toggle-mysend-1.svg and Toggle-mysend-2.svg or you could theme them with the same image by creating a file called Toggle-mysend.svg which would apply to both.<p>
+
+<p>The SVG renderer is not very robust, so the best way to design your own widget graphics is to start with the widget graphics in droidparty-tests/svg-widgets/*.svg and modify them. The renderer only really works on plain paths, so make sure you convert any objects like rectangles or circles to plain SVG paths. The renderer used is a fork of <a href="http://code.google.com/p/svg-android/">svg-android</a> with some support for <a href="http://inkscape.org/">Inkscape</a> hacked in.</p>
+
+<h3>Standalone apps</h3>
+
+<p>You can use the PdDroidParty code base to bundle your own Pd patches as standalone Android apps.</p>
+
+<ul>
+	<li>Clone the source code with bazaar: `bzr branch http://mccormick.cx/dev/PdDroidParty/`</li>
+	<li>Convert the app name to whatever you like: `./convert-app-name mysynth "My Synthesizer"`</li>
+	<li>Replace your own icon 72x72 PNG icon over res/drawable/icon.png</li>
+	<li>Place your patch and files with a droidparty_main.pd in the "patch" subfolder.</li>
+	<li>Pack the patch subfolder into an Android zip resource: `./pack-patch`</li>
+	<li>Install on your device for testing: `ant install`</li>
+</ul>
+
+<p>If you make an app based on this source code, <a href='mailto:chris@mccormick.cx'>I would love to hear about it</a>.</p>
 
 <h3>Source code (GPLv3)</h3>
 
