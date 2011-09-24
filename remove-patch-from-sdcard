@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cwd=`pwd`
+dir=`basename $cwd`
+echo "rm -r /sdcard/$dir; exit;" | adb shell
