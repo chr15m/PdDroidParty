@@ -87,6 +87,8 @@
 
 <p>The SVG renderer is not very robust, so the best way to design your own widget graphics is to start with the widget graphics in droidparty-tests/svg-widgets/*.svg and modify them. The renderer only really works on plain paths, so make sure you convert any objects like rectangles or circles to plain SVG paths. The renderer used is a fork of <a href="http://code.google.com/p/svg-android/">svg-android</a> with some support for <a href="http://inkscape.org/">Inkscape</a> hacked in.</p>
 
+<p>You can put three special attributes on the SVG element using a text editor, for font customisation. They are textFont, textColor, and textAntialias.</p>
+
 <h3>Standalone apps</h3>
 
 <p>You can use the PdDroidParty code base to bundle your own Pd patches as standalone Android apps.</p>
