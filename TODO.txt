@@ -1,4 +1,8 @@
- * if splash.svg exists in assets, show that on startup (while patch loads?)
+ * splash class
+   * if splash.svg exists in assets, show that on startup
+   * move patch unzipping stuff into the splash class
+ * change wording from "Loading patch..." to "Loading..."
+ * wordbutton - replace underscores with spaces
 
  * work out multitouch support
 
