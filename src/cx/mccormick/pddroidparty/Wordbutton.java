@@ -25,6 +25,8 @@ public class Wordbutton extends Bang {
 	
 	boolean down = false;
 	
+	String spacereplace = null;
+	
 	public Wordbutton(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
@@ -35,9 +37,10 @@ public class Wordbutton extends Bang {
 		
 		sendname = "wordbutton-" + atomline[7];
 		label = setLabel(atomline[7]);
+		spacereplace = label.replace("_", " ");
 		paint.setTextSize(Math.round(h * 0.75));
 		paint.setTextAlign(Paint.Align.CENTER);
-		paint.getTextBounds(label, 0, label.length(), tRect);
+		paint.getTextBounds(spacereplace, 0, label.length(), tRect);
 		labelpos[0] = w / 2 - tRect.width() / 2;
 		labelpos[1] = h / 2 - tRect.height() / 2;
 		
@@ -64,7 +67,7 @@ public class Wordbutton extends Bang {
 			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
 			canvas.drawLine(dRect.right, dRect.top + 1, dRect.right, dRect.bottom, paint);
 		}
-		canvas.drawText(label, dRect.left + dRect.width() / 2, (int)(dRect.top + dRect.height() * 0.75), paint);
+		canvas.drawText(spacereplace, dRect.left + dRect.width() / 2, (int)(dRect.top + dRect.height() * 0.75), paint);
 	}
 	
 	public void touch(MotionEvent event) {

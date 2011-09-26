@@ -2,7 +2,6 @@
    * if splash.svg exists in assets, show that on startup
    * move patch unzipping stuff into the splash class
  * change wording from "Loading patch..." to "Loading..."
- * wordbutton - replace underscores with spaces
  * get sdk version thing working properly
 
  * work out multitouch support
@@ -100,4 +99,5 @@ DONE
    + don't show patch selector
  +  fix back button & exit button for unpacked zips
  + CanOfBeats - superclass main droidparty class for derivatives
+ + wordbutton - replace underscores with spaces
 
