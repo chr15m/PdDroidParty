@@ -3,15 +3,18 @@
    * move patch unzipping stuff into the splash class
  * change wording from "Loading patch..." to "Loading..."
  * wordbutton - replace underscores with spaces
+ * get sdk version thing working properly
 
  * work out multitouch support
 
+ * Fix build against latest version of libpd
  * BUG: allow any message to numberboxes (at the moment users are needing to pass through [float])
  * BUG: canvas label can't be changed with a message
  * BUG: canvas colours are inconsistent between PC and PdDroidParty
  * BUG: Numberbox font size is not working properly
  * BUG: touch abstraction has no black dot (make an option to show it?)
 
+ * upgrade svg-android to the forked version
  * Stop console errors for built-in abstractions (make passthrough abstractions)
  * document abstractions
  * document SVG stuff
