@@ -1,7 +1,3 @@
- * splash class
-   * if splash.svg exists in assets, show that on startup
-   * move patch unzipping stuff into the splash class
-
  * work out multitouch support
 
  * Fix build against latest version of libpd
@@ -100,4 +96,7 @@ DONE
  + CanOfBeats - superclass main droidparty class for derivatives
  + wordbutton - replace underscores with spaces
  + change wording from "Loading patch..." to "Loading..."
+ + splash class
+   + if splash.svg exists in assets, show that on startup
+   + move patch unzipping stuff into the splash class
 
