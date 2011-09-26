@@ -233,7 +233,7 @@ public class PdDroidParty extends Activity {
 	// initialise Pd asking for the desired sample rate, parameters, etc.
 	private void initPd() {
 		final ProgressDialog progress = new ProgressDialog(this);
-		progress.setMessage("Loading patch...");
+		progress.setMessage("Loading...");
 		progress.setCancelable(false);
 		progress.setIndeterminate(true);
 		progress.show();
