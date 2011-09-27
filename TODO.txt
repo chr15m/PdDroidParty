@@ -1,5 +1,5 @@
  * work out multitouch support
-
+ * cache the patch list in the database
  * Fix build against latest version of libpd
  * get it working with the 1.6 SDK (bluetooth free or emulated)
  * BUG: allow any message to numberboxes (at the moment users are needing to pass through [float])
