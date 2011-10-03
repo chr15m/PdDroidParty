@@ -93,6 +93,8 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 			PdBase.addToSearchPath(basedir + "/patch");
 			// also add the recordings directory
 			(new File(basedir, "recordings")).mkdirs();
+			// also add the safefiles directory
+			(new File(basedir, "savefiles")).mkdirs();
 			// return the patch path to launch Pd
 			return basedir + "/patch/droidparty_main.pd";
 		}

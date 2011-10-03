@@ -1,4 +1,5 @@
  * work out multitouch support
+ * test bérenger's broken-toggles app
  * cache the patch list in the database
  * Fix build against latest version of libpd
  * get it working with the 1.6 SDK (bluetooth free or emulated)
@@ -99,4 +100,5 @@ DONE
  + splash class
    + if splash.svg exists in assets, show that on startup
    + move patch unzipping stuff into the splash class
+ + make default 'savefiles' directory alongside recordings and patch
 
