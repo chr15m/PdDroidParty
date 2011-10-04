@@ -85,6 +85,11 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		});
 	}
 	
+	/** Main patch is done loading, now we should change the background from the splash. **/
+	public void loaded() {
+		
+	}
+	
 	/** build a user interface using the lines of atoms found in the patch by the pd file parser */
 	public void buildUI(PdParser p, ArrayList<String[]> atomlines) {
 		//ArrayList<String> canvases = new ArrayList<String>();

@@ -1,3 +1,6 @@
+ * stretch the splash svg
+ * stretch the background svg
+
  * work out multitouch support
  * test bérenger's broken-toggles app
  * cache the patch list in the database

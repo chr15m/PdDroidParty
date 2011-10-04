@@ -291,6 +291,7 @@ public class PdDroidParty extends Activity {
 					String name = res.getString(R.string.app_name);
 					pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
 					progress.dismiss();
+					patchview.loaded();
 				} catch (IOException e) {
 					post(e.toString() + "; exiting now");
 					finish();
