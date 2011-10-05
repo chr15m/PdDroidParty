@@ -92,6 +92,16 @@ public class Toggle extends Widget {
 		}
 	}
 	
+	public void receiveList(Object... args) {
+		if (args.length > 0) {
+			if (args[0].getClass().equals(Float.class)) {
+				receiveFloat((Float)args[0]);
+			} else {
+				receiveBang();
+			}
+		}
+	}
+	
 	public void receiveFloat(float v) {
 		val = v;
 		sendFloat(val);

@@ -98,6 +98,12 @@ public class Taplist extends Widget {
 		}
 	}
 	
+	public void receiveList(Object... args) {
+		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
+			receiveFloat((Float)args[0]);
+		}
+	}
+	
 	public void receiveFloat(float v) {
 		val = v % atoms.size();
 		doSend();
