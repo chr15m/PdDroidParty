@@ -17,13 +17,21 @@ public class SVGRenderer {
 	SVGManipulator original = null;
 	// cached image so we don't keep regenerating it every frame
 	Picture cached = null;
+	// my SVG filename
+	String svgfile = null;
 	HashMap<Integer, Picture> interpolated_cache = new HashMap<Integer, Picture>();
+	// class shared static hashmap of all cached SVG images
+	private static HashMap<String, Picture> cache = new HashMap<String, Picture>();
 	
 	public SVGRenderer(File f) {
-		Log.e(TAG, "Caching: " + f);
+		svgfile = f.toString();
+		Log.e(TAG, "Loading: " + svgfile);
 		original = new SVGManipulator(f);
 		// cache it the first time
-		cached = SVGParser.getSVGFromString(original.toString()).getPicture();
+		if (!cache.containsKey(svgfile)) {
+			cache.put(svgfile, SVGParser.getSVGFromString(original.toString()).getPicture());
+			Log.e(TAG, "(cache store)");
+		}
 	}
 	
 	// only create an SVGRenderer if we can load the file name asked for
@@ -39,10 +47,13 @@ public class SVGRenderer {
 	
 	// get a rendered version of the svg
 	public Picture getPicture() {
-		if (cached == null) {
-			cached = SVGParser.getSVGFromString(original.toString()).getPicture();
+		if (cached != null) {
+			return cached;
 		}
-		return cached;
+		if (!cache.containsKey(svgfile)) {
+			cache.put(svgfile, SVGParser.getSVGFromString(original.toString()).getPicture());
+		}
+		return cache.get(svgfile);
 	}
 	
 	// proxy to SVGManipulator to get attributes of the SVG
@@ -56,10 +67,10 @@ public class SVGRenderer {
 			cached = interpolated_cache.get((int)(amount * 1000));
 			Log.e("SVGRenderer", "cache hit: " + ((int)(amount * 1000)));
 		} else {
-			// de-cache
-			cached = null;
 			original.interpolate(startid, endid, amount);
-			interpolated_cache.put((int)(amount * 1000), getPicture());
+			Picture tmp = getPicture();
+			interpolated_cache.put((int)(amount * 1000), tmp);
+			cached = tmp;
 			Log.e("SVGRenderer", "cached: " + ((int)(amount * 1000)));
 		}
 		return this;

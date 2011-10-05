@@ -1,6 +1,5 @@
  * stretch the splash svg
  * stretch the background svg
- * cache svgrenderer images across instances
  * Make the splash screen persist on the background until loaded
 
  * work out multitouch support
@@ -106,4 +105,5 @@ DONE
    + if splash.svg exists in assets, show that on startup
    + move patch unzipping stuff into the splash class
  + make default 'savefiles' directory alongside recordings and patch
+ + cache svgrenderer images across instances
 
