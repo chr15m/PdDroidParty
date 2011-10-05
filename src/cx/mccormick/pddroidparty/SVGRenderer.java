@@ -12,6 +12,7 @@ import android.graphics.Picture;
 import com.larvalabs.svgandroid.SVGParser;
 
 public class SVGRenderer {
+	private static final String TAG = "SVGRenderer";
 	// used for modification (e.g. interpolation) of the original svg
 	SVGManipulator original = null;
 	// cached image so we don't keep regenerating it every frame
@@ -19,6 +20,7 @@ public class SVGRenderer {
 	HashMap<Integer, Picture> interpolated_cache = new HashMap<Integer, Picture>();
 	
 	public SVGRenderer(File f) {
+		Log.e(TAG, "Caching: " + f);
 		original = new SVGManipulator(f);
 		// cache it the first time
 		cached = SVGParser.getSVGFromString(original.toString()).getPicture();

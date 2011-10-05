@@ -119,7 +119,7 @@ public class Slider extends Widget {
 	public void slider_setval(float v) {
 		val = Math.min(max, Math.max(min, v));
 		if (svg != null) {
-			Log.e("Slider", "" + ((val - min) / (max - min)));
+			// Log.e("Slider", "" + ((val - min) / (max - min)));
 			if (slider == null) {
 				svg.interpolate("closed", "open", (val - min) / (max - min));
 			}
