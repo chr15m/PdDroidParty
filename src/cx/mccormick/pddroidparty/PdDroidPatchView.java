@@ -3,6 +3,7 @@ package cx.mccormick.pddroidparty;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,6 +12,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+
+import com.larvalabs.svgandroid.SVGParser;
 
 public class PdDroidPatchView extends View implements OnTouchListener {
 	private static final String TAG = "PdDroidPatchView";
@@ -21,6 +24,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	public int fontsize;
 	ArrayList<Widget> widgets = new ArrayList<Widget>();
 	public PdDroidParty app;
+	private int splash_res = 0;
+	private Resources res = null;
 	private Picture background = null;
 	
 	public PdDroidPatchView(Context context, PdDroidParty parent) {
@@ -37,10 +42,26 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		paint.setColor(Color.WHITE);
 		paint.setAntiAlias(true);
 		
-		// load the background image
-		SVGRenderer renderer = SVGRenderer.getSVGRenderer(this, "background");
-		if (renderer != null) {
-			background = renderer.getPicture();
+		res = parent.getResources();
+		
+		// if there is a splash image, use it
+		splash_res = res.getIdentifier("splash", "raw", parent.getPackageName());
+		if (splash_res != 0) {
+			// Get a drawable from the parsed SVG and set it as the drawable for the ImageView
+			background = SVGParser.getSVGFromResource(res, splash_res).getPicture();
+		} else {
+			loadBackground();
+		}
+	}
+	
+	private void loadBackground() {
+		// if we have a splash_res or we don't have a background
+		if (background == null || splash_res != 0) {
+			// load the background image
+			SVGRenderer renderer = SVGRenderer.getSVGRenderer(this, "background");
+			if (renderer != null) {
+				background = renderer.getPicture();
+			}
 		}
 	}
 	
@@ -87,7 +108,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	
 	/** Main patch is done loading, now we should change the background from the splash. **/
 	public void loaded() {
-		
+		loadBackground();
 	}
 	
 	/** build a user interface using the lines of atoms found in the patch by the pd file parser */

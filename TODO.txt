@@ -1,7 +1,4 @@
- * stretch the splash svg
- * stretch the background svg
- * Make the splash screen persist on the background until loaded
-
+ * numberbox init val in doc patches (overview? test?)
  * work out multitouch support
  * test bérenger's broken-toggles app
  * cache the patch list in the database
@@ -106,4 +103,7 @@ DONE
    + move patch unzipping stuff into the splash class
  + make default 'savefiles' directory alongside recordings and patch
  + cache svgrenderer images across instances
+ + stretch the splash svg
+ + stretch the background svg
+ + Make the splash screen persist on the background until loaded
 
