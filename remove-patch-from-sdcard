@@ -2,4 +2,4 @@
 
 cwd=`pwd`
 dir=`basename $cwd`
-echo "rm -r /sdcard/$dir; exit;" | adb shell
+echo "rm -r /sdcard/$dir/patch; exit;" | adb shell
