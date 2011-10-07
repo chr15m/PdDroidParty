@@ -92,12 +92,29 @@ public class Toggle extends Widget {
 		}
 	}
 	
+	public void receiveMessage(String dest, Object... args) {
+		// set message sets value without sending
+		if (dest.equals("set") && args.length > 0) {
+			val = (Float)args[0];
+		}
+	}
+	
 	public void receiveList(Object... args) {
 		if (args.length > 0) {
 			if (args[0].getClass().equals(Float.class)) {
+				// if we receive a float, pass it through, setting our value
 				receiveFloat((Float)args[0]);
-			} else {
-				receiveBang();
+			} else if (args[0].getClass().equals(String.class)) {
+				// if we receive a set message
+				if (args[0].equals("set")) {
+					// set our value to the float supplied but don't pass it through
+					if (args.length > 1 && args[1].getClass().equals(Float.class)) {
+						val = (Float)args[1];
+					}
+				} else if (args[0].equals("bang")) {
+					// if we receive a bang, do that
+					receiveBang();
+				}
 			}
 		}
 	}
