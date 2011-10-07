@@ -290,8 +290,10 @@ public class PdDroidParty extends Activity {
 					// start the audio thread
 					String name = res.getString(R.string.app_name);
 					pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
-					progress.dismiss();
+					// tell the patch view everything has been loaded
 					patchview.loaded();
+					// dismiss the progress meter
+					progress.dismiss();
 				} catch (IOException e) {
 					post(e.toString() + "; exiting now");
 					finish();
