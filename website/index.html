@@ -19,6 +19,28 @@
 			margin-right: 50px;
 			margin-left: 30px;
 		}
+		
+		.applink {
+			display: table-cell;
+			vertical-align: middle;
+			width: 256px;
+			text-align: center;
+			float: right;
+			margin-right: 65px;
+			margin-left: 20px;
+		}
+		
+		.applink img {
+			float: left;
+		}
+		
+		a {
+			text-decoration: none;
+		}
+		
+		a:hover {
+			text-decoration: underline;
+		}
 	</style>
 <script type="text/javascript">
 
@@ -39,18 +61,19 @@
 <div id='outer'>
 <div id='inner'>
 <h1>PdDroidParty <img src='icon.png'/></h1>
-<img id='screenshot' src='PdDroidParty.png'>
+<div class='applink'><a href='https://market.android.com/details?id=cx.mccormick.canofbeats'><img src='https://www.gstatic.com/android/market/cx.mccormick.canofbeats/hi-256-0-5733994f16134666ec9b0d852c1350acdb9f6a6a' width='128' height='128'/>Support PdDroidParty development - buy CanOfBeats for Android</a></div>
 <p>Run your Pure Data patches on Android with native GUIs emulated.</p>
 
 <h3>Download</h3>
 <ul>
-<li><a href='PdDroidParty-debug-131.apk'>PdDroidParty-debug-131.apk</a></li>
+<li><a href='PdDroidParty-debug-154.apk'>PdDroidParty-debug-154.apk</a></li>
 <li><a href='droidparty-tests.tgz'>droidparty-tests.tgz</a></li>
 <li><a href='droidparty-abstractions.tgz'>droidparty-abstractions.tgz</a></li>
 <li><a href='droidparty-demos.tgz'>droidparty-demos.tgz</a></li>
 </ul>
 
 <p>(Unzip the tgz files onto your device's sdcard e.g. into /sdcard/pd/)</p>
+<img id='screenshot' src='PdDroidParty.png'>
 
 <h3>How to make patches for PdDroidParty</h3>
 
