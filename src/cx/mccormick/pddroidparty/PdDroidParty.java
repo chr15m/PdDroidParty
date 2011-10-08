@@ -14,7 +14,6 @@ import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
 import org.puredata.core.PdReceiver;
-import org.puredata.core.utils.PdUtils;
 import org.puredata.core.utils.PdDispatcher;
 import org.puredata.core.utils.IoUtils;
 
@@ -58,7 +57,7 @@ public class PdDroidParty extends Activity {
 	
 	private String path;
 	private PdService pdService = null;
-	private String patch;  // the path to the patch receiver is defined in res/values/strings.xml
+	private int patch = -1;
 	private final Object lock = new Object();
 	public Menu ourmenu = null;
 	Map<String, DroidPartyReceiver> receivemap = new HashMap<String, DroidPartyReceiver>();
@@ -285,7 +284,7 @@ public class PdDroidParty extends Activity {
 						Log.e(TAG, e.toString());
 						finish();
 					}
-					patch = PdUtils.openPatch(path);
+					patch = PdBase.openPatch(path.toString());
 					patchview.buildUI(p, atomlines);
 					// start the audio thread
 					String name = res.getString(R.string.app_name);
@@ -329,8 +328,12 @@ public class PdDroidParty extends Activity {
 	// quit the Pd service and release other resources
 	private void cleanup() {
 		// make sure to release all resources
-		if (pdService != null) pdService.stopAudio();
-		PdUtils.closePatch(patch);
+		if (pdService != null) {
+			pdService.stopAudio();
+		}
+		if (patch != -1) {
+			PdBase.closePatch(patch);
+		}
 		PdBase.sendMessage("pd", "quit", "bang");
 		PdBase.release();
 		try {
