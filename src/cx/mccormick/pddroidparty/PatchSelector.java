@@ -116,9 +116,8 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					}
 				}
 				if (bakedpatch != null) {
-					finish();
 					launchDroidParty(bakedpatch);
-					stop();
+					finish();
 				} else {
 					List<File> list = IoUtils.find(new File("/sdcard"), ".*droidparty_main\\.pd$");
 					for (File f: list) {
@@ -155,16 +154,18 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		ImageView imageView = new ImageView(this);
 		// Set the background color to white
 		imageView.setBackgroundColor(Color.WHITE);
-		// Parse the SVG file from the resource
-		SVG svg = SVGParser.getSVGFromResource(getResources(), res.getIdentifier("splash", "raw", getPackageName()));
-		// Get a drawable from the parsed SVG and set it as the drawable for the ImageView
-		imageView.setImageDrawable(svg.createPictureDrawable());
-		// Set the ImageView as the content view for the Activity
-		setContentView(imageView);
+		int splashres = res.getIdentifier("splash", "raw", getPackageName());
+		if (splashres != 0) {
+			// Parse the SVG file from the resource
+			SVG svg = SVGParser.getSVGFromResource(getResources(), splashres);
+			// Get a drawable from the parsed SVG and set it as the drawable for the ImageView
+			imageView.setImageDrawable(svg.createPictureDrawable());
+			// Set the ImageView as the content view for the Activity
+			setContentView(imageView);
+		}
 		// initialise Pd without a progress thing
 		initPd(null);
 	}
-
 	
 	private void initGui() {
 		setContentView(R.layout.patch_selector);
