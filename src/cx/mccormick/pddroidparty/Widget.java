@@ -46,10 +46,19 @@ public class Widget {
 		screenheight = parent.getHeight();
 		fontsize = (int)((float)parent.fontsize / parent.patchheight * screenheight) - 2;
 		
+		File f = null;
+		
 		// set an aliased font
-		File f = new File(parent.app.getPatchFile().getParent() + "/font.ttf");
+		f = new File(parent.app.getPatchFile().getParent() + "/font.ttf");
 		if (f.exists() && f.canRead() && f.isFile()) {
 			font = Typeface.createFromFile(f);
+		} else {
+			// set an anti-aliased font
+			f = new File(parent.app.getPatchFile().getParent() + "/font-antialiased.ttf");
+			if (f.exists() && f.canRead() && f.isFile()) {
+				font = Typeface.createFromFile(f);
+				paint.setAntiAlias(true);
+			}
 		}
 		
 		paint.setColor(Color.BLACK);
