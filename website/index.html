@@ -5,8 +5,8 @@
 		body {
 			margin-top: 20px;
 			font-family: Arial;
-			background-image: url('pattern.gif');
 			color: #333333;
+			background-color: #ffffff;
 		}
 		
 		div#inner {
@@ -23,14 +23,14 @@
 		.applink {
 			display: table-cell;
 			vertical-align: middle;
-			width: 256px;
+			width: 200px;
 			text-align: center;
 			float: right;
-			margin-right: 65px;
+			margin-right: 100px;
 			margin-left: 20px;
 		}
 		
-		.applink img {
+		.applink img.logo {
 			float: left;
 		}
 		
@@ -60,8 +60,10 @@
 <body>
 <div id='outer'>
 <div id='inner'>
-<h1>PdDroidParty <img src='icon.png'/></h1>
-<div class='applink'><a href='https://market.android.com/details?id=cx.mccormick.canofbeats'><img src='https://www.gstatic.com/android/market/cx.mccormick.canofbeats/hi-256-0-5733994f16134666ec9b0d852c1350acdb9f6a6a' width='128' height='128'/>Support PdDroidParty development - buy CanOfBeats for Android</a></div>
+<h1><img src='icon.png'/>PdDroidParty</h1>
+<div class='applink'><a href='https://market.android.com/details?id=cx.mccormick.canofbeats'><img src='canofbeats-icon.png' class='logo'/>
+<img src='45_avail_market_logo1.png'/><br/>support this<br/>buy CanOfBeats</a>
+</div>
 <p>Run your Pure Data patches on Android with native GUIs emulated.</p>
 
 <h3>Download</h3>
@@ -117,7 +119,7 @@
 <p>You can use the PdDroidParty code base to bundle your own Pd patches as standalone Android apps.</p>
 
 <ul>
-	<li>Clone the source code with bazaar: `bzr branch http://mccormick.cx/dev/PdDroidParty/ MySynthesizer`</li>
+	<li>Clone the source code with bazaar: `bzr branch http://droidparty.net/ MySynthesizer`</li>
 	<li>Convert the app name to whatever you like: `./convert-app-name mysynth "My Synthesizer"`</li>
 	<li>In the cloned directory re-generate the Android build.xml file: `android update project --path .`</li>
 	<li>Replace your own icon 72x72 PNG icon over res/drawable/icon.png</li>
@@ -133,9 +135,13 @@
 <h3>Source code (GPLv3)</h3>
 
 <p>Get the source with <a href='http://bazaar.canonical.com/en/'>bazaar</a>:</p>
-<pre><code>	bzr co http://mccormick.cx/dev/PdDroidParty/</code></pre>
+<pre><code>	bzr co http://droidparty.net/</code></pre>
 
-<p>Made with <a href='http://gitorious.org/pdlib/'>libpd</a>.</p>
+<p>Made with <a href='http://gitorious.org/pdlib/'>libpd</a> by Peter Brinkmann and <a href='http://puredata.info/'>Pure Data</a> by Miller S. Puckette.</p>
+
+<p>Portions of this page and the PdDroidParty software contain modifications based on work created and <a href="http://code.google.com/policies.html">shared by Google</a> and used
+  according to terms described in the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons 3.0 Attribution License</a>.</p>
+
 </div>
 </div>
 </body>
