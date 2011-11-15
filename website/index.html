@@ -6,7 +6,7 @@
 			margin-top: 20px;
 			font-family: Arial;
 			color: #333333;
-			background-color: #ffffff;
+			background-color: #eee;
 		}
 		
 		div#inner {
@@ -18,6 +18,11 @@
 			float: right;
 			margin-right: 50px;
 			margin-left: 30px;
+		}
+		
+		img#icon {
+			position: relative;
+			top: 5px;
 		}
 		
 		.applink {
@@ -33,9 +38,15 @@
 		.applink img.logo {
 			float: left;
 		}
-		
+	
+		h1 {
+			text-align: center;
+		}
+			
 		a {
 			text-decoration: none;
+			color: #a0c030;
+			font-weight: bold;
 		}
 		
 		a:hover {
@@ -60,7 +71,7 @@
 <body>
 <div id='outer'>
 <div id='inner'>
-<h1><img src='icon.png'/>PdDroidParty</h1>
+<h1><img src='icon.png' id='icon'/>PdDroidParty</h1>
 <div class='applink'><a href='https://market.android.com/details?id=cx.mccormick.canofbeats'><img src='canofbeats-icon.png' class='logo'/>
 <img src='45_avail_market_logo1.png'/><br/>support this<br/>buy CanOfBeats</a>
 </div>
@@ -68,7 +79,7 @@
 
 <h3>Download</h3>
 <ul>
-<li><a href='PdDroidParty-debug-154.apk'>PdDroidParty-debug-154.apk</a></li>
+<li><a href='PdDroidParty-debug-162.apk'>PdDroidParty-debug-162.apk</a></li>
 <li><a href='droidparty-tests.tgz'>droidparty-tests.tgz</a></li>
 <li><a href='droidparty-abstractions.tgz'>droidparty-abstractions.tgz</a></li>
 <li><a href='droidparty-demos.tgz'>droidparty-demos.tgz</a></li>
@@ -136,6 +147,8 @@
 
 <p>Get the source with <a href='http://bazaar.canonical.com/en/'>bazaar</a>:</p>
 <pre><code>	bzr co http://droidparty.net/</code></pre>
+
+<h3>Attributions</h3>
 
 <p>Made with <a href='http://gitorious.org/pdlib/'>libpd</a> by Peter Brinkmann and <a href='http://puredata.info/'>Pure Data</a> by Miller S. Puckette.</p>
 

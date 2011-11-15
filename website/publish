@@ -16,6 +16,13 @@ ln -s PdDroidParty-debug-$nextrev.apk PdDroidParty-debug.apk
 sed "s/PdDroidParty-debug-[0-9][0-9][0-9].apk*/PdDroidParty-debug-$nextrev.apk/g" index.html > index.html.tmp
 mv index.html.tmp index.html
 
-bzr commit -m "Version bump for release v$nextrev"
+if [ "$1" != "" ]
+then
+	message="$@"
+else
+	message="Version bump for release v$nextrev"
+fi
 
-rsync -avz . mccormick.cx:~/mccormick.cx/projects/PdDroidParty/
+bzr commit -m "$message"
+
+rsync -avz . droidparty.net:/var/www/droidparty.net/
