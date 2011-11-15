@@ -15,9 +15,9 @@
    width="100%"
    height="100%"
    sodipodi:docname="droidparty-icon.svg"
-   inkscape:export-filename="/home/chrism/testicon.png"
-   inkscape:export-xdpi="24.690001"
-   inkscape:export-ydpi="24.690001">
+   inkscape:export-filename="/home/chrism/dev/android/PdDroidParty/res/drawable/icon.png"
+   inkscape:export-xdpi="24.685715"
+   inkscape:export-ydpi="24.685715">
   <metadata
      id="metadata3089">
     <rdf:RDF>
@@ -48,8 +48,8 @@
      borderlayer="true"
      inkscape:showpageshadow="false"
      inkscape:zoom="0.85141429"
-     inkscape:cx="30.463737"
-     inkscape:cy="343.53888"
+     inkscape:cx="-10.057077"
+     inkscape:cy="266.0208"
      inkscape:window-x="0"
      inkscape:window-y="16"
      inkscape:window-maximized="1"
@@ -191,10 +191,10 @@
      rx="23.92"
      height="132.89999"
      width="47.84"
-     y="-139.85951"
-     x="-332.00308"
+     y="-140.36652"
+     x="-328.32944"
      style="fill:#a4c639;stroke:#ffffff;stroke-width:7.16800022"
-     transform="matrix(-0.82510741,-0.56497589,-0.56497589,0.82510741,0,0)"
+     transform="matrix(-0.83021559,-0.55744244,-0.55744244,0.83021559,0,0)"
      inkscape:export-filename="/home/chrism/dev/android/PdDroidParty/website/icon.png"
      inkscape:export-xdpi="16.799999"
      inkscape:export-ydpi="16.799999" />
@@ -266,7 +266,7 @@
      inkscape:export-xdpi="16.799999"
      inkscape:export-ydpi="16.799999" />
   <rect
-     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     style="fill:#ffffff;fill-opacity:1;stroke:#333333;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      id="rect3941"
      width="149.49153"
      height="86.372879"
@@ -276,7 +276,7 @@
      inkscape:export-xdpi="16.799999"
      inkscape:export-ydpi="16.799999" />
   <rect
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     style="fill:#333333;fill-opacity:1;stroke:#333333;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      id="rect3943"
      width="46.508476"
      height="10.33311"
@@ -291,12 +291,12 @@
      height="10.33311"
      width="46.508476"
      id="rect3945"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     style="fill:#333333;fill-opacity:1;stroke:#333333;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      inkscape:export-filename="/home/chrism/dev/android/PdDroidParty/website/icon.png"
      inkscape:export-xdpi="16.799999"
      inkscape:export-ydpi="16.799999" />
   <rect
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     style="fill:#333333;fill-opacity:1;stroke:#333333;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      id="rect3947"
      width="46.508476"
      height="10.33311"
@@ -311,13 +311,13 @@
      height="10.33311"
      width="46.508476"
      id="rect3949"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     style="fill:#333333;fill-opacity:1;stroke:#333333;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      inkscape:export-filename="/home/chrism/dev/android/PdDroidParty/website/icon.png"
      inkscape:export-xdpi="16.799999"
      inkscape:export-ydpi="16.799999" />
   <text
      xml:space="preserve"
-     style="font-size:129.95045471px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:end;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Aspire;-inkscape-font-specification:Aspire Semi-Bold"
+     style="font-size:129.95045471000000248px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:end;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#333333;fill-opacity:1;stroke:#333333;font-family:Aspire;-inkscape-font-specification:Aspire Semi-Bold"
      x="215.49622"
      y="235.28023"
      id="text3951"
