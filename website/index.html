@@ -39,7 +39,7 @@
 		.applink img.logo {
 			float: left;
 		}
-	
+		
 		h1 {
 			text-align: center;
 		}
@@ -72,10 +72,13 @@
 <body>
 <div id='outer'>
 <div id='inner'>
+
 <h1><img src='icon.png' id='icon'/>PdDroidParty</h1>
+
 <div class='applink'><a href='https://market.android.com/details?id=cx.mccormick.canofbeats'><img src='canofbeats-icon.png' class='logo'/>
 <img src='45_avail_market_logo1.png'/><br/>support this<br/>buy CanOfBeats</a>
 </div>
+
 <p>Run your Pure Data patches on Android with native GUIs emulated.</p>
 
 <h3>Download</h3>
@@ -86,7 +89,23 @@
 <li><a href='droidparty-demos.tgz'>droidparty-demos.tgz</a></li>
 </ul>
 
+	<div class='donate'>
+	<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+	<input type="hidden" name="cmd" value="_donations">
+	<input type="hidden" name="business" value="chris@mccormick.cx">
+	<input type="hidden" name="lc" value="US">
+	<input type="hidden" name="item_name" value="PdDroidParty development">
+	<input type="hidden" name="item_number" value="PdDroidParty">
+	<input type="hidden" name="no_note" value="0">
+	<input type="hidden" name="currency_code" value="USD">
+	<input type="hidden" name="bn" value="PP-DonationsBF:btn_donate_SM.gif:NonHostedGuest">
+	<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+	<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+	</form>
+	</div>
+
 <p>(Unzip the tgz files onto your device's sdcard e.g. into /sdcard/pd/)</p>
+
 <img id='screenshot' src='PdDroidParty.png'>
 
 <h3>How to make patches for PdDroidParty</h3>
