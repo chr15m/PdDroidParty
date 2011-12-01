@@ -1,14 +1,20 @@
+ * accelerometer support (RjDj style - ScenePlayer)
+   (check ScenePlayer code)
+ * touch support code (RjDj style - ScenePlayer)
+ * fix $0 replacement in GUI send/receives
+ * work out multitouch support
  * loadsave dialog title should reflect activity name
  * incorporate phonecall code from ScenePlayer
+
+ * multi-page canvas display with vis
+
+ * Toasting an info message android style
 
  * Fix build against latest version of libpd
  * get it working with the 1.6 SDK (bluetooth free or emulated)
 
  * upgrade svg-android to the forked version
 
- * multi-page canvas display with vis
-
- * work out multitouch support
  * documentation - numberbox init val in doc patches (_OVERVIEW.pd? test patches?)
  * test bérenger's broken-toggles app
  * cache the patch list in the database
@@ -27,11 +33,6 @@
 
  * add externals to the path
    * copy externals from /sdcard/pd-externals to the phone because /sdcard is mounted noexec
- * fix $0 replacement in GUI send/receives
- * accelerometer support (RjDj style?)
-   (check ScenePlayer code)
-
- * Toasting an info message android style
 
  * include demos zip in the PdDroidParty apk under res
  * more patch GUIs
