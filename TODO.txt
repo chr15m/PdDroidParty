@@ -1,10 +1,12 @@
+ * Prevent sleeping while app is active
  * accelerometer support (RjDj style - ScenePlayer)
    (check ScenePlayer code)
  * touch support code (RjDj style - ScenePlayer)
  * fix $0 replacement in GUI send/receives
  * work out multitouch support
- * loadsave dialog title should reflect activity name
  * incorporate phonecall code from ScenePlayer
+
+ * loadsave dialog title should reflect activity name
 
  * multi-page canvas display with vis
 
