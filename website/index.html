@@ -135,6 +135,10 @@
 	<li>[loadsave] - Wraps and openpanel/savepanel type of interface into a single abstraction that lets the user specify or choose filenames using the Android interface.</li>
 </ul>
 
+<h3>Fonts</h3>
+
+<p>You can theme all of the defult non-SVG-themed widgets with a font other than the built-in courier font. Put a TTF font file of your choice in the patch directory and call it 'font.ttf' if you want aliased rendering, or 'font-antialiased.ttf' if you want anti-aliased rendering. This will cause PdDroidParty to render that patch with the font you have chosen.</p>
+
 <h3>SVG Widgets</h3>
 
 <p>It's possible to theme your patches with SVG images now. You can theme the following Pd GUI objects: canvas, numberbox (the abstraction), sliders, taplist (abstraction), toggle, touch (abstraction), wordbutton (abstraction).</p>
@@ -160,6 +164,8 @@
 	<li>Pack the patch subfolder into an Android zip resource: `./pack-patch`</li>
 	<li>Install on your device for testing: `ant install`</li>
 </ul>
+
+<p>There are some good tips for Windows users in <a href='http://puredata.hurleur.com/viewtopic.php?pid=28154#p28154'>this forum thread.</a></p>
 
 <p>If you make an app based on this source code, <a href='mailto:chris@mccormick.cx'>I would love to hear about it</a>.</p>
 
