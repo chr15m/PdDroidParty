@@ -221,7 +221,9 @@ public class PdDroidParty extends Activity {
 	// initialise the GUI with the OpenGL rendering engine
 	private void initGui() {
 		//setContentView(R.layout.main);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		int flags = WindowManager.LayoutParams.FLAG_FULLSCREEN |
+			WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+		getWindow().setFlags(flags, flags);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		patchview = new PdDroidPatchView(this, this);
 		setContentView(patchview);

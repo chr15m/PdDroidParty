@@ -1,4 +1,5 @@
  * Prevent sleeping while app is active
+   http://forum.processing.org/topic/turning-sleep-mode-off-in-android#25080000000940015
  * accelerometer support (RjDj style - ScenePlayer)
    (check ScenePlayer code)
  * touch support code (RjDj style - ScenePlayer)
