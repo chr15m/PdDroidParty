@@ -1,25 +1,24 @@
  * incorporate phonecall code from ScenePlayer
-
- * Add a touchpad which doesn't reset to 0,0 when the user lifts their finger.
  * Prevent sleeping while app is active
    http://forum.processing.org/topic/turning-sleep-mode-off-in-android#25080000000940015
+
+ * Add a touchpad which doesn't reset to 0,0 when the user lifts their finger.
  * accelerometer support (RjDj style - ScenePlayer)
    (check ScenePlayer code)
  * touch support code (RjDj style - ScenePlayer)
  * gps support RjDj style
  * work out multitouch support
 
+ * loadsave dialog title should reflect activity name
+
  * bundle pdlua
 
  * nbx2 -> slider -> nbx2 gives a different value!
 
- * loadsave dialog title should reflect activity name
-
  * multi-page canvas display with vis
 
  * Toasting an info message android style
-
- * get it working with the 1.6 SDK (bluetooth free or emulated)
+ * confirm / alert message
 
  * upgrade svg-android to the forked version
 
@@ -124,4 +123,5 @@ DONE
  + Make the splash screen persist on the background until loaded
  + Fix build against latest version of libpd
  + fix $0 replacement in GUI send/receives
+ + get it working with the 1.6 SDK (bluetooth free or emulated)
 
