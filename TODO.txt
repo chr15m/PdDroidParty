@@ -1,4 +1,3 @@
- * fix $0 replacement in GUI send/receives
  * incorporate phonecall code from ScenePlayer
 
  * Add a touchpad which doesn't reset to 0,0 when the user lifts their finger.
@@ -11,6 +10,8 @@
  * work out multitouch support
 
  * bundle pdlua
+
+ * nbx2 -> slider -> nbx2 gives a different value!
 
  * loadsave dialog title should reflect activity name
 
@@ -122,4 +123,5 @@ DONE
  + stretch the background svg
  + Make the splash screen persist on the background until loaded
  + Fix build against latest version of libpd
+ + fix $0 replacement in GUI send/receives
 

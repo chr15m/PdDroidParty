@@ -27,7 +27,7 @@ public class Bang extends Widget {
 		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
 		float h = Float.parseFloat(atomline[5]) / parent.patchheight * screenheight;
 		
-		sendname = atomline[9];
+		sendname = app.app.replaceDollarZero(atomline[9]);
 		receivename = atomline[10];
 		label = setLabel(atomline[11]);
 		labelpos[0] = Float.parseFloat(atomline[12]) / parent.patchwidth * screenwidth;

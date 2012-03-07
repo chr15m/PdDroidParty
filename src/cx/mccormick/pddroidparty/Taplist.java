@@ -43,7 +43,7 @@ public class Taplist extends Widget {
 		paint.setTextSize(fontsize);
 		paint.setTextAlign(Paint.Align.CENTER);
 		
-		sendname = atomline[8];
+		sendname = app.app.replaceDollarZero(atomline[8]);
 		receivename = atomline[7];
 		
 		setval(0, 0);

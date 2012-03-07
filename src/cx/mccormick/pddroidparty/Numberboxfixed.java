@@ -46,7 +46,7 @@ public class Numberboxfixed extends Numberbox {
 		min = Float.parseFloat(atomline[9]);
 		max = Float.parseFloat(atomline[10]);
 		init = 1;
-		sendname = atomline[8];
+		sendname = app.app.replaceDollarZero(atomline[8]);
 		receivename = atomline[7];
 		
 		// set the value to the init value if possible

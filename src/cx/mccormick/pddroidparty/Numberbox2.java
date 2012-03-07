@@ -55,7 +55,7 @@ public class Numberbox2 extends Numberbox {
 		min = Float.parseFloat(atomline[7]);
 		max = Float.parseFloat(atomline[8]);
 		init = Integer.parseInt(atomline[10]);
-		sendname = atomline[11];
+		sendname = app.app.replaceDollarZero(atomline[11]);
 		receivename = atomline[12];
 		label = setLabel(atomline[13]);
 		labelpos[0] = Float.parseFloat(atomline[14]) / parent.patchwidth * screenwidth;

@@ -57,10 +57,10 @@ public class PdDroidParty extends Activity {
 	public static final int DIALOG_NUMBERBOX = 1;
 	public static final int DIALOG_SAVE = 2;
 	public static final int DIALOG_LOAD = 3;
+	public int dollarzero = -1;
 	
 	private String path;
 	private PdService pdService = null;
-	private int patch = -1;
 	private final Object lock = new Object();
 	public Menu ourmenu = null;
 	Map<String, DroidPartyReceiver> receivemap = new HashMap<String, DroidPartyReceiver>();
@@ -211,12 +211,19 @@ public class PdDroidParty extends Activity {
 		PdBase.sendList(dest, ol);
 	}
 	
+	public String replaceDollarZero(String name) {
+		return name.replace("\\$0", dollarzero + "").replace("$0", dollarzero + "");
+	}
+	
 	public void registerReceiver(String name, Widget w) {
-		DroidPartyReceiver r = receivemap.get(name);
+		// do $0 replacement
+		String realname = replaceDollarZero(name);
+		Log.e(TAG, "Receiver: " + realname);
+		DroidPartyReceiver r = receivemap.get(realname);
 		if (r == null) {
 			r = new DroidPartyReceiver(patchview, w);
-			receivemap.put(name, r);
-			dispatcher.addListener(name, r.listener);
+			receivemap.put(realname, r);
+			dispatcher.addListener(realname, r.listener);
 		} else {
 			r.addWidget(w);
 		}
@@ -297,7 +304,7 @@ public class PdDroidParty extends Activity {
 						Log.e(TAG, e.toString());
 						finish();
 					}
-					patch = PdBase.openPatch(path.toString());
+					dollarzero = PdBase.openPatch(path.toString());
 					patchview.buildUI(p, atomlines);
 					// start the audio thread
 					String name = res.getString(R.string.app_name);
@@ -344,8 +351,8 @@ public class PdDroidParty extends Activity {
 		if (pdService != null) {
 			pdService.stopAudio();
 		}
-		if (patch != -1) {
-			PdBase.closePatch(patch);
+		if (dollarzero != -1) {
+			PdBase.closePatch(dollarzero);
 		}
 		PdBase.sendMessage("pd", "quit", "bang");
 		PdBase.release();

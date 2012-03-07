@@ -31,7 +31,7 @@ public class Touch extends Widget {
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
-		sendname = atomline[7];
+		sendname = app.app.replaceDollarZero(atomline[7]);
 		
 		// try and load SVGs
 		on = getSVG(TAG, "on", label);

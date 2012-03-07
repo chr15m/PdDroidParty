@@ -30,7 +30,7 @@ public class Toggle extends Widget {
 		toggleval = Float.parseFloat(atomline[18]);
 		
 		init = Integer.parseInt(atomline[6]);
-		sendname = atomline[7];
+		sendname = app.app.replaceDollarZero(atomline[7]);
 		receivename = atomline[8];
 		label = setLabel(atomline[9]);
 		labelpos[0] = Float.parseFloat(atomline[10]) / parent.patchwidth * screenwidth;

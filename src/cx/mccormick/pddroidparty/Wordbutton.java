@@ -35,7 +35,7 @@ public class Wordbutton extends Bang {
 		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
 		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
 		
-		sendname = "wordbutton-" + atomline[7];
+		sendname = "wordbutton-" + app.app.replaceDollarZero(atomline[7]);
 		label = setLabel(atomline[7]);
 		spacereplace = label.replace("_", " ");
 		paint.setTextSize(Math.round(h * 0.75));
