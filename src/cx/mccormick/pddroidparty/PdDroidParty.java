@@ -24,6 +24,7 @@ import android.app.AlertDialog;
 import android.text.Html;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.Context;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -42,6 +43,8 @@ import android.text.Spanned;
 import android.text.util.Linkify;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.MulticastLock;
 
 import cx.mccormick.pddroidparty.PdParser;
 
@@ -63,6 +66,7 @@ public class PdDroidParty extends Activity {
 	Map<String, DroidPartyReceiver> receivemap = new HashMap<String, DroidPartyReceiver>();
 	ArrayList<String[]> atomlines = null;
 	Widget widgetpopped = null;
+	MulticastLock wifiMulticastLock = null;
 	
 	private MenuItem menuabout = null;
 	private MenuItem menuexit = null;
@@ -233,6 +237,13 @@ public class PdDroidParty extends Activity {
 	
 	// initialise Pd asking for the desired sample rate, parameters, etc.
 	private void initPd() {
+		Context context = this.getApplicationContext();
+		// make sure netreceive can receive broadcast UDP packets
+		wifiMulticastLock = ((WifiManager) context.getSystemService(Context.WIFI_SERVICE)).createMulticastLock("PdDroidPartyMulticastLock");
+		Log.e(TAG, "Got Multicast Lock (before)? " + wifiMulticastLock.isHeld());
+		wifiMulticastLock.acquire();
+		Log.e(TAG, "Got Multicast Lock (after)? " + wifiMulticastLock.isHeld());
+		// set a progress dialog running
 		final ProgressDialog progress = new ProgressDialog(this);
 		progress.setMessage("Loading...");
 		progress.setCancelable(false);
@@ -344,6 +355,9 @@ public class PdDroidParty extends Activity {
 			// already unbound
 			pdService = null;
 		}
+		// release the lock on wifi multicasting
+		if (wifiMulticastLock != null && wifiMulticastLock.isHeld())
+		wifiMulticastLock.release();
 	}
 	
 	public void launchDialog(Widget which, int type) {
