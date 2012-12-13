@@ -1,23 +1,32 @@
 Run your Pure Data patches on Android with native GUIs emulated.
 
-http://mccormick.cx/projects/PdDroidParty
-
-Running your patches
---------------------
-
-See the website for instructions.
+http://droidparty.net/
 
 Building
 --------
 
-Run these on a fresh checkout:
+Run these on a fresh checkout to get the libpd dependencies and get set up:
 
+	# get the latest version of pd-for-android
+	git submodule init
+	git submodule update
+	# get pd-for-android's own submodules
+	cd pd-for-android
+	git submodule init
+	git sudmodule update
+	# make the PdCore component build with ant
+	cd PdCore
 	android update project --path .
-	ant install
+	# now go back to the top level and configure out project
+	cd ..
+	cd ..
+	android update project --name PdDroidParty --path .
 
-See the website for more details.
+Then to build simply:
 
-You can push the existing test suite and the demos to your device:
+	ant debug install
+
+You can push the existing test suite and the demos to your device's sdcard using adb:
 
 	./push-tests-to-sdcard
 	./push-demos-to-sdcard
