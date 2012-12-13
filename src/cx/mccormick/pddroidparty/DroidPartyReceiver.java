@@ -1,6 +1,6 @@
 package cx.mccormick.pddroidparty;
 
-import org.puredata.core.utils.PdListener;
+import org.puredata.core.PdListener;
 
 import java.util.ArrayList;
 
@@ -17,9 +17,8 @@ public class DroidPartyReceiver {
 		widgets.add(w);
 	}
 	
-	public final PdListener listener = new PdListener() {
-		@Override
-		public void receiveList(Object... args) {
+	public final PdListener listener = new PdListener.Adapter() {
+		@Override public void receiveList(String source, Object... args) {
 			if (widgets != null) {
 				for (Widget widget: widgets) {
 					widget.receiveList(args);
@@ -29,8 +28,7 @@ public class DroidPartyReceiver {
 			patchview.threadSafeInvalidate();
 		}
 		
-		@Override
-		public void receiveMessage(String symbol, Object... args) {
+		@Override public void receiveMessage(String source, String symbol, Object... args) {
 			if (widgets != null) {
 				for (Widget widget: widgets) {
 					widget.receiveMessage(symbol, args);
@@ -40,7 +38,7 @@ public class DroidPartyReceiver {
 			patchview.threadSafeInvalidate();
 		}
 		
-		@Override public void receiveSymbol(String symbol) {
+		@Override public void receiveSymbol(String source, String symbol) {
 			if (widgets != null) {
 				for (Widget widget: widgets) {
 					widget.receiveSymbol(symbol);
@@ -50,7 +48,7 @@ public class DroidPartyReceiver {
 			patchview.threadSafeInvalidate();
 		}
 		
-		@Override public void receiveFloat(float x) {
+		@Override public void receiveFloat(String source, float x) {
 			if (widgets != null) {
 				for (Widget widget: widgets) {
 					widget.receiveFloat(x);
@@ -60,7 +58,7 @@ public class DroidPartyReceiver {
 			patchview.threadSafeInvalidate();
 		}
 		
-		@Override public void receiveBang() {
+		@Override public void receiveBang(String source) {
 			if (widgets != null) {
 				for (Widget widget: widgets) {
 					widget.receiveBang();
