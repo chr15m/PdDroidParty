@@ -108,6 +108,8 @@
 
 <img id='screenshot' src='PdDroidParty.png'>
 
+<p><a href='https://github.com/chr15m/PdDroidParty'>Get the GPLv3 source code from GitHub</a></p>
+
 <p>On iOS? Check out <a href='https://github.com/danomatika/PdParty'>PdParty for iOS</a>.</p>
 
 <h3>How to make patches for PdDroidParty</h3>
@@ -156,25 +158,19 @@
 <p>You can use the PdDroidParty code base to bundle your own Pd patches as standalone Android apps.</p>
 
 <ul>
-	<li>Clone the source code with bazaar: `bzr branch http://droidparty.net/PdDroidParty MySynthesizer`</li>
+	<li>Get the source code: `git clone https://github.com/chr15m/PdDroidParty.git MySynthesizer`</li>
 	<li>Convert the app name to whatever you like: `./convert-app-name mysynth "My Synthesizer"`</li>
-	<li>In the cloned directory re-generate the Android build.xml file: `android update project --path .`</li>
 	<li>Replace your own icon 72x72 PNG icon over res/drawable/icon.png</li>
 	<li>(optional) Place a splash.svg graphic with 1.333 aspect ratio (e.g. 640x480) in res/raw/</li>
 	<li>(optional) edit assets/about.html with your own "about" text</li>
 	<li>Place your patch and files with a droidparty_main.pd in the "patch" subfolder</li>
 	<li>Pack the patch subfolder into an Android zip resource: `./pack-patch`</li>
-	<li>Install on your device for testing: `ant install`</li>
+	<li>Follow the instructions in the README.txt file for building.</li>
 </ul>
 
 <p>There are some good tips for Windows users in <a href='http://puredata.hurleur.com/viewtopic.php?pid=28154#p28154'>this forum thread.</a></p>
 
 <p>If you make an app based on this source code, <a href='mailto:chris@mccormick.cx'>I would love to hear about it</a>.</p>
-
-<h3>Source code (GPLv3)</h3>
-
-<p>Get the source with <a href='http://bazaar.canonical.com/en/'>bazaar</a>:</p>
-<pre><code>	bzr co http://droidparty.net/PdDroidParty</code></pre>
 
 <h3>Attributions</h3>
 
