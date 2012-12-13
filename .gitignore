@@ -4,3 +4,6 @@ local.properties
 build.xml
 gen
 bin
+website/PdDroidParty-debug*.apk
+website/droidparty-*.zip
+website/index.html

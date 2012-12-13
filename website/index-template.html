@@ -83,13 +83,13 @@
 
 <h3>Download</h3>
 <ul>
-<li><a href='PdDroidParty-debug-179.apk'>PdDroidParty-debug-179.apk</a></li>
-<li><a href='droidparty-tests.tgz'>droidparty-tests.tgz</a></li>
-<li><a href='droidparty-abstractions.tgz'>droidparty-abstractions.tgz</a></li>
-<li><a href='droidparty-demos.tgz'>droidparty-demos.tgz</a></li>
+<li><a href='PdDroidParty-debug-REVNO.apk'>PdDroidParty-debug-REVNO.apk</a></li>
+<li><a href='droidparty-tests.zip'>droidparty-tests.zip</a></li>
+<li><a href='droidparty-abstractions.zip'>droidparty-abstractions.zip</a></li>
+<li><a href='droidparty-demos.zip'>droidparty-demos.zip</a></li>
 </ul>
 
-	<div class='donate'>
+<!--	<div class='donate'>
 	<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 	<input type="hidden" name="cmd" value="_donations">
 	<input type="hidden" name="business" value="chris@mccormick.cx">
@@ -102,9 +102,9 @@
 	<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
 	<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
 	</form>
-	</div>
+	</div> -->
 
-<p>(Unzip the tgz files onto your device's sdcard e.g. into /sdcard/pd/)</p>
+<p>(Unzip the zipfiles onto your device's sdcard e.g. into /sdcard/pd/)</p>
 
 <img id='screenshot' src='PdDroidParty.png'>
 
@@ -118,7 +118,7 @@
 
 <p>2. PdDroidParty GUI patches will be scaled to fit the screen of the device. Your patches should have the rough dimensions of a phone/tablet in landscape mode (e.g. 3:2 aspect ratio or e.g. 480x320 should usually work well). If it's not exact it doesn't matter - the GUI elements will be scaled.</p>
 
-<p>3. Numberbox, Sliders, Toggle, Comment, Bang, and Canvas are currently rendered by PdDroidParty, although not feature complete. Check out the GUI abstractions in the droidparty-abstractions.tgz file - these are also supported natively. See the Abstractions section below for more details.</p>
+<p>3. Numberbox, Sliders, Toggle, Comment, Bang, and Canvas are currently rendered by PdDroidParty, although not feature complete. Check out the GUI abstractions in the <a href='droidparty-abstractions.zip'>droidparty-abstractions.zip</a> file - these are also supported natively. See the Abstractions section below for more details.</p>
 
 <p>4. All GUI elements should communicate with the main audio patches using send and receive only. You can usually set send and receive for each GUI by right clicking on the object and choosing 'properties' in Pd. Do not directly connect cables to the GUI elements as they won't work. It helps to keep the GUIs on their own in the droidparty_main.pd file and have it include the logic of your patch as an abstraction or subpatch containing senders and receivers for interfacing with GUI elements. This is good patch design practice anyway as it is basically a model-view-controller methodology.</p>
 
