@@ -34,7 +34,9 @@ You can push the existing test suite and the demos to your device's sdcard using
 Copyright
 ---------
 
-Copyright Chris McCormick, 2011
+Copyright Chris McCormick, 2011-2013.
+
+With contributions from: Kishan Muddu.
 
 GPLv3 Licensed - see LICENSE for details.
 
