@@ -84,18 +84,80 @@ public class Taplist extends Widget {
 	}
 	
 	public void touch(MotionEvent event) {
-		float ex = event.getX();
-		float ey = event.getY();
-		if (event.getAction() == event.ACTION_DOWN && dRect.contains(ex, ey)) {
-			// go to the next item in our list
-			val = (val + 1) % atoms.size();
-			doSend();
-			down = true;
+		
+		int action = event.getAction() & MotionEvent.ACTION_MASK;
+		int pid, index;
+		float ex;
+		float ey;
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			ex = event.getX();
+			ey = event.getY();
+			if (dRect.contains(ex, ey)) {
+				val = (val + 1) % atoms.size();
+				doSend();
+				down = true;
+				
+			}
+			break;
+		case MotionEvent.ACTION_POINTER_DOWN:
+			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+			index = event.findPointerIndex(pid);
+			Log.d("dwnTapBefore", index+"");
+			index=(index==-1)?1:index;
+			Log.d("dwnTapAfter", index+"");
+			ex = event.getX(index);
+			ey = event.getY(index);
+			if (dRect.contains(ex, ey)) {
+
+				val = (val + 1) % atoms.size();
+				doSend();
+				down = true;
+			}
+			break;
+			
+		case MotionEvent.ACTION_UP: 
+			if(down)
+		{
+			ex = event.getX();
+			ey = event.getY();
+			if (dRect.contains(ex, ey)) {
+
+				down = false;
+			}
+		}
+			break;
+
+		case MotionEvent.ACTION_POINTER_UP: if(down)
+		{
+			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+			index = event.findPointerIndex(pid);
+			Log.d("upTapBefore", index+"");
+			index=(index==-1)?1:index;
+			Log.d("upTapAfter", index+"");
+			ex = event.getX(index);
+			ey = event.getY(index);
+			if (dRect.contains(ex, ey)) {
+
+				down = false;
+			}
+		}
+			break;
 		}
 		
-		if (event.getAction() == event.ACTION_UP && down) {
-			down = false;
-		}
+		
+//		float ex = event.getX();
+//		float ey = event.getY();
+//		if (event.getAction() == event.ACTION_DOWN && dRect.contains(ex, ey)) {
+//			// go to the next item in our list
+//			val = (val + 1) % atoms.size();
+//			doSend();
+//			down = true;
+//		}
+//		
+//		if (event.getAction() == event.ACTION_UP && down) {
+//			down = false;
+//		}
 	}
 	
 	public void receiveList(Object... args) {
