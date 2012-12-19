@@ -80,19 +80,59 @@ public class Numberbox extends Widget {
 	}
 	
 	public void touch(MotionEvent event) {
-		float ex = event.getX();
-		float ey = event.getY();
-		
-		if (event.getAction() == event.ACTION_DOWN && dRect.contains(ex, ey)) {
-			down = true;
-		}
-		
-		if (event.getAction() == event.ACTION_UP) {
+
+		int action = event.getAction() & MotionEvent.ACTION_MASK;
+		int pid, index;
+		float ex;
+		float ey;
+
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			ex = event.getX();
+			ey = event.getY();
+			if (dRect.contains(ex, ey)) {
+				down = true;
+			}
+			break;
+
+		case MotionEvent.ACTION_POINTER_DOWN:
+			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+			index = event.findPointerIndex(pid);
+			Log.d("dwnNBoxBefore", index+"");
+			index=(index==-1)?1:index;
+			Log.d("dwnNBoxAfter", index+"");
+			ex = event.getX(index);
+			ey = event.getY(index);
+			if (dRect.contains(ex, ey)) {
+				down = true;
+			}
+			break;
+
+		case MotionEvent.ACTION_UP:
+			ex = event.getX();
+			ey = event.getY();
 			if (dRect.contains(ex, ey)) {
 				parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
 			}
 			down = false;
+			break;
+
+		case MotionEvent.ACTION_POINTER_UP:
+			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+			index = event.findPointerIndex(pid);
+			Log.d("upNBoxBefore", index+"");
+			index=(index==-1)?1:index;
+			Log.d("NBoxAfter", index+"");
+			ex = event.getX(index);
+			ey = event.getY(index);
+			if (dRect.contains(ex, ey)) {
+				parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
+			}
+			down = false;
+			break;
+
 		}
+
 		
 		// TODO: allow dragging to set the number
 		/*if (down) {

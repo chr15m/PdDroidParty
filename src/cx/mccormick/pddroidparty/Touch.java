@@ -54,16 +54,77 @@ public class Touch extends Widget {
 	}
 	
 	public void touch(MotionEvent event) {
-		float ex = event.getX();
-		float ey = event.getY();
-		if ((event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) && dRect.contains(ex, ey)) {
-			send(((ex - dRect.left) / dRect.width()) + " " + ((ey - dRect.top) / dRect.height()));
-			down = true;
-		}
-		
-		if (event.getAction() == event.ACTION_UP && down) {
-			send(0 + " " + 0);
-			down = false;
+
+		int action = event.getAction() & MotionEvent.ACTION_MASK;
+		int pid, index;
+		float ex;
+		float ey;
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			ex = event.getX();
+			ey = event.getY();
+			if (dRect.contains(ex, ey)) {
+
+				send(((ex - dRect.left) / dRect.width()) + " "
+						+ ((ey - dRect.top) / dRect.height()));
+				down = true;
+			}
+			break;
+		case MotionEvent.ACTION_POINTER_DOWN:
+			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+			index = event.findPointerIndex(pid);
+			Log.d("dwnTouchBefore", index+"");
+			index=(index==-1)?1:index;
+			Log.d("dwnTouchAfter", index+"");
+			ex = event.getX(index);
+			ey = event.getY(index);
+			if (dRect.contains(ex, ey)) {
+
+				send(((ex - dRect.left) / dRect.width()) + " "
+						+ ((ey - dRect.top) / dRect.height()));
+				down = true;
+			}
+			break;
+		case MotionEvent.ACTION_MOVE:
+			for (int i = 0; i < event.getPointerCount(); i++) {
+				ex = event.getX(i);
+				ey = event.getY(i);
+				if (dRect.contains(ex, ey)) {
+
+					send(((ex - dRect.left) / dRect.width()) + " "
+							+ ((ey - dRect.top) / dRect.height()));
+					down = true;
+
+				}
+			}
+			break;
+
+		case MotionEvent.ACTION_UP:
+			if (down) {
+				ex = event.getX();
+				ey = event.getY();
+				if (dRect.contains(ex, ey)) {
+
+					down = false;
+				}
+			}
+			break;
+
+		case MotionEvent.ACTION_POINTER_UP:
+			if (down) {
+				pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+				index = event.findPointerIndex(pid);
+				Log.d("upTouchBefore", index+"");
+				index=(index==-1)?1:index;
+				Log.d("dwnTouchAfter", index+"");
+				ex = event.getX(index);
+				ey = event.getY(index);
+				if (dRect.contains(ex, ey)) {
+
+					down = false;
+				}
+			}
+			break;
 		}
 	}
 }

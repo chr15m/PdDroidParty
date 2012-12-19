@@ -16,94 +16,151 @@ import org.puredata.core.PdBase;
 
 public class Taplist extends Widget {
 	private static final String TAG = "Taplist";
-	
+
 	String longest = null;
 	ArrayList<String> atoms = new ArrayList<String>();
-	
+
 	SVGRenderer on = null;
 	SVGRenderer off = null;
-	
+
 	boolean down = false;
-	
+
 	public Taplist(PdDroidPatchView app, String[] atomline) {
 		super(app);
-		
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
-		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
-		
-		fontsize = (int)(h * 0.75);
-		
+
+		float x = Float.parseFloat(atomline[2]) / parent.patchwidth
+				* screenwidth;
+		float y = Float.parseFloat(atomline[3]) / parent.patchheight
+				* screenheight;
+		float w = Float.parseFloat(atomline[5]) / parent.patchwidth
+				* screenwidth;
+		float h = Float.parseFloat(atomline[6]) / parent.patchheight
+				* screenheight;
+
+		fontsize = (int) (h * 0.75);
+
 		// get list atoms
-		for (int a=9; a<atomline.length; a++) {
+		for (int a = 9; a < atomline.length; a++) {
 			atoms.add(atomline[a]);
 		}
-		
+
 		paint.setTextSize(fontsize);
 		paint.setTextAlign(Paint.Align.CENTER);
-		
+
 		sendname = app.app.replaceDollarZero(atomline[8]);
 		receivename = atomline[7];
-		
+
 		setval(0, 0);
-		
+
 		// graphics setup
-		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
-		
+		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
+				Math.round(y + h));
+
 		// listen out for floats from Pd
 		setupreceive();
-		
+
 		// try and load SVGs
 		on = getSVG(TAG, "on", sendname, receivename);
 		off = getSVG(TAG, "off", sendname, receivename);
-		
+
 		setTextParametersFromSVG(on);
 		setTextParametersFromSVG(off);
 	}
-	
+
 	public void draw(Canvas canvas) {
 		if (down) {
 			paint.setStrokeWidth(2);
 		} else {
 			paint.setStrokeWidth(1);
 		}
-		
+
 		if (down ? drawPicture(canvas, on) : drawPicture(canvas, off)) {
-			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
-			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1, dRect.bottom, paint);
-			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);
-			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom, paint);
+			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1,
+					dRect.top, paint);
+			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1,
+					dRect.bottom, paint);
+			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left,
+					dRect.bottom - 1, paint);
+			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom,
+					paint);
 		}
-		canvas.drawText(atoms.get((int)val), dRect.left + dRect.width() / 2, (int)(dRect.top + dRect.height() * 0.75), paint);
+		canvas.drawText(atoms.get((int) val), dRect.left + dRect.width() / 2,
+				(int) (dRect.top + dRect.height() * 0.75), paint);
 	}
-	
+
 	private void doSend() {
-		parent.app.send(sendname, atoms.get((int)val));
+		parent.app.send(sendname, atoms.get((int) val));
 		PdBase.sendFloat(sendname + "/idx", val);
 	}
-	
+
 	public void touch(MotionEvent event) {
-		float ex = event.getX();
-		float ey = event.getY();
-		if (event.getAction() == event.ACTION_DOWN && dRect.contains(ex, ey)) {
-			// go to the next item in our list
-			val = (val + 1) % atoms.size();
-			doSend();
-			down = true;
-		}
-		
-		if (event.getAction() == event.ACTION_UP && down) {
-			down = false;
+
+		int action = event.getAction() & MotionEvent.ACTION_MASK;
+		int pid, index;
+		float ex;
+		float ey;
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			ex = event.getX();
+			ey = event.getY();
+			if (dRect.contains(ex, ey)) {
+				val = (val + 1) % atoms.size();
+				doSend();
+				down = true;
+
+			}
+			break;
+		case MotionEvent.ACTION_POINTER_DOWN:
+			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+			index = event.findPointerIndex(pid);
+			Log.d("dwnTapBefore", index + "");
+			index = (index == -1) ? 1 : index;
+			Log.d("dwnTapAfter", index + "");
+			ex = event.getX(index);
+			ey = event.getY(index);
+			if (dRect.contains(ex, ey)) {
+
+				val = (val + 1) % atoms.size();
+				doSend();
+				down = true;
+			}
+			break;
+
+		case MotionEvent.ACTION_UP:
+			if (down) {
+				ex = event.getX();
+				ey = event.getY();
+				if (dRect.contains(ex, ey)) {
+
+					down = false;
+				}
+			}
+			break;
+
+		case MotionEvent.ACTION_POINTER_UP:
+			if (down) {
+				pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+				index = event.findPointerIndex(pid);
+				Log.d("upTapBefore", index + "");
+				index = (index == -1) ? 1 : index;
+				Log.d("upTapAfter", index + "");
+				ex = event.getX(index);
+				ey = event.getY(index);
+				if (dRect.contains(ex, ey)) {
+
+					down = false;
+				}
+			}
+			break;
 		}
 	}
-	
+
 	public void receiveList(Object... args) {
 		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
-			receiveFloat((Float)args[0]);
+			receiveFloat((Float) args[0]);
 		}
 	}
-	
+
 	public void receiveFloat(float v) {
 		val = v % atoms.size();
 		doSend();

@@ -134,17 +134,19 @@ public class Slider extends Widget {
 		return (((dRect.height() - (y - dRect.top)) / dRect.height()) * (max - min) + min);
 	}
 	
+
 	public void touch(MotionEvent event) {
-		float ex = event.getX();
-		float ey = event.getY();
-		if (event.getAction() == event.ACTION_DOWN && dRect.contains(ex, ey)) {
-			down = true;
-		}
-		
-		if (down) {
-			//Log.e(TAG, "touch:" + val);
-			if (event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) {
-				// calculate the new value based on touch
+
+		int action = event.getAction() & MotionEvent.ACTION_MASK;
+		int pid, index;
+		float ex;
+		float ey;
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			ex = event.getX();
+			ey = event.getY();
+			if (dRect.contains(ex, ey)) {
+
 				if (orientation_horizontal) {
 					val = get_horizontal_val(ex);
 				} else {
@@ -154,9 +156,50 @@ public class Slider extends Widget {
 				slider_setval(val);
 				// send the result to Pd
 				send("" + val);
-			} else if (event.getAction() == event.ACTION_UP) {
-				down = false;
 			}
+			break;
+		case MotionEvent.ACTION_POINTER_DOWN:
+			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+			index = event.findPointerIndex(pid);
+			Log.d("SliderBefore", index+"");
+			index=(index==-1)?1:index;
+			Log.d("SliderAfter", index+"");
+			ex = event.getX(index);
+			ey = event.getY(index);
+			if (dRect.contains(ex, ey)) {
+
+				if (orientation_horizontal) {
+					val = get_horizontal_val(ex);
+				} else {
+					val = get_vertical_val(ey);
+				}
+				// clamp the value
+				slider_setval(val);
+				// send the result to Pd
+				send("" + val);
+
+			}
+			break;
+		case MotionEvent.ACTION_MOVE:
+			for (int i = 0; i < event.getPointerCount(); i++) {
+				ex = event.getX(i);
+				ey = event.getY(i);
+				if (dRect.contains(ex, ey)) {
+
+					if (orientation_horizontal) {
+						val = get_horizontal_val(ex);
+					} else {
+						val = get_vertical_val(ey);
+					}
+					// clamp the value
+					slider_setval(val);
+					// send the result to Pd
+					send("" + val);
+
+				}
+			}
+			break;
+
 		}
 	}
 	
