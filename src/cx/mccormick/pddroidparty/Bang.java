@@ -67,37 +67,11 @@ public class Bang extends Widget {
 	}
 	
 	public void touch(MotionEvent event) {
-		
-		int action = event.getAction() & MotionEvent.ACTION_MASK;
-		int pid, index;
-		float ex;
-		float ey;
-		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			ex = event.getX();
-			ey = event.getY();
-			if (dRect.contains(ex, ey)) {
-
-				bang();
-			}
-			break;
-		case MotionEvent.ACTION_POINTER_DOWN:
-			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-			index = event.findPointerIndex(pid);
-			Log.d("BangBefore", index+"");
-			index=(index==-1)?1:index;
-			Log.d("BangAfter", index+"");
-			ex = event.getX(index);
-			ey = event.getY(index);
-			if (dRect.contains(ex, ey)) {
-
-				bang();
-
-			}
-			break;
-		
+		float ex = event.getX();
+		float ey = event.getY();
+		if (event.getAction() == event.ACTION_DOWN && dRect.contains(ex, ey)) {
+			bang();
 		}
-		
 	}
 	
 	public void receiveAny() {
