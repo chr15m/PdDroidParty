@@ -19,14 +19,15 @@ public class Touch extends Widget {
 	SVGRenderer off = null;
 	
 	boolean down = false;
+	int pid0 = -1; //pointer id when down
 	
 	public Touch(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
-		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) ;
+		float y = Float.parseFloat(atomline[3]) ;
+		float w = Float.parseFloat(atomline[5]) ;
+		float h = Float.parseFloat(atomline[6]) ;
 		
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
@@ -53,7 +54,40 @@ public class Touch extends Widget {
 		}
 	}
 	
-	public void touch(MotionEvent event) {
+	public boolean touchdown(int pid, float x, float y)
+	{
+		if (dRect.contains(x, y)) {
+
+			send(((x - dRect.left) / dRect.width()) + " "
+					+ ((y - dRect.top) / dRect.height()));
+			down = true;
+			pid0 = pid;
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean touchup(int pid, float x, float y)
+	{
+		if(pid == pid0) {
+			down = false;
+			pid0 = -1;
+		}
+		return false;
+	}
+	
+	public boolean touchmove(int pid, float x, float y)
+	{
+		if(pid == pid0) {
+			send(((x - dRect.left) / dRect.width()) + " "
+					+ ((y - dRect.top) / dRect.height()));			
+			return true;
+		}
+		return false;	
+	}
+	
+	public void touch_(MotionEvent event) {
 
 		int action = event.getAction() & MotionEvent.ACTION_MASK;
 		int pid, index;

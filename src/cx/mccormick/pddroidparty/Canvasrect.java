@@ -12,80 +12,73 @@ public class Canvasrect extends Widget {
 	
 	SVGRenderer vis = null;
 	
-	private static int IEM_GUI_MAX_COLOR = 30;
-	private static int iemgui_color_hex[] = {
-		16579836, 10526880, 4210752, 16572640, 16572608,
-		16579784, 14220504, 14220540, 14476540, 16308476,
-		14737632, 8158332, 2105376, 16525352, 16559172,
-		15263784, 1370132, 2684148, 3952892, 16003312,
-		12369084, 6316128, 0, 9177096, 5779456,
-		7874580, 2641940, 17488, 5256, 5767248
-	};
-	
 	public Canvasrect(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		float w = Float.parseFloat(atomline[6]) / parent.patchwidth * screenwidth;
-		float h = Float.parseFloat(atomline[7]) / parent.patchheight * screenheight;
-		
+		float x = Float.parseFloat(atomline[2]) ;
+		float y = Float.parseFloat(atomline[3]) ;
+		float w = Float.parseFloat(atomline[6]) ;
+		float h = Float.parseFloat(atomline[7]) ;
+		sendname = atomline[8];
 		receivename = atomline[9];
+		label = setLabel(atomline[10]);
+		labelpos[0] = Float.parseFloat(atomline[11]);
+		labelpos[1] = Float.parseFloat(atomline[12]);
+		labelfont = Integer.parseInt(atomline[13]);
+		labelsize = (int)(Float.parseFloat(atomline[14]));
+		bgcolor = getColor(Integer.parseInt(atomline[15]));
+		labelcolor = getColor(Integer.parseInt(atomline[16]));
+		
 		setupreceive();
-		
-		// TODO: calculate and set fill colour
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
-		
-		int iemcolor = Integer.parseInt(atomline[15]);
-		Log.e("ORIGINAL COLOR", "" + iemcolor);
-		int color = 0;
-		
-		if(iemcolor < 0)
-		{
-			iemcolor = -1 - iemcolor;
-			paint.setARGB(0xFF, (iemcolor & 0x3f000) >> 10, (iemcolor & 0xfc0) >> 4, iemcolor & 0x3f << 2);
-		}
-		else
-		{
-			iemcolor = iemgui_modulo_color(iemcolor);
-			color = iemgui_color_hex[iemcolor] << 8 | 0xFF;
-			paint.setColor(color);
-		}
-		
-		Log.e("COLOR", "" + color);
-		//paint.setColor(Color.BLACK);
-		paint.setStyle(Paint.Style.FILL);
-		//paint.setStyle(Paint.Style.STROKE);
-		//r.sort();
 		vis = getSVG(TAG, null, receivename);
+		
+		if(receivename.equals("ViewPort")) {
+			parent.viewX=(int)dRect.left;
+			parent.viewY=(int)dRect.top;
+			parent.viewW=(int)dRect.width();
+			parent.viewH=(int)dRect.height();
+		}
 	}
 	
-	private int iemgui_modulo_color(int col) {
-		while (col >= IEM_GUI_MAX_COLOR)
-			col -= IEM_GUI_MAX_COLOR;
-		while (col < 0)
-			col += IEM_GUI_MAX_COLOR;
-		return col;
-	}
 		
 	public void draw(Canvas canvas) {
+		if(receivename.equals("ViewPort")) return;
 		if (drawPicture(canvas, vis)) {
+			paint.setStyle(Paint.Style.FILL);
+			paint.setColor(bgcolor);			
 			canvas.drawRect(dRect.left, dRect.top, dRect.right, dRect.bottom, paint); 
+			drawLabel(canvas);
 		}
 	}
 	
 	public void receiveMessage(String symbol, Object... args) {
-		if (symbol.equals("pos")) {
-			if (args.length == 2) {
-				float w = dRect.width();
-				float h = dRect.height();
-				//Log.e("POS", args[0].toString() + ", " + args[1].toString());
-				dRect.left = Float.parseFloat(args[0].toString()) / parent.patchwidth * screenwidth;
-				dRect.top = Float.parseFloat(args[1].toString()) / parent.patchwidth * screenwidth;
-				dRect.right = dRect.left + w;
-				dRect.bottom = dRect.top + h;
-				//r.sort();
+		
+		if (symbol.equals("vis_size") && args.length > 1 && args[0].getClass().equals(Float.class) && args[1].getClass().equals(Float.class)) {
+			float w = Float.parseFloat(args[0].toString());
+			float h = Float.parseFloat(args[1].toString());
+			
+			dRect.right = dRect.left + w;
+			dRect.bottom = dRect.top + h;
+			
+		} else if( symbol.equals("color")
+		&& args.length > 1 && args[0].getClass().equals(Float.class)
+		&& args[1].getClass().equals(Float.class)
+		) {
+			bgcolor = getColor24((int)(float)(Float)args[0]);
+			labelcolor = getColor24((int)(float)(Float)args[1]);
+			//Log.e(TAG, "msg bgcolor = "+(int)(float)(Float)args[0]+", bgcolor = "+bgcolor);
+		}
+		else widgetreceiveSymbol(symbol,args);
+		
+		if(receivename.equals("ViewPort")) {
+			if (symbol.equals("vis_size") || symbol.equals("pos") ) {
+				parent.viewX=(int)dRect.left;
+				parent.viewY=(int)dRect.top;
+				parent.viewW=(int)dRect.width();
+				parent.viewH=(int)dRect.height();
 			}
 		}
 	}
+	
 }

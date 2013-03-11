@@ -53,7 +53,7 @@ public class PdDroidParty extends Activity {
 	public static final String PATCH = "PATCH";
 	private static final String PD_CLIENT = "PdDroidParty";
 	private static final String TAG = "PdDroidParty";
-	private static final int SAMPLE_RATE = 22050;
+	private static final int SAMPLE_RATE = 44100;
 	public static final int DIALOG_NUMBERBOX = 1;
 	public static final int DIALOG_SAVE = 2;
 	public static final int DIALOG_LOAD = 3;

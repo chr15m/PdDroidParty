@@ -26,12 +26,13 @@ public class Numberbox extends Widget {
 	Rect tRect = new Rect();
 	
 	boolean down = false;
+	int pid0 = -1; //pointer id when down
 	
 	public Numberbox(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) ;
+		float y = Float.parseFloat(atomline[3]) ;
 		
 		// calculate screen bounds for the numbers that can fit
 		numwidth = Integer.parseInt(atomline[4]);
@@ -72,14 +73,36 @@ public class Numberbox extends Widget {
 	}
 	
 	public void draw(Canvas canvas) {
+		paint.setColor(Color.BLACK);
 		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
 		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
 		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
 		canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
 		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
+		drawLabel(canvas);
 	}
 	
-	public void touch(MotionEvent event) {
+	public boolean touchdown(int pid, float x,float y) {
+		if (dRect.contains(x, y)) {
+			down = true;
+			pid0 = pid;
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean touchup(int pid, float x,float y) {
+		if (pid == pid0) {
+			parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
+			down = false;
+			pid0 = -1;
+			return true;
+		}
+		return false;
+	}
+
+	
+	public void touch_(MotionEvent event) {
 
 		int action = event.getAction() & MotionEvent.ACTION_MASK;
 		int pid, index;
@@ -168,5 +191,13 @@ public class Numberbox extends Widget {
 		}
 		sendFloat(val);
 	}
+	
+	public void receiveMessage(String symbol, Object... args) {
+		if(widgetreceiveSymbol(symbol,args)) return;
+		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
+			receiveFloat((Float)args[0]);
+		}
+	}
+
 }
 

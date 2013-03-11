@@ -5,10 +5,13 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
+import android.annotation.TargetApi;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.Paint;
 import android.view.MotionEvent;
+import android.os.Build;
 import android.util.Log;
 
 public class Slider extends Widget {
@@ -16,6 +19,9 @@ public class Slider extends Widget {
 	
 	float min, max;
 	int log;
+	
+	int pid0=-1;			// pointer id,
+	float x0,y0,val0 ; 	// position of pointer, and value when pointer down.
 	
 	boolean orientation_horizontal = true;
 	boolean down = false;
@@ -30,10 +36,10 @@ public class Slider extends Widget {
 		
 		orientation_horizontal = horizontal;
 		
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
-		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) ;
+		float y = Float.parseFloat(atomline[3]) ;
+		float w = Float.parseFloat(atomline[5]) ;
+		float h = Float.parseFloat(atomline[6]) ;
 		
 		min = Float.parseFloat(atomline[7]);
 		max = Float.parseFloat(atomline[8]);
@@ -42,9 +48,14 @@ public class Slider extends Widget {
 		sendname = app.app.replaceDollarZero(atomline[11]);
 		receivename = atomline[12];
 		label = setLabel(atomline[13]);
-		labelpos[0] = Float.parseFloat(atomline[14]) / parent.patchwidth * screenwidth;
-		labelpos[1] = Float.parseFloat(atomline[15]) / parent.patchheight * screenheight;
-		
+		labelpos[0] = Float.parseFloat(atomline[14]) ;
+		labelpos[1] = Float.parseFloat(atomline[15]) ;
+		labelfont = Integer.parseInt(atomline[16]);
+		labelsize = (int)(Float.parseFloat(atomline[17]));
+		bgcolor = getColor(Integer.parseInt(atomline[18]));
+		fgcolor = getColor(Integer.parseInt(atomline[19]));
+		labelcolor = getColor(Integer.parseInt(atomline[20]));
+
 		setval((float)(Float.parseFloat(atomline[21]) * 0.01 * (max - min) / ((horizontal ? Float.parseFloat(atomline[5]) : Float.parseFloat(atomline[6])) - 1) + min), min);
 		
 		// listen out for floats from Pd
@@ -96,15 +107,24 @@ public class Slider extends Widget {
 	
 	public void draw(Canvas canvas) {
 		if (drawPicture(canvas, svg)) {
-			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right, dRect.top, paint);
-			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
-			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
-			canvas.drawLine(dRect.right, dRect.top + 1, dRect.right, dRect.bottom, paint);
+			paint.setColor(bgcolor);
+			paint.setStyle(Paint.Style.FILL);
+			canvas.drawRect(dRect,paint);
+
+			paint.setColor(Color.BLACK);
+			paint.setStrokeWidth(1);
+			canvas.drawLine(dRect.left /*+ 1*/, dRect.top, dRect.right, dRect.top, paint);
+			canvas.drawLine(dRect.left /*+ 1*/, dRect.bottom, dRect.right, dRect.bottom, paint);
+			canvas.drawLine(dRect.left, dRect.top /*+ 1*/, dRect.left, dRect.bottom, paint);
+			canvas.drawLine(dRect.right, dRect.top /*+ 1*/, dRect.right, dRect.bottom, paint);
+			paint.setColor(fgcolor);
+			paint.setStrokeWidth(3);
 			if (orientation_horizontal) {
-				canvas.drawLine(Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.top + 2), Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.bottom - 2), paint);
+				canvas.drawLine(Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.top /*+ 2*/), Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.bottom /*- 2*/), paint);
 			} else {
-				canvas.drawLine(Math.round(dRect.left + 2), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), Math.round(dRect.right - 2), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), paint);
+				canvas.drawLine(Math.round(dRect.left /*+ 2*/), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), Math.round(dRect.right /*- 2*/), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), paint);
 			}
+
 			drawLabel(canvas);
 		} else if (slider != null) {
 			if (orientation_horizontal) {
@@ -115,6 +135,7 @@ public class Slider extends Widget {
 			drawPicture(canvas, slider, sRect);
 		}
 	}
+
 	
 	public void slider_setval(float v) {
 		val = Math.min(max, Math.max(min, v));
@@ -134,76 +155,46 @@ public class Slider extends Widget {
 		return (((dRect.height() - (y - dRect.top)) / dRect.height()) * (max - min) + min);
 	}
 	
-
-	public void touch(MotionEvent event) {
-
-		int action = event.getAction() & MotionEvent.ACTION_MASK;
-		int pid, index;
-		float ex;
-		float ey;
-		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			ex = event.getX();
-			ey = event.getY();
-			if (dRect.contains(ex, ey)) {
-
-				if (orientation_horizontal) {
-					val = get_horizontal_val(ex);
-				} else {
-					val = get_vertical_val(ey);
-				}
-				// clamp the value
-				slider_setval(val);
-				// send the result to Pd
-				send("" + val);
-			}
-			break;
-		case MotionEvent.ACTION_POINTER_DOWN:
-			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-			index = event.findPointerIndex(pid);
-			Log.d("SliderBefore", index+"");
-			index=(index==-1)?1:index;
-			Log.d("SliderAfter", index+"");
-			ex = event.getX(index);
-			ey = event.getY(index);
-			if (dRect.contains(ex, ey)) {
-
-				if (orientation_horizontal) {
-					val = get_horizontal_val(ex);
-				} else {
-					val = get_vertical_val(ey);
-				}
-				// clamp the value
-				slider_setval(val);
-				// send the result to Pd
-				send("" + val);
-
-			}
-			break;
-		case MotionEvent.ACTION_MOVE:
-			for (int i = 0; i < event.getPointerCount(); i++) {
-				ex = event.getX(i);
-				ey = event.getY(i);
-				if (dRect.contains(ex, ey)) {
-
-					if (orientation_horizontal) {
-						val = get_horizontal_val(ex);
-					} else {
-						val = get_vertical_val(ey);
-					}
-					// clamp the value
-					slider_setval(val);
-					// send the result to Pd
-					send("" + val);
-
-				}
-			}
-			break;
-
+	public boolean touchdown(int pid,float x,float y)
+	{
+		if (dRect.contains(x, y)) {
+			val0=val;
+			x0=x;
+			y0=y;
+			pid0=pid;
+			return true;
 		}
+		return false;
+	}
+
+	public boolean touchup(int pid,float x,float y)
+	{
+		if(pid0 == pid) {
+			pid0 = -1;
+			//return true;
+		}
+		return false;
+	}
+
+	public boolean touchmove(int pid,float x,float y)
+	{
+		if(pid0 == pid) {
+			if (orientation_horizontal) {
+				val = val0 + get_horizontal_val(x) - get_horizontal_val(x0);
+			} else {
+				val = val0 + get_vertical_val(y) - get_vertical_val(y0);
+			}
+			// clamp the value
+			slider_setval(val);
+			// send the result to Pd
+			send("" + val);
+			return true;
+		}
+		return false;
 	}
 	
 	public void receiveMessage(String symbol, Object... args) {
+		if(widgetreceiveSymbol(symbol,args)) return;
 		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
 			receiveFloat((Float)args[0]);
 		}

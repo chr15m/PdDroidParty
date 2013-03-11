@@ -24,20 +24,17 @@ public class Wordbutton extends Bang {
 	SVGRenderer off = null;
 
 	boolean down = false;
-
+	int pid0 = -1; //pointer id when down
+	
 	String spacereplace = null;
 
 	public Wordbutton(PdDroidPatchView app, String[] atomline) {
 		super(app);
 
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth
-				* screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight
-				* screenheight;
-		float w = Float.parseFloat(atomline[5]) / parent.patchwidth
-				* screenwidth;
-		float h = Float.parseFloat(atomline[6]) / parent.patchheight
-				* screenheight;
+		float x = Float.parseFloat(atomline[2]) ;
+		float y = Float.parseFloat(atomline[3]) ;
+		float w = Float.parseFloat(atomline[5]) ;
+		float h = Float.parseFloat(atomline[6]) ;
 
 		sendname = "wordbutton-" + app.app.replaceDollarZero(atomline[7]);
 		label = setLabel(atomline[7]);
@@ -80,7 +77,30 @@ public class Wordbutton extends Bang {
 				(int) (dRect.top + dRect.height() * 0.75), paint);
 	}
 
-	public void touch(MotionEvent event) {
+	public boolean touchdown(int pid,float x,float y)
+	{
+		if (dRect.contains(x, y)) {
+			down = true;
+			pid0 = pid;
+			return true;
+		}
+		return false;
+	}
+
+	public boolean touchup(int pid,float x,float y)
+	{
+		if (pid == pid0) {
+			if (dRect.contains(x, y)) {
+				PdBase.sendBang(sendname);
+			}
+			down = false;
+			pid0 = -1;
+			//return true;
+		}
+		return false;
+	}
+	
+	public void touch_(MotionEvent event) {
 
 		int action = event.getAction() & MotionEvent.ACTION_MASK;
 		int pid, index;
