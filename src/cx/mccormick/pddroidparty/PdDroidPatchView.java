@@ -215,9 +215,11 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 								widgets.add(new Taplist(this, line));
 							} else if (line[4].equals("touch")) {
 								widgets.add(new Touch(this, line));
+							// things that aren't widgets
 							} else if (line[4].equals("droidnetreceive")) {
 								widgets.add(new DroidNetReceive(this, line));
-							// things that aren't widgets
+							} else if (line[4].equals("droidnetclient")) {
+								widgets.add(new DroidNetClient(this, line));
 							} else if (line[4].equals("menubang")) {
 								new MenuBang(this, line);
 							} else if (line[4].equals("loadsave")) {
