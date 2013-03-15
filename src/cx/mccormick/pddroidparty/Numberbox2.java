@@ -21,8 +21,8 @@ public class Numberbox2 extends Numberbox {
 	public Numberbox2(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) ;
+		float y = Float.parseFloat(atomline[3]) ;
 		Rect tRect = new Rect();
 		
 		// calculate screen bounds for the numbers that can fit
@@ -45,7 +45,7 @@ public class Numberbox2 extends Numberbox {
 		dRect.left -= 3;
 		dRect.right += 3;
 		
-		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
+		float h = Float.parseFloat(atomline[6]) ;
 		float diff = h - dRect.height();
 		if (diff > 0) {
 			dRect.bottom += diff / 2;
@@ -58,8 +58,8 @@ public class Numberbox2 extends Numberbox {
 		sendname = app.app.replaceDollarZero(atomline[11]);
 		receivename = atomline[12];
 		label = setLabel(atomline[13]);
-		labelpos[0] = Float.parseFloat(atomline[14]) / parent.patchwidth * screenwidth;
-		labelpos[1] = Float.parseFloat(atomline[15]) / parent.patchheight * screenheight;
+		labelpos[0] = Float.parseFloat(atomline[14]) ;
+		labelpos[1] = Float.parseFloat(atomline[15]) ;
 		
 		// set the value to the init value if possible
 		setval(Float.parseFloat(atomline[21]), 0);

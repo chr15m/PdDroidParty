@@ -6,6 +6,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Picture;
 import android.graphics.RectF;
@@ -22,14 +23,10 @@ public class Toggle extends Widget {
 	public Toggle(PdDroidPatchView app, String[] atomline) {
 		super(app);
 
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth
-				* screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight
-				* screenheight;
-		float w = Float.parseFloat(atomline[5]) / parent.patchwidth
-				* screenwidth;
-		float h = Float.parseFloat(atomline[5]) / parent.patchheight
-				* screenheight;
+		float x = Float.parseFloat(atomline[2]) ;
+		float y = Float.parseFloat(atomline[3]) ;
+		float w = Float.parseFloat(atomline[5]) ;
+		float h = Float.parseFloat(atomline[5]) ;
 
 		toggleval = Float.parseFloat(atomline[18]);
 
@@ -37,10 +34,13 @@ public class Toggle extends Widget {
 		sendname = app.app.replaceDollarZero(atomline[7]);
 		receivename = atomline[8];
 		label = setLabel(atomline[9]);
-		labelpos[0] = Float.parseFloat(atomline[10]) / parent.patchwidth
-				* screenwidth;
-		labelpos[1] = Float.parseFloat(atomline[11]) / parent.patchheight
-				* screenheight;
+		labelpos[0] = Float.parseFloat(atomline[10]) ;
+		labelpos[1] = Float.parseFloat(atomline[11]) ;
+		labelfont = Integer.parseInt(atomline[12]);
+		labelsize = (int)(Float.parseFloat(atomline[13]) );
+		bgcolor = getColor(Integer.parseInt(atomline[14]));
+		fgcolor = getColor(Integer.parseInt(atomline[15]));
+		labelcolor = getColor(Integer.parseInt(atomline[16]));
 
 		setval(Float.parseFloat(atomline[17]), 0);
 
@@ -61,22 +61,24 @@ public class Toggle extends Widget {
 
 	public void draw(Canvas canvas) {
 		if (drawPicture(canvas, off)) {
-			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right, dRect.top,
-					paint);
-			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right,
-					dRect.bottom, paint);
-			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left,
-					dRect.bottom, paint);
-			canvas.drawLine(dRect.right, dRect.top + 1, dRect.right,
-					dRect.bottom, paint);
-		}
+			paint.setColor(bgcolor);
+			paint.setStyle(Paint.Style.FILL);
+			canvas.drawRect(dRect,paint);
 
+			paint.setColor(Color.BLACK);
+			paint.setStrokeWidth(1);
+			canvas.drawLine(dRect.left /*+ 1*/, dRect.top, dRect.right, dRect.top, paint);
+			canvas.drawLine(dRect.left /*+ 1*/, dRect.bottom, dRect.right, dRect.bottom, paint);
+			canvas.drawLine(dRect.left, dRect.top /*+ 1*/, dRect.left, dRect.bottom, paint);
+			canvas.drawLine(dRect.right, dRect.top /*+ 1*/, dRect.right, dRect.bottom, paint);
+		}
+		
 		if (val != 0) {
 			if (drawPicture(canvas, on)) {
-				canvas.drawLine(dRect.left + 2, dRect.top + 2, dRect.right - 2,
-						dRect.bottom - 2, paint);
-				canvas.drawLine(dRect.left + 2, dRect.bottom - 2,
-						dRect.right - 2, dRect.top + 2, paint);
+				paint.setColor(fgcolor);
+				paint.setStrokeWidth(3);
+				canvas.drawLine(dRect.left + 2, dRect.top + 2, dRect.right - 2, dRect.bottom - 2, paint);
+				canvas.drawLine(dRect.left + 2, dRect.bottom - 2, dRect.right - 2, dRect.top + 2, paint);
 			}
 		}
 		drawLabel(canvas);
@@ -96,44 +98,20 @@ public class Toggle extends Widget {
 		}
 	}
 
-	public void touch(MotionEvent event) {
-
-		int action = event.getAction() & MotionEvent.ACTION_MASK;
-		int pid, index;
-		float ex;
-		float ey;
-
-		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			ex = event.getX();
-			ey = event.getY();
-			if (dRect.contains(ex, ey)) {
-				toggle();
-				sendFloat(val);
-			}
-			break;
-		case MotionEvent.ACTION_POINTER_DOWN:
-			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-			index = event.findPointerIndex(pid);
-			Log.d("ToggleBefore", index + "");
-			index = (index == -1) ? 1 : index;
-			Log.d("ToggleAfter", index + "");
-			Log.d("Test", index + "");
-			if (dRect.contains(event.getX(index), event.getY(index))) {
-				Log.d(TAG, "touch:togglee" + event.getX(index));
-				toggle();
-				sendFloat(val);
-			}
-
-			break;
-
+	public boolean touchdown(int pid,float x,float y)
+	{
+		if (dRect.contains(x, y)) {
+			toggle();
+			sendFloat(val);
+			return true;
 		}
-
+		return false;
 	}
 
-	public void receiveMessage(String dest, Object... args) {
+	public void receiveMessage(String symbol, Object... args) {
 		// set message sets value without sending
-		if (dest.equals("set") && args.length > 0) {
+		if(widgetreceiveSymbol(symbol,args)) return;
+		if (symbol.equals("set") && args.length > 0) {
 			val = (Float) args[0];
 		}
 	}

@@ -21,10 +21,10 @@ public class Numberboxfixed extends Numberbox {
 	public Numberboxfixed(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
-		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) ;
+		float y = Float.parseFloat(atomline[3]) ;
+		float w = Float.parseFloat(atomline[5]) ;
+		float h = Float.parseFloat(atomline[6]) ;
 		
 		fontsize = (int)(h * 0.75);
 		

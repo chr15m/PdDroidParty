@@ -21,6 +21,12 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	Paint paint = new Paint();
 	public int patchwidth;
 	public int patchheight;
+	//view port :
+	public int viewX=0;
+	public int viewY=0;
+	public int viewW=1;
+	public int viewH=1;
+
 	public int fontsize;
 	ArrayList<Widget> widgets = new ArrayList<Widget>();
 	public PdDroidParty app;
@@ -32,7 +38,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		super(context);
 		
 		app = parent;
-		
+
 		setFocusable(true);
 		setFocusableInTouchMode(true);
 		
@@ -76,22 +82,66 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		}
 		// draw all widgets
 		if (widgets != null) {
+			canvas.save();
+			canvas.scale(getWidth()/(float)viewW,getHeight()/(float)viewH);
+			canvas.translate(-viewX ,-viewY );
 			for (Widget widget: widgets) {
 				widget.draw(canvas);
 			}
+			canvas.restore();
 		}
 	}
 	
+	public float PointerX(float x){
+		return (x*((float)viewW)/getWidth()+viewX);
+	}
+	
+	public float PointerY(float y){
+		return (y*((float)viewH)/getHeight()+viewY);
+	}
+	
 	public boolean onTouch(View view, MotionEvent event) {
-		// if(event.getAction() != MotionEvent.ACTION_DOWN)
-		// return super.onTouchEvent(event);
+		int index,pid,action;
+		float x,y;
+		
 		if (widgets != null) {
-			for (Widget widget: widgets) {
-				widget.touch(event);
+			action = event.getActionMasked();
+			switch(action) {
+				case MotionEvent.ACTION_DOWN:
+				case MotionEvent.ACTION_POINTER_DOWN:
+					index = event.getActionIndex();
+					pid = event.getPointerId(index);
+					x = PointerX(event.getX(index));
+					y = PointerY(event.getY(index));
+					for (Widget widget: widgets) {
+						if( widget.touchdown(pid,x,y)) break;
+					}
+					break;
+				case MotionEvent.ACTION_UP:
+				case MotionEvent.ACTION_POINTER_UP:
+					index = event.getActionIndex();
+					pid = event.getPointerId(index);
+					x = PointerX(event.getX(index));
+					y = PointerY(event.getY(index));
+					for (Widget widget: widgets) {
+						if( widget.touchup(pid,x,y)) break;
+					}
+					break;
+				case MotionEvent.ACTION_MOVE:
+					int pointerCount = event.getPointerCount();
+					for (int p = 0; p < pointerCount; p++) {
+						pid = event.getPointerId(p);
+						x = PointerX(event.getX(p));
+						y = PointerY(event.getY(p));
+						for (Widget widget: widgets) {
+							if( widget.touchmove(pid,x,y)) break;
+						}
+					}
+					break;
+				default:
 			}
 		}
 		invalidate();
-		//Log.d(TAG, "touch: " + event.getX() + " " + event.getY());
 		return true;
 	}
 	
@@ -127,8 +177,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 					}*/
 					level += 1;
 					if (level == 1) {
-						patchwidth = Integer.parseInt(line[4]);
-						patchheight = Integer.parseInt(line[5]);
+						viewW = patchwidth = Integer.parseInt(line[4]);
+						viewH = patchheight = Integer.parseInt(line[5]);
 						fontsize = Integer.parseInt(line[6]);
 					}
 				} else if (line[1].equals("restore")) {
@@ -166,6 +216,10 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 							} else if (line[4].equals("touch")) {
 								widgets.add(new Touch(this, line));
 							// things that aren't widgets
+							} else if (line[4].equals("droidnetreceive")) {
+								widgets.add(new DroidNetReceive(this, line));
+							} else if (line[4].equals("droidnetclient")) {
+								widgets.add(new DroidNetClient(this, line));
 							} else if (line[4].equals("menubang")) {
 								new MenuBang(this, line);
 							} else if (line[4].equals("loadsave")) {

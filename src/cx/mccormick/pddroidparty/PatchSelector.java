@@ -119,7 +119,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					launchDroidParty(bakedpatch);
 					finish();
 				} else {
-					List<File> list = IoUtils.find(new File("/sdcard"), ".*droidparty_main\\.pd$");
+					List<File> list = IoUtils.find(new File("/sdcard/PdDroidParty"), ".*droidparty_main\\.pd$");
 					for (File f: list) {
 						String[] parts = f.getParent().split("/");
 						// exclude generic patch directories found in apps based on PdDroidParty

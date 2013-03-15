@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Collection;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -13,16 +12,14 @@ import java.io.IOException;
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
-import org.puredata.core.PdReceiver;
 import org.puredata.core.utils.PdDispatcher;
-import org.puredata.core.utils.IoUtils;
 
 import android.app.ProgressDialog;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.AlertDialog;
 import android.text.Html;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Context;
 import android.content.ServiceConnection;
@@ -34,12 +31,10 @@ import android.os.IBinder;
 import android.widget.Toast;
 import android.widget.TextView;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.text.Spanned;
 import android.text.util.Linkify;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -53,7 +48,7 @@ public class PdDroidParty extends Activity {
 	public static final String PATCH = "PATCH";
 	private static final String PD_CLIENT = "PdDroidParty";
 	private static final String TAG = "PdDroidParty";
-	private static final int SAMPLE_RATE = 22050;
+	private static final int SAMPLE_RATE = 44100;
 	public static final int DIALOG_NUMBERBOX = 1;
 	public static final int DIALOG_SAVE = 2;
 	public static final int DIALOG_LOAD = 3;
@@ -194,6 +189,30 @@ public class PdDroidParty extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	// confirm quit :
+	@Override
+	public void onBackPressed() {
+	    String basename;
+	    
+	    basename = path.substring(0,path.lastIndexOf("/"));
+	    basename = basename.substring(basename.lastIndexOf("/")+1,basename.length());
+	    
+		new AlertDialog.Builder(this)
+	        .setIcon(android.R.drawable.ic_dialog_alert)
+	        .setTitle("Confirm Close")
+	        .setMessage("Are you sure you want to close " + basename + " ?")
+	        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+	    {
+	        @Override
+	        public void onClick(DialogInterface dialog, int which) {
+	            finish();    
+	        }
+
+	    })
+	    .setNegativeButton("No", null)
+	    .show();
+	}
+	
 	// send a Pd atom-string 's' to a particular receiver 'dest'
 	public void send(String dest, String s) {
 		List<Object> list = new ArrayList<Object>();
@@ -290,7 +309,7 @@ public class PdDroidParty extends Activity {
 					PdParser p = new PdParser();
 					// p.printAtoms(p.parsePatch(path));
 					// get the actual lines of atoms from the patch
-					atomlines = p.parsePatch(path);
+					atomlines = PdParser.parsePatch(path);
 					// some devices don't have a mic and might be buggy
 					// so don't create the audio in unless we really need it
 					// TODO: check a config option for this

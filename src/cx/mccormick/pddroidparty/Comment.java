@@ -27,8 +27,8 @@ public class Comment extends Widget {
 		}
 		
 		label = buffer.toString();
-		labelpos[0] = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		labelpos[1] = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight + fontsize;
+		labelpos[0] = Float.parseFloat(atomline[2]) ;
+		labelpos[1] = Float.parseFloat(atomline[3]) ;
 	}
 	
 	public void draw(Canvas canvas) {

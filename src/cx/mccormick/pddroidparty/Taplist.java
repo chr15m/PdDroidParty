@@ -24,18 +24,15 @@ public class Taplist extends Widget {
 	SVGRenderer off = null;
 
 	boolean down = false;
-
+	int pid0 = -1; //pointer id when down
+	
 	public Taplist(PdDroidPatchView app, String[] atomline) {
 		super(app);
 
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth
-				* screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight
-				* screenheight;
-		float w = Float.parseFloat(atomline[5]) / parent.patchwidth
-				* screenwidth;
-		float h = Float.parseFloat(atomline[6]) / parent.patchheight
-				* screenheight;
+		float x = Float.parseFloat(atomline[2]) ;
+		float y = Float.parseFloat(atomline[3]) ;
+		float w = Float.parseFloat(atomline[5]) ;
+		float h = Float.parseFloat(atomline[6]) ;
 
 		fontsize = (int) (h * 0.75);
 
@@ -93,68 +90,26 @@ public class Taplist extends Widget {
 		PdBase.sendFloat(sendname + "/idx", val);
 	}
 
-	public void touch(MotionEvent event) {
-
-		int action = event.getAction() & MotionEvent.ACTION_MASK;
-		int pid, index;
-		float ex;
-		float ey;
-		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			ex = event.getX();
-			ey = event.getY();
-			if (dRect.contains(ex, ey)) {
-				val = (val + 1) % atoms.size();
-				doSend();
-				down = true;
-
-			}
-			break;
-		case MotionEvent.ACTION_POINTER_DOWN:
-			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-			index = event.findPointerIndex(pid);
-			Log.d("dwnTapBefore", index + "");
-			index = (index == -1) ? 1 : index;
-			Log.d("dwnTapAfter", index + "");
-			ex = event.getX(index);
-			ey = event.getY(index);
-			if (dRect.contains(ex, ey)) {
-
-				val = (val + 1) % atoms.size();
-				doSend();
-				down = true;
-			}
-			break;
-
-		case MotionEvent.ACTION_UP:
-			if (down) {
-				ex = event.getX();
-				ey = event.getY();
-				if (dRect.contains(ex, ey)) {
-
-					down = false;
-				}
-			}
-			break;
-
-		case MotionEvent.ACTION_POINTER_UP:
-			if (down) {
-				pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-				index = event.findPointerIndex(pid);
-				Log.d("upTapBefore", index + "");
-				index = (index == -1) ? 1 : index;
-				Log.d("upTapAfter", index + "");
-				ex = event.getX(index);
-				ey = event.getY(index);
-				if (dRect.contains(ex, ey)) {
-
-					down = false;
-				}
-			}
-			break;
+	public boolean touchdown(int pid, float x,float y) {
+		if (dRect.contains(x, y)) {
+			val = (val + 1) % atoms.size();
+			doSend();
+			down = true;
+			pid0 = pid;
+			return true;
 		}
+		return false;
 	}
-
+	
+	public boolean touchup(int pid, float x,float y) {
+		if (pid == pid0) {
+			down = false;
+			pid0 = -1;
+			return true;
+		}
+		return false;
+	}
+	
 	public void receiveList(Object... args) {
 		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
 			receiveFloat((Float) args[0]);

@@ -19,14 +19,15 @@ public class Touch extends Widget {
 	SVGRenderer off = null;
 	
 	boolean down = false;
+	int pid0 = -1; //pointer id when down
 	
 	public Touch(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		
-		float x = Float.parseFloat(atomline[2]) / parent.patchwidth * screenwidth;
-		float y = Float.parseFloat(atomline[3]) / parent.patchheight * screenheight;
-		float w = Float.parseFloat(atomline[5]) / parent.patchwidth * screenwidth;
-		float h = Float.parseFloat(atomline[6]) / parent.patchheight * screenheight;
+		float x = Float.parseFloat(atomline[2]) ;
+		float y = Float.parseFloat(atomline[3]) ;
+		float w = Float.parseFloat(atomline[5]) ;
+		float h = Float.parseFloat(atomline[6]) ;
 		
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
@@ -53,78 +54,42 @@ public class Touch extends Widget {
 		}
 	}
 	
-	public void touch(MotionEvent event) {
-
-		int action = event.getAction() & MotionEvent.ACTION_MASK;
-		int pid, index;
-		float ex;
-		float ey;
-		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			ex = event.getX();
-			ey = event.getY();
-			if (dRect.contains(ex, ey)) {
-
-				send(((ex - dRect.left) / dRect.width()) + " "
-						+ ((ey - dRect.top) / dRect.height()));
-				down = true;
-			}
-			break;
-		case MotionEvent.ACTION_POINTER_DOWN:
-			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-			index = event.findPointerIndex(pid);
-			Log.d("dwnTouchBefore", index+"");
-			index=(index==-1)?1:index;
-			Log.d("dwnTouchAfter", index+"");
-			ex = event.getX(index);
-			ey = event.getY(index);
-			if (dRect.contains(ex, ey)) {
-
-				send(((ex - dRect.left) / dRect.width()) + " "
-						+ ((ey - dRect.top) / dRect.height()));
-				down = true;
-			}
-			break;
-		case MotionEvent.ACTION_MOVE:
-			for (int i = 0; i < event.getPointerCount(); i++) {
-				ex = event.getX(i);
-				ey = event.getY(i);
-				if (dRect.contains(ex, ey)) {
-
-					send(((ex - dRect.left) / dRect.width()) + " "
-							+ ((ey - dRect.top) / dRect.height()));
-					down = true;
-
-				}
-			}
-			break;
-
-		case MotionEvent.ACTION_UP:
-			if (down) {
-				ex = event.getX();
-				ey = event.getY();
-				if (dRect.contains(ex, ey)) {
-
-					down = false;
-				}
-			}
-			break;
-
-		case MotionEvent.ACTION_POINTER_UP:
-			if (down) {
-				pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-				index = event.findPointerIndex(pid);
-				Log.d("upTouchBefore", index+"");
-				index=(index==-1)?1:index;
-				Log.d("dwnTouchAfter", index+"");
-				ex = event.getX(index);
-				ey = event.getY(index);
-				if (dRect.contains(ex, ey)) {
-
-					down = false;
-				}
-			}
-			break;
-		}
+	public void Sendxy(float x, float y)
+	{
+		send(((x - dRect.left) / dRect.width()) + " "
+				+ ((y - dRect.top) / dRect.height()));
 	}
+	
+	public boolean touchdown(int pid, float x, float y)
+	{
+		if (dRect.contains(x, y)) {
+
+			down = true;
+			pid0 = pid;
+			Sendxy(x,y);
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean touchup(int pid, float x, float y)
+	{
+		if(pid == pid0) {
+			down = false;
+			pid0 = -1;
+			send("-1 -1");
+		}
+		return false;
+	}
+	
+	public boolean touchmove(int pid, float x, float y)
+	{
+		if(pid == pid0) {
+			Sendxy(x,y);		
+			return true;
+		}
+		return false;	
+	}
+
 }
