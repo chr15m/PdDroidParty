@@ -93,6 +93,7 @@ public class DroidNetClient extends Widget {
 		}
 		else if(symbol.equals("disconnect")){
 			if(port == 0) return;
+			if(connection == null) return;
 			try {
 				connection.close();
 			} catch (IOException e) {
@@ -114,7 +115,10 @@ public class DroidNetClient extends Widget {
 				return;
 			}
 			try {
-				for(Object o : args) out.write(o.toString().getBytes());
+				for(Object o : args) {
+					out.write(o.toString().getBytes());
+					out.write(' ');
+				}
 				out.write(';');
 				out.write('\n');
 				
