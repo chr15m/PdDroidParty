@@ -1,3 +1,4 @@
+![PdDroidParty Logo](http://droidparty.net/icon.png)
 Run your Pure Data patches on Android with native GUIs emulated.
 
 http://droidparty.net/
@@ -40,6 +41,4 @@ With contributions from: Kishan Muddu, Antoine Rousseau.
 
 GPLv3 Licensed - see LICENSE for details.
 
-Contains libpd by Peter Brinkmann and Pure Data by Miller S. Puckette
-They are BSD.
-
+Contains libpd by Peter Brinkmann and Pure Data by Miller S. Puckette. They are BSD licensed.
