@@ -1,2 +1,2 @@
 #!/bin/bash
-adb push droidparty-tests /sdcard/pd/droidparty-tests
+adb push droidparty-tests /sdcard/PdDroidParty/droidparty-tests
