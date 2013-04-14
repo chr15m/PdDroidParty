@@ -25,6 +25,7 @@ public class Slider extends Widget {
 	
 	boolean orientation_horizontal = true;
 	boolean down = false;
+	int steady = 1;
 	
 	SVGRenderer svg = null;
 	SVGRenderer slider = null;
@@ -55,6 +56,7 @@ public class Slider extends Widget {
 		bgcolor = getColor(Integer.parseInt(atomline[18]));
 		fgcolor = getColor(Integer.parseInt(atomline[19]));
 		labelcolor = getColor(Integer.parseInt(atomline[20]));
+		steady = Integer.parseInt(atomline[22]);
 
 		setval((float)(Float.parseFloat(atomline[21]) * 0.01 * (max - min) / ((horizontal ? Float.parseFloat(atomline[5]) : Float.parseFloat(atomline[6])) - 1) + min), min);
 		
@@ -180,9 +182,9 @@ public class Slider extends Widget {
 	{
 		if(pid0 == pid) {
 			if (orientation_horizontal) {
-				val = val0 + get_horizontal_val(x) - get_horizontal_val(x0);
+				val = steady * val0 + get_horizontal_val(x) - get_horizontal_val(x0) * steady;
 			} else {
-				val = val0 + get_vertical_val(y) - get_vertical_val(y0);
+				val = steady * val0 + get_vertical_val(y) - get_vertical_val(y0) * steady;
 			}
 			// clamp the value
 			slider_setval(val);
