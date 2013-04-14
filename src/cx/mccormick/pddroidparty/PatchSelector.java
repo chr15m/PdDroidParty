@@ -98,6 +98,18 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 			// return the patch path to launch Pd
 			return basedir + "/patch/droidparty_main.pd";
 		}
+		
+		// add abstractions and externals zips
+		Resources res = getResources();
+		File libDir = getFilesDir();
+		try {
+			IoUtils.extractZipResource(res.openRawResource(R.raw.abstractions), libDir, true);
+			// IoUtils.extractZipResource(res.openRawResource(Properties.hasArmeabiV7a ? R.raw.externals_v7a : R.raw.externals), libDir, true);
+		} catch (IOException e) {
+			Log.e("PatchSelector", e.toString());
+		}
+		PdBase.addToSearchPath(libDir.getAbsolutePath());
+		
 		return null;
 	}
 	
