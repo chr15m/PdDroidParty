@@ -15,14 +15,25 @@
 		}
 		
 		div#inner {
-			margin-left: 50px;
+			margin-left: auto;
 			margin-right: auto;
+			background: rgba(255, 255,255,0.5);
+			padding: 1em;
+			box-shadow: 0px 0px 10px #888;
+			-webkit-box-shadow: 0px 0px 10px #888;
+			-moz-box-shadow: 0px 0px 10px #888;
+			/* For IE 8 */
+			-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=10, Direction=0, Color='#888888')";
+			/* For IE 5.5 - 7 */
+			filter: progid:DXImageTransform.Microsoft.Shadow(Strength=10, Direction=0, Color='#888888');
+			
+			max-width: 1024px;
 		}
 	
 		img#screenshot {
 			float: right;
-			margin-right: 50px;
-			margin-left: 30px;
+			margin-right: 1em;
+			margin-left: 1em;
 		}
 		
 		img#icon {
@@ -36,8 +47,8 @@
 			width: 200px;
 			text-align: center;
 			float: right;
-			margin-right: 100px;
-			margin-left: 20px;
+			margin-right: 1em;
+			margin-left: 1em;
 		}
 		
 		.applink img.logo {
@@ -61,9 +72,9 @@
 </head>
 <body>
 <div id='outer'>
-<div id='inner'>
-
 <h1><img src='icon.png' id='icon'/>PdDroidParty</h1>
+
+<div id='inner'>
 
 <div class='applink'><a href='https://market.android.com/details?id=cx.mccormick.canofbeats'><img src='canofbeats-icon.png' class='logo'/>
 support this<br/>buy CanOfBeats<br/><img src='45_avail_market_logo1.png'/></a>
