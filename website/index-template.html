@@ -94,13 +94,17 @@
 	</form>
 	</div> -->
 
-<p>(Unzip the zipfiles onto your device's sdcard e.g. into /sdcard/pd/)</p>
+<p>(Unzip the zipfiles onto your device's sdcard e.g. into /sdcard/PdDroidParty/)</p>
 
 <img id='screenshot' src='PdDroidParty.png'>
 
 <p><a href='https://github.com/chr15m/PdDroidParty'>Get the GPLv3 source code from GitHub</a></p>
 
 <p>On iOS? Check out <a href='https://github.com/danomatika/PdParty'>PdParty for iOS</a>.</p>
+
+<h3>Help and support</h3>
+
+<p>Need help? Ask a question on <a href='http://lists.puredata.info/listinfo/pd-list'>the Pure Data mailing list</a> or <a href='http://puredata.hurleur.com/'>the Pure Data Forum</a>.
 
 <h3>How to make patches for PdDroidParty</h3>
 
@@ -112,7 +116,7 @@
 
 <p>4. All GUI elements should communicate with the main audio patches using send and receive only. You can usually set send and receive for each GUI by right clicking on the object and choosing 'properties' in Pd. Do not directly connect cables to the GUI elements as they won't work. It helps to keep the GUIs on their own in the droidparty_main.pd file and have it include the logic of your patch as an abstraction or subpatch containing senders and receivers for interfacing with GUI elements. This is good patch design practice anyway as it is basically a model-view-controller methodology.</p>
 
-<p>5. Copy the entire directory containing your droidparty_main.pd somewhere onto the sdcard of your device. You can usually do this over USB with most phones and tablets by mounting your device as a hard drive on your computer. One good place to copy it is to e.g. /sdcard/pd/MyPdPatch</p>
+<p>5. Copy the entire directory containing your droidparty_main.pd onto the sdcard of your device under a directory called PdDroidParty. You can usually do this over USB with most phones and tablets by mounting your device as a hard drive on your computer. For example your directory called MyPdPatch containing a patch called droidparty_main.pd could be copied to /sdcard/PdDroidParty/MyPdPatch on your device.</p>
 
 <p>6. Run PdDroidParty and you will find an entry named after your subdirectory. Tap it to load your patch.</p>
 

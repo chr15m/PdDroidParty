@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd bundled-abstractions
+zip -r abstractions.zip *
+mv abstractions.zip ../res/raw/
