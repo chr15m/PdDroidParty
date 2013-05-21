@@ -1,16 +1,24 @@
 package cx.mccormick.pddroidparty;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
+
+import android.annotation.TargetApi;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.Paint;
+import android.view.MotionEvent;
+import android.os.Build;
+import android.util.Log;
 
 public class Slider extends Widget {
 	private static final String TAG = "Slider";
 	
 	float min, max;
 	int log;
-	boolean jump;
 	
 	int pid0=-1;			// pointer id,
 	float x0,y0,val0 ; 	// position of pointer, and value when pointer down.
@@ -49,7 +57,7 @@ public class Slider extends Widget {
 		labelcolor = getColor(Integer.parseInt(atomline[20]));
 
 		setval((float)(Float.parseFloat(atomline[21]) * 0.01 * (max - min) / ((horizontal ? Float.parseFloat(atomline[5]) : Float.parseFloat(atomline[6])) - 1) + min), min);
-		jump = (Float.parseFloat(atomline[22])==0) ;
+		
 		// listen out for floats from Pd
 		setupreceive();
 		
@@ -154,11 +162,6 @@ public class Slider extends Widget {
 			x0=x;
 			y0=y;
 			pid0=pid;
-			if(jump) {
-				if (orientation_horizontal) val = get_horizontal_val(x);
-				else val = get_vertical_val(y);
-			}
-			send("" + val);
 			return true;
 		}
 		return false;
@@ -176,15 +179,10 @@ public class Slider extends Widget {
 	public boolean touchmove(int pid,float x,float y)
 	{
 		if(pid0 == pid) {
-			if(jump) {
-				if (orientation_horizontal) val = get_horizontal_val(x);
-				else val = get_vertical_val(y);
-			}
-			else {
-				if (orientation_horizontal) 
-					val = val0 + get_horizontal_val(x) - get_horizontal_val(x0);
-				else
-					val = val0 + get_vertical_val(y) - get_vertical_val(y0);
+			if (orientation_horizontal) {
+				val = val0 + get_horizontal_val(x) - get_horizontal_val(x0);
+			} else {
+				val = val0 + get_vertical_val(y) - get_vertical_val(y0);
 			}
 			// clamp the value
 			slider_setval(val);
