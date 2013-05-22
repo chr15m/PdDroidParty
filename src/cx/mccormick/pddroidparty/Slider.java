@@ -99,7 +99,7 @@ public class Slider extends Widget {
 			}
 		}
 		
-		slider_setval(val);
+		setval(val);
 		
 		// interpolate the svg paths with ID "open" and "closed"
 		//if (svg != null) {
@@ -138,8 +138,7 @@ public class Slider extends Widget {
 		}
 	}
 
-	
-	public void slider_setval(float v) {
+	public void setval(float v) {
 		val = Math.min(max, Math.max(min, v));
 		if (svg != null) {
 			// Log.e("Slider", "" + ((val - min) / (max - min)));
@@ -187,7 +186,7 @@ public class Slider extends Widget {
 				val = steady * val0 + get_vertical_val(y) - get_vertical_val(y0) * steady;
 			}
 			// clamp the value
-			slider_setval(val);
+			setval(val);
 			// send the result to Pd
 			send("" + val);
 			return true;
@@ -209,7 +208,8 @@ public class Slider extends Widget {
 	}
 	
 	public void receiveFloat(float v) {
-		slider_setval(v);
+		setval(v);
+		sendFloat(val);
 	}
 }
 
