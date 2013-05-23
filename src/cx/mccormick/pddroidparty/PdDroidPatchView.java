@@ -43,7 +43,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		setFocusableInTouchMode(true);
 		
 		this.setOnTouchListener(this);
-		
+		this.setId(R.id.patch_view);
 		// default background color settings
 		paint.setColor(Color.WHITE);
 		paint.setAntiAlias(true);
