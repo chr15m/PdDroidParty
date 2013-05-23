@@ -163,6 +163,11 @@ public class Slider extends Widget {
 			x0=x;
 			y0=y;
 			pid0=pid;
+			if(steady==0) {
+				if (orientation_horizontal) val = get_horizontal_val(x);
+				else val = get_vertical_val(y);
+			}
+			send("" + val);
 			return true;
 		}
 		return false;
