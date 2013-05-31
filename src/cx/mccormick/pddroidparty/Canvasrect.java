@@ -61,14 +61,14 @@ public class Canvasrect extends Widget {
 			dRect.right = dRect.left + w;
 			dRect.bottom = dRect.top + h;
 			
-		} else if( symbol.equals("color")
+		} /*else if( symbol.equals("color")
 		&& args.length > 1 && args[0].getClass().equals(Float.class)
 		&& args[1].getClass().equals(Float.class)
 		) {
 			bgcolor = getColor24((int)(float)(Float)args[0]);
 			labelcolor = getColor24((int)(float)(Float)args[1]);
 			//Log.e(TAG, "msg bgcolor = "+(int)(float)(Float)args[0]+", bgcolor = "+bgcolor);
-		}
+		}*/
 		else widgetreceiveSymbol(symbol,args);
 		
 		if(receivename.equals("ViewPort")) {

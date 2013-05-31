@@ -246,7 +246,13 @@ public class Widget {
 		return false;
 	}
 
-	
+	/**
+	 * Generic setval method
+	 **/	
+	public void setval(float v) {
+		val=v;
+	}
+
 	public boolean widgetreceiveSymbol(String symbol, Object... args) {
 		if( symbol.equals("label")
 		&& args.length > 0 && args[0].getClass().equals(String.class)
@@ -293,11 +299,17 @@ public class Widget {
 			return true;
 		}
 
+		if( symbol.equals("set")
+		&& args.length > 0 && args[0].getClass().equals(Float.class)
+		) {
+			setval((Float)args[0]);
+			return true;
+		}
+		
 		return false;
-	
+
 	}
-	
-	
+		
 	public void receiveList(Object... args) {
 		Log.e(TAG, "dropped list");
 	}
