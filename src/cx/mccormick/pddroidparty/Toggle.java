@@ -97,7 +97,7 @@ public class Toggle extends Widget {
 			sendFloat(val);
 		}
 	}
-
+			
 	public boolean touchdown(int pid,float x,float y)
 	{
 		if (dRect.contains(x, y)) {
@@ -111,9 +111,6 @@ public class Toggle extends Widget {
 	public void receiveMessage(String symbol, Object... args) {
 		// set message sets value without sending
 		if(widgetreceiveSymbol(symbol,args)) return;
-		if (symbol.equals("set") && args.length > 0) {
-			val = (Float) args[0];
-		}
 	}
 
 	public void receiveList(Object... args) {
@@ -139,7 +136,7 @@ public class Toggle extends Widget {
 	}
 
 	public void receiveFloat(float v) {
-		val = v;
+		setval(v);
 		sendFloat(val);
 	}
 
