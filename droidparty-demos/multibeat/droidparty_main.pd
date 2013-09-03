@@ -1,5 +1,5 @@
-#N canvas 222 254 480 320 10;
-#N canvas 813 56 435 597 audio 1;
+#N canvas 221 255 480 320 10;
+#N canvas 812 57 435 597 audio 1;
 #X obj 16 17 loadbang;
 #X msg 16 38 \; pd dsp 1;
 #X obj 205 438 dac~;
@@ -6831,20 +6831,20 @@ empty empty 17 7 0 10 -262144 -1 -1 1 0 \;;
 -1 1 1;
 #X obj 435 279 tgl 25 1 toggle_3_15 empty empty 17 7 0 10 -262144 -1
 -1 0 1;
-#X obj 70 150 cnv 16 25 16 empty ticker empty 20 12 0 14 -258113 -66577
+#X obj 406 150 cnv 16 25 16 empty ticker empty 20 12 0 14 -258113 -66577
 0;
 #X obj 207 21 vsl 32 128 0 1.5 0 1 feedback empty feedback 0 -9 0 10
--262144 -1 -1 0 1;
+-262144 -1 -1 0 0;
 #X obj 164 21 vsl 32 128 0 127 0 1 length empty delay 0 -9 0 10 -262144
--1 -1 0 1;
+-1 -1 0 0;
 #X obj 293 22 vsl 32 128 1 20 0 1 q empty rez 0 -9 0 10 -262144 -1
--1 0 1;
+-1 0 0;
 #X obj 250 22 vsl 32 128 0 127 0 1 cutoff empty cutoff 0 -9 0 10 -262144
--1 -1 12700 1;
+-1 -1 12700 0;
 #X obj 15 21 vsl 32 128 0 2 0 1 bass-vol empty bass 0 -9 0 10 -262144
--1 -1 0 1;
+-1 -1 0 0;
 #X obj 58 21 vsl 32 128 0 2 0 1 snare-vol empty snare 0 -9 0 10 -262144
--1 -1 0 1;
+-1 -1 0 0;
 #X obj 101 21 vsl 32 128 0 2 0 1 hat-vol empty hat 0 -9 0 10 -262144
--1 -1 0 1;
+-1 -1 0 0;
 #X obj 387 20 numberbox 64 32 bpm-r bpm 30 300 180;
