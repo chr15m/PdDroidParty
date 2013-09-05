@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.NoClassDefFoundError;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
@@ -41,6 +42,7 @@ import android.text.util.Linkify;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 
@@ -165,8 +167,14 @@ public class PdDroidParty extends Activity {
 		MenuBang.setMenu(menu);
 		// TODO: preferences = ic_menu_preferences
 		// midi menu
-		menumidi = menu.add(0, Menu.FIRST + menu.size(), 0, "Midi");
-		menumidi.setIcon(android.R.drawable.ic_menu_manage); 
+		// test for platforms that don't support USB OTG devices
+		try {
+			UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
+			menumidi = menu.add(0, Menu.FIRST + menu.size(), 0, "Midi");
+			menumidi.setIcon(android.R.drawable.ic_menu_manage); 
+		} catch(NoClassDefFoundError e) {
+			// don't care
+		}
 		// exit menu item
 		menuexit = menu.add(0, Menu.FIRST + menu.size(), 0, "Exit");
 		menuexit.setIcon(android.R.drawable.ic_menu_close_clear_cancel); 
@@ -206,7 +214,7 @@ public class PdDroidParty extends Activity {
 			((TextView)ab.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
 		} else if (item == menuexit) {
 			finish();
-		} else if (item == menumidi) {
+		} else if (menumidi != null && item == menumidi) {
 			if (midiDevice == null) {
 				chooseMidiDevice();
 			} else {
