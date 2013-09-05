@@ -540,10 +540,18 @@ public class PdDroidParty extends Activity {
 	}
 	
 	private void chooseMidiDevice() {
+		// set a progress dialog running
+		final ProgressDialog progress = new ProgressDialog(this);
+		progress.setMessage("Waiting for USB midi");
+		progress.setCancelable(false);
+		progress.setIndeterminate(true);
+		progress.show();
 		final List<UsbMidiDevice> devices = UsbMidiDevice.getMidiDevices(this);
 		new AsyncDeviceInfoLookup() {
 			@Override
 			protected void onLookupComplete() {
+				// ok we are done
+				progress.dismiss();
 				if (!devices.isEmpty()) {
 					String devicenames[] = new String[devices.size()];
 					// loop through the devices and get their names
