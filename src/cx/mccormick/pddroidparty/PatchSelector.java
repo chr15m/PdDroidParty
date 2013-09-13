@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -59,7 +60,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private String latestMainPdzPath;
 	ProgressDialog progress;
 	Handler handler;
-	private String latestMainFileName;
+	private String dpMainfileName;
 	private static long SPLASHTIME = 2000;
 
 	@Override
@@ -86,9 +87,38 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 			 final Uri data = intent.getData();
 			 if (data != null) {
 				 Log.d("PatchSelector", "> Got data   : " + data);
+				 
 				 String scheme = data.getScheme();
 				 if (ContentResolver.SCHEME_CONTENT.equals(scheme)) { // if the URI is of type content://
 					// handle content uri to get sdcardPath
+					 if(data.toString().contains("gmail")){ //for direct gmail attachment
+						 try 
+						    {
+						        InputStream attachment = getContentResolver().openInputStream(data);
+						        if (attachment == null)
+						            Log.e("onCreate", "cannot access mail attachment");
+						        else
+						        {
+						            FileOutputStream tmp = new FileOutputStream("/sdcard/attachment.dpz");
+						            byte []buffer = new byte[1024];
+						            while (attachment.read(buffer) > 0)
+						                tmp.write(buffer);
+
+						            tmp.close();
+						            attachment.close();
+						        }
+						        pdzZipPath = "/sdcard/attachment.dpz";
+						        getLatestVersion();
+						        process();
+						    } 
+						    catch (FileNotFoundException e) {
+						        // TODO Auto-generated catch block
+						        e.printStackTrace();
+						    } catch (IOException e) {
+						        // TODO Auto-generated catch block
+						        e.printStackTrace();
+						    }
+					 } else {
 					 String[] filePathColumn = {MediaColumns.DATA};
 					 Cursor cursor = getContentResolver().query(data, filePathColumn, null, null, null);
 					 cursor.moveToFirst();
@@ -98,6 +128,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					 Log.d("PatchSelector", "> Open file  : " + pdzZipPath);
 					 getLatestVersion();
 					 process();
+				}
 				 } else {
 					// handle as file uri
 					 pdzZipPath = data.getPath();
@@ -145,7 +176,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					 Log.d("Extracting", file.getAbsolutePath());
 					
 				 }
-				 launchDroidParty("sdcard/PdDroidParty/"+folderName+"/"+latestMainFileName);
+				 launchDroidParty("sdcard/PdDroidParty/"+folderName+"/"+dpMainfileName);
 			 }
 		}  catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -201,7 +232,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						folderName = f.getName();
 					  if (f.getAbsolutePath().toLowerCase().contains("droidparty_main.pd")) {
 						  latestMainPdzPath = f.getAbsolutePath();
-						  latestMainFileName = f.getName();
+						  dpMainfileName = f.getName();
 							 InputStream is = new FileInputStream(f);
 							 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 							 String line;
