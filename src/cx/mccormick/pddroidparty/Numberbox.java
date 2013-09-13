@@ -1,19 +1,13 @@
 package cx.mccormick.pddroidparty;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.text.DecimalFormat;
 
 import android.graphics.Canvas;
-import android.graphics.RectF;
-import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.text.StaticLayout;
-import android.view.MotionEvent;
 import android.util.Log;
+import android.view.MotionEvent;
 
 public class Numberbox extends Widget {
 	private static final String TAG = "Floatatom";

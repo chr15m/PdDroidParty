@@ -1,20 +1,12 @@
 package cx.mccormick.pddroidparty;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
-import java.lang.Math;
+import org.puredata.core.PdBase;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.RectF;
 import android.graphics.Paint;
-import android.view.MotionEvent;
+import android.graphics.RectF;
 import android.os.SystemClock;
-import android.util.Log;
-
-import org.puredata.core.PdBase;
 
 public class Bang extends Widget {
 	private static final String TAG = "Bang";

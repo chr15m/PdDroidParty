@@ -2,17 +2,11 @@ package cx.mccormick.pddroidparty;
 
 import java.util.ArrayList;
 
-import android.graphics.Canvas;
-import android.graphics.RectF;
-import android.graphics.Paint;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.Picture;
-import android.text.StaticLayout;
-import android.view.MotionEvent;
-import android.util.Log;
-
 import org.puredata.core.PdBase;
+
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 
 public class Taplist extends Widget {
 	private static final String TAG = "Taplist";

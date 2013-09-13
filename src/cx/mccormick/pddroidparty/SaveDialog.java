@@ -1,15 +1,12 @@
 package cx.mccormick.pddroidparty;
 
-import cx.mccormick.pddroidparty.R;
- 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.content.Intent;
+import android.widget.Button;
+import android.widget.EditText;
 
 public class SaveDialog extends Activity {
 	@Override

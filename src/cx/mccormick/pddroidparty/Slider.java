@@ -1,18 +1,9 @@
 package cx.mccormick.pddroidparty;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
-
-import android.annotation.TargetApi;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.RectF;
 import android.graphics.Paint;
-import android.view.MotionEvent;
-import android.os.Build;
-import android.util.Log;
+import android.graphics.RectF;
 
 public class Slider extends Widget {
 	private static final String TAG = "Slider";

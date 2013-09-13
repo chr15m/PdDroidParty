@@ -1,10 +1,10 @@
 package cx.mccormick.pddroidparty;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.io.IOException;
-import java.io.OutputStream;
 
 import android.util.Log;
 

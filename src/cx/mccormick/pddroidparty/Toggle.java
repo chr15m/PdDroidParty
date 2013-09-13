@@ -1,17 +1,9 @@
 package cx.mccormick.pddroidparty;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Picture;
 import android.graphics.RectF;
-import android.view.MotionEvent;
-import android.util.Log;
 
 public class Toggle extends Widget {
 	private static final String TAG = "Toggle";

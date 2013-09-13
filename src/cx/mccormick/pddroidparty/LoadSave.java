@@ -1,7 +1,5 @@
 package cx.mccormick.pddroidparty;
 
-import android.util.Log;
-
 import org.puredata.core.PdBase;
 
 public class LoadSave extends Widget {

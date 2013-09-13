@@ -3,14 +3,8 @@ package cx.mccormick.pddroidparty;
 import java.text.DecimalFormat;
 
 import android.graphics.Canvas;
-import android.graphics.RectF;
 import android.graphics.Paint;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.Picture;
-import android.text.StaticLayout;
-import android.view.MotionEvent;
-import android.util.Log;
+import android.graphics.RectF;
 
 public class Numberboxfixed extends Numberbox {
 	private static final String TAG = "Numberbox";

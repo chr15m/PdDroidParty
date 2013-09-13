@@ -14,7 +14,26 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+					<!-- FOR FILE Manager -->
+		<intent-filter>
+		    <action android:name="android.intent.action.VIEW" />
+		    <category android:name="android.intent.category.DEFAULT" />
+		    <category android:name="android.intent.category.BROWSABLE" />
+		    <data  android:scheme="http" android:host="*" android:pathPattern=".*\\.pdz" />
+		    <data  android:scheme="https" android:host="*" android:pathPattern=".*\\.pdz" />
+		    <data  android:scheme="content" android:host="*" android:pathPattern=".*\\.pdz" />
+		    <data  android:scheme="file" android:host="*" android:pathPattern=".*\\.pdz" />
+		    </intent-filter>
+		    <!-- FOR Email Attachment -->   
+		    <intent-filter>
+		    <action android:name="android.intent.action.VIEW" />
+		    <category android:name="android.intent.category.DEFAULT" />
+		    <category android:name="android.intent.category.BROWSABLE" />
+		    <data android:mimeType="application/octet-stream" android:pathPattern=".*\\.pdz" android:scheme="file" />
+		    <data android:mimeType="application/octet-stream" android:pathPattern=".*\\.pdz" android:scheme="content" />
+		    </intent-filter> 
 		</activity>
+
 		<activity android:name=".PdDroidParty" android:launchMode="singleTask"
 			android:label="@string/app_name" android:screenOrientation="landscape">
 		</activity>

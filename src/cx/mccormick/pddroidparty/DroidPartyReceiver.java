@@ -1,8 +1,8 @@
 package cx.mccormick.pddroidparty;
 
-import org.puredata.core.PdListener;
-
 import java.util.ArrayList;
+
+import org.puredata.core.PdListener;
 
 public class DroidPartyReceiver {
 	ArrayList<Widget> widgets = new ArrayList<Widget>();

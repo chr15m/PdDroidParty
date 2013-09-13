@@ -1,11 +1,8 @@
 package cx.mccormick.pddroidparty;
 
-import android.graphics.RectF;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Color;
-import android.graphics.Picture;
-import android.util.Log;
+import android.graphics.RectF;
 
 public class Canvasrect extends Widget {
 	private static final String TAG = "Canvas";
