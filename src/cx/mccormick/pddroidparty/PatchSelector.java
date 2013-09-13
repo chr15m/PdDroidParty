@@ -42,6 +42,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
@@ -55,9 +56,10 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private String folderName;
 	private float version;
 	private float latestVersion;
-	private String latestPdzPath;
+	private String latestMainPdzPath;
 	ProgressDialog progress;
 	Handler handler;
+	private String latestMainFileName;
 	private static long SPLASHTIME = 2000;
 
 	@Override
@@ -108,12 +110,11 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		return;
 	}
 	private void process() {
-		// TODO Auto-generated method stub
 		if (!getDiskVersion()) {
 			extract();
 		}  else if (this.version < latestVersion || latestVersion == 0) {
 			new AlertDialog.Builder(PatchSelector.this)
-			.setTitle("New .pdz")
+			.setTitle("New .pdz File")
 			.setMessage("Do you want to replace " + version
 					+ " with latest version " + latestVersion
 					+ "").setCancelable(false)
@@ -130,7 +131,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						}
 					}).show();
 		} else {
-			 launchDroidParty(latestPdzPath);
+			 launchDroidParty(latestMainPdzPath);
 		}
 		
 	}
@@ -142,9 +143,9 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 			 if (listMain.size() != 0) {
 				 for (File file : listMain) {
 					 Log.d("Extracting", file.getAbsolutePath());
-					 if (file.getAbsolutePath().contains(".pd"))
-						 launchDroidParty(file.getAbsolutePath());
+					
 				 }
+				 launchDroidParty("sdcard/PdDroidParty/"+folderName+"/"+latestMainFileName);
 			 }
 		}  catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -156,8 +157,6 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 
 	private boolean getDiskVersion() {
 		// TODO Auto-generated method stub
-		folderName = pdzZipPath.substring(pdzZipPath.lastIndexOf("/") + 1,pdzZipPath.lastIndexOf("."));
-		Log.d("FolderName", folderName);
 		List<File> listpdMain = IoUtils.find(new File("/sdcard/PdDroidParty"+ "/" + folderName), ".*droidparty_main\\.pd$");
 		if (listpdMain.size() != 0) {
 			 for (File f : listpdMain) {
@@ -167,16 +166,21 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 					 String line;
 					 while ((line = reader.readLine()) != null) {
-						 if (line.contains("#X text") && line.contains(" Version: ")) {
+						 String version;
+						 if (line.contains(" version: ")) {
 							 Log.d("VersionLine", line);
-							 String version = line.substring(line.lastIndexOf(":") + 1,line.length() - 1);
-							 if (version.equals("") || version.equals(null)) {
-								 version = "0";
-							 }
+							 version = line.substring(line.lastIndexOf(":") + 1,line.length() - 1);
+							 this.version = Float.parseFloat(version);
+							 break;
+						 } else {
+							 version = "0";
 							 this.version = Float.parseFloat(version);
 						 }
+						 
 					 }
 					 reader.close();
+					 Log.d("DiskVersion", version+"");
+					 Toast.makeText(PatchSelector.this, "DiskVersion"+version+"", Toast.LENGTH_SHORT).show();
 				 } catch (Exception e) {
 					 e.printStackTrace();
 					 return false;
@@ -189,33 +193,40 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private void getLatestVersion() {
 		// TODO Auto-generated method stub
 		File temp = new File("/sdcard/pdTemp");
-		try {
-			List<File> listMain = IoUtils.extractZipResource(new FileInputStream(pdzZipPath), temp);
+		try{
+			List<File> listMain = IoUtils.extractZipResource(new FileInputStream(pdzZipPath), temp, true);
 			if (listMain.size() != 0) {
 				for (File f : listMain) {
-					 Log.d("LatestpdzFilePath", f.getAbsolutePath());
-					 if (f.getAbsolutePath().contains(".pd")) {
-						 InputStream is = new FileInputStream(f);
-						 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-						 String line;
-						 while ((line = reader.readLine()) != null) {
-							 if (line.contains("#X text")&& line.contains(" Version: ")) {
-								 Log.d("LatestVersionLine", line);
-								 String version = line.substring(line.lastIndexOf(":") + 1, line.length() - 1);
-								 if (version.equals("") || version.equals(null)) {
+					if(f.isDirectory())
+						folderName = f.getName();
+					  if (f.getAbsolutePath().toLowerCase().contains("droidparty_main.pd")) {
+						  latestMainPdzPath = f.getAbsolutePath();
+						  latestMainFileName = f.getName();
+							 InputStream is = new FileInputStream(f);
+							 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+							 String line;
+							 while ((line = reader.readLine()) != null) {
+								 String version;
+								 if (line.contains(" version: ")) {
+									 Log.d("LatestVersionLine", line);
+									 version = line.substring(line.lastIndexOf(":") + 1, line.length() - 1);
+									 this.latestVersion = Float.parseFloat(version);
+									 break;
+								 } else {
 									 version = "0";
+									 this.latestVersion = Float.parseFloat(version);
 								 }
-								 this.latestVersion = Float.parseFloat(version);
+								 
 							 }
-							 latestPdzPath = f.getAbsolutePath();
+							 reader.close();
+							 Log.d("LatestVersion", latestVersion+"");
+							 Toast.makeText(PatchSelector.this, "ClickedVersion"+latestVersion+"", Toast.LENGTH_SHORT).show();
 						 }
-						 reader.close();
-					 }
+						 
+					 
 				}
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}catch (IOException e) {
+		} catch (Exception e){
 			e.printStackTrace();
 		}
 	}
@@ -307,6 +318,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						// exclude generic patch directories found in apps based on PdDroidParty
 						if (!parts[parts.length - 1].equals("patch")) {
 							patches.put(parts[parts.length - 1], f.getAbsolutePath());
+							Log.d("AbsPath", f.getAbsolutePath());
 						}
 					}
 					ArrayList<String> keyList = new ArrayList<String>(patches.keySet());
