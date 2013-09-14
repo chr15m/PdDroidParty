@@ -91,44 +91,8 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 				 String scheme = data.getScheme();
 				 if (ContentResolver.SCHEME_CONTENT.equals(scheme)) { // if the URI is of type content://
 					// handle content uri to get sdcardPath
-					 if(data.toString().contains("gmail")){ //for direct gmail attachment
-						 try 
-						    {
-						        InputStream attachment = getContentResolver().openInputStream(data);
-						        if (attachment == null)
-						            Log.e("onCreate", "cannot access mail attachment");
-						        else
-						        {
-						            FileOutputStream tmp = new FileOutputStream("/sdcard/attachment.dpz");
-						            byte []buffer = new byte[1024];
-						            while (attachment.read(buffer) > 0)
-						                tmp.write(buffer);
-
-						            tmp.close();
-						            attachment.close();
-						        }
-						        pdzZipPath = "/sdcard/attachment.dpz";
-						        getLatestVersion();
-						        process();
-						    } 
-						    catch (FileNotFoundException e) {
-						        // TODO Auto-generated catch block
-						        e.printStackTrace();
-						    } catch (IOException e) {
-						        // TODO Auto-generated catch block
-						        e.printStackTrace();
-						    }
-					 } else {
-					 String[] filePathColumn = {MediaColumns.DATA};
-					 Cursor cursor = getContentResolver().query(data, filePathColumn, null, null, null);
-					 cursor.moveToFirst();
-					 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-					 pdzZipPath = cursor.getString(columnIndex);
-					 cursor.close();
-					 Log.d("PatchSelector", "> Open file  : " + pdzZipPath);
-					 getLatestVersion();
-					 process();
-				}
+					 processContentUri(data);
+						 
 				 } else {
 					// handle as file uri
 					 pdzZipPath = data.getPath();
@@ -140,6 +104,36 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		}
 		return;
 	}
+	private void processContentUri(Uri data) {
+		try 
+	    {
+	        InputStream attachment = getContentResolver().openInputStream(data);
+	        if (attachment == null)
+	            Log.e("onCreate", "cannot access mail attachment");
+	        else
+	        {
+	            FileOutputStream tmp = new FileOutputStream("/sdcard/temp.dpz");
+	            byte []buffer = new byte[1024];
+	            while (attachment.read(buffer) > 0)
+	                tmp.write(buffer);
+
+	            tmp.close();
+	            attachment.close();
+	        }
+	        pdzZipPath = "/sdcard/temp.dpz";
+	        getLatestVersion(); // check the version of pdz we just clicked on
+	        process();
+	    } 
+	    catch (FileNotFoundException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	    } catch (IOException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	    }
+		
+	}
+
 	private void process() {
 		if (!getDiskVersion()) {
 			extract();
@@ -162,6 +156,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						}
 					}).show();
 		} else {
+			Toast.makeText(PatchSelector.this,"Not replacing files", Toast.LENGTH_SHORT).show();
 			 launchDroidParty(latestMainPdzPath);
 		}
 		
