@@ -14,22 +14,31 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+			
 					<!-- FOR FILE Manager -->
 		<intent-filter>
 		    <action android:name="android.intent.action.VIEW" />
 		    <category android:name="android.intent.category.DEFAULT" />
 		    <category android:name="android.intent.category.BROWSABLE" />
-		    <data  android:scheme="content" android:host="*" android:pathPattern=".*\\.dpz" />
-		    <data  android:scheme="file" android:host="*" android:pathPattern=".*\\.dpz" />
+		    <data android:scheme="file" android:host="*" android:pathPattern=".*\\.dpz" />
 		    </intent-filter>
-		    <!-- FOR Email Attachment -->   
+		    
+		    <!-- For Email -->
 		    <intent-filter>
 		    <action android:name="android.intent.action.VIEW" />
 		    <category android:name="android.intent.category.DEFAULT" />
 		    <category android:name="android.intent.category.BROWSABLE" />
-		    <data android:mimeType="application/octet-stream" android:pathPattern=".*\\.dpz" android:scheme="file" />
-		    <data android:mimeType="application/octet-stream" android:pathPattern=".*\\.dpz" android:scheme="content" />
-		    </intent-filter> 
+		    <data  android:host="*" android:mimeType="*/*" android:scheme="content" />
+		    </intent-filter>
+		    
+		    <!-- FOR Http  -->
+		    <intent-filter>
+		    <action android:name="android.intent.action.VIEW" />
+		    <category android:name="android.intent.category.DEFAULT" />
+		    <category android:name="android.intent.category.BROWSABLE" />
+		    <data  android:scheme="http" android:host="*"
+                    android:pathPattern=".*\\.dpz" />
+                </intent-filter>
 		</activity>
 
 		<activity android:name=".PdDroidParty" android:launchMode="singleTask"

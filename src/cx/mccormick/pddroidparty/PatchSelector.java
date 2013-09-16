@@ -2,6 +2,7 @@ package cx.mccormick.pddroidparty;
 
 /* Based on SceneSelection code by Peter Brinkmann (thanks!) */
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,6 +26,7 @@ import org.puredata.core.utils.IoUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
@@ -29,12 +34,13 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
-import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -57,8 +63,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private String folderName;
 	private float version;
 	private float latestVersion;
-	private String latestMainPdzPath;
-	ProgressDialog progress;
+	ProgressDialog progress, httpProgress;
 	Handler handler;
 	private String dpMainfileName;
 	private static long SPLASHTIME = 2000;
@@ -78,7 +83,6 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
 		super.onStart();
 		Log.d("PatchSelector", "+ onStart");
 		final Intent intent = getIntent();
@@ -87,7 +91,9 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 			 final Uri data = intent.getData();
 			 if (data != null) {
 				 Log.d("PatchSelector", "> Got data   : " + data);
-				 
+				 if(data.toString().contains("http")){
+					 new DownloadFileFromURL().execute(data.toString());
+				 }
 				 String scheme = data.getScheme();
 				 if (ContentResolver.SCHEME_CONTENT.equals(scheme)) { // if the URI is of type content://
 					// handle content uri to get sdcardPath
@@ -103,6 +109,17 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 			 }
 		}
 		return;
+	}
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		 httpProgress = new ProgressDialog(this);
+	        httpProgress.setMessage("Downloading file. Please wait...");
+	        httpProgress.setIndeterminate(false);
+	        httpProgress.setMax(100);
+	        httpProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+	        httpProgress.setCancelable(true);
+	        httpProgress.show();
+	        return httpProgress;
 	}
 	private void processContentUri(Uri data) {
 		try 
@@ -125,10 +142,8 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	        process();
 	    } 
 	    catch (FileNotFoundException e) {
-	        // TODO Auto-generated catch block
 	        e.printStackTrace();
 	    } catch (IOException e) {
-	        // TODO Auto-generated catch block
 	        e.printStackTrace();
 	    }
 		
@@ -137,12 +152,22 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private void process() {
 		if (!getDiskVersion()) {
 			extract();
-		}  else if (this.version < latestVersion || latestVersion == 0) {
+		}  else {
+			String Latestversion = Float.toString(latestVersion);
+			String Thisversion = Float.toString(version);
+			if(Latestversion.contains(".0"));
+			{
+				Latestversion = Latestversion.substring(0, Latestversion.lastIndexOf("."));
+			}
+			if(Thisversion.contains(".0"));
+			{
+				Thisversion = Thisversion.substring(0, Thisversion.lastIndexOf("."));
+			}
 			new AlertDialog.Builder(PatchSelector.this)
-			.setTitle("New .pdz File")
-			.setMessage("Do you want to replace " + version
-					+ " with latest version " + latestVersion
-					+ "").setCancelable(false)
+			.setTitle("New .dpz File")
+			.setMessage("Would you like to replace " + Thisversion
+					+ " with latest version " + Latestversion
+					+ " ?").setCancelable(false)
 					.setPositiveButton("Okay", new OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -155,10 +180,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 							finish();
 						}
 					}).show();
-		} else {
-			Toast.makeText(PatchSelector.this,"Not replacing files", Toast.LENGTH_SHORT).show();
-			 launchDroidParty(latestMainPdzPath);
-		}
+		} 
 		
 	}
 
@@ -226,7 +248,6 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					if(f.isDirectory())
 						folderName = f.getName();
 					  if (f.getAbsolutePath().toLowerCase().contains("droidparty_main.pd")) {
-						  latestMainPdzPath = f.getAbsolutePath();
 						  dpMainfileName = f.getName();
 							 InputStream is = new FileInputStream(f);
 							 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -251,6 +272,13 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						 
 					 
 				}
+			}
+			else{
+				Toast.makeText(PatchSelector.this, "PdDroidParty: File Format not Supported, or bad file", Toast.LENGTH_LONG).show();
+				if(progress!=null){
+					progress.dismiss();
+				}
+				finish();
 			}
 		} catch (Exception e){
 			e.printStackTrace();
@@ -397,5 +425,83 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		progress.show();
 		initPd(progress);
 		patchList.setOnItemClickListener(this);
+	}
+	class DownloadFileFromURL extends AsyncTask<String, String, String> {
+		 
+	    /**
+	     * Before starting background thread
+	     * Show Progress Bar Dialog
+	     * */
+	    @Override
+	    protected void onPreExecute() {
+	        super.onPreExecute();
+	        showDialog(0);
+	    }
+	 
+	    /**
+	     * Downloading file in background thread
+	     * */
+	    @Override
+	    protected String doInBackground(String... f_url) {
+	        int count;
+	        try {
+	            URL url = new URL(f_url[0]);
+	            URLConnection conection = url.openConnection();
+	            conection.connect();
+	            // getting file length
+	            int lenghtOfFile = conection.getContentLength();
+	 
+	            // input stream to read file - with 8k buffer
+	            InputStream input = new BufferedInputStream(url.openStream(), 8192);
+	 
+	            // Output stream to write file
+	            OutputStream output = new FileOutputStream("/sdcard/temp.dpz");
+	 
+	            byte data[] = new byte[1024];
+	 
+	            long total = 0;
+	 
+	            while ((count = input.read(data)) != -1) {
+	                total += count;
+	                // publishing the progress....
+	                // After this onProgressUpdate will be called
+	                publishProgress(""+(int)((total*100)/lenghtOfFile));
+	 
+	                // writing data to file
+	                output.write(data, 0, count);
+	            }
+	 
+	            // flushing output
+	            output.flush();
+	 
+	            // closing streams
+	            output.close();
+	            input.close();
+	 
+	        } catch (Exception e) {
+	            Log.e("Error: ", e.getMessage());
+	        }
+	 
+	        return null;
+	    }
+	 
+	   
+	    protected void onProgressUpdate(String... progress) {
+	        // setting progress percentage
+	        httpProgress.setProgress(Integer.parseInt(progress[0]));
+	   }
+	 
+	    
+	    @Override
+	    protected void onPostExecute(String file_url) {
+	        // dismiss the dialog after the file was downloaded
+	        dismissDialog(0);
+	 
+	     
+	        pdzZipPath = Environment.getExternalStorageDirectory().toString() + "/temp.dpz";
+	        getLatestVersion();
+	        process();
+	    }
+	 
 	}
 }
