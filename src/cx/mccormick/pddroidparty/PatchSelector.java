@@ -35,7 +35,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,6 +42,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -67,6 +67,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	Handler handler;
 	private String dpMainfileName;
 	private static long SPLASHTIME = 2000;
+	private boolean foundmainPd = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -248,6 +249,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					if(f.isDirectory())
 						folderName = f.getName();
 					  if (f.getAbsolutePath().toLowerCase().contains("droidparty_main.pd")) {
+						  foundmainPd = true;
 						  dpMainfileName = f.getName();
 							 InputStream is = new FileInputStream(f);
 							 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -267,22 +269,27 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 							 }
 							 reader.close();
 							 Log.d("LatestVersion", latestVersion+"");
-							 Toast.makeText(PatchSelector.this, "ClickedVersion"+latestVersion+"", Toast.LENGTH_SHORT).show();
-						 }
-						 
-					 
-				}
+							 break;
+						 } 
+				} if(!foundmainPd){
+					closePd();
+					}
 			}
 			else{
-				Toast.makeText(PatchSelector.this, "PdDroidParty: File Format not Supported, or bad file", Toast.LENGTH_LONG).show();
-				if(progress!=null){
-					progress.dismiss();
-				}
-				finish();
+				closePd();
 			}
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+	}
+
+	private void closePd() {
+		// TODO Auto-generated method stub
+		Toast.makeText(PatchSelector.this, "PdDroidParty: File Format not Supported, or bad file", Toast.LENGTH_LONG).show();
+		if(progress!=null){
+			progress.dismiss();
+		}
+		finish();
 	}
 
 	@Override

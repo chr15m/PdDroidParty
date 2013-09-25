@@ -28,7 +28,9 @@
 		    <action android:name="android.intent.action.VIEW" />
 		    <category android:name="android.intent.category.DEFAULT" />
 		    <category android:name="android.intent.category.BROWSABLE" />
-		    <data  android:host="*" android:mimeType="*/*" android:scheme="content" />
+		   <data android:scheme="content" />
+            <data android:mimeType="application/dpz"/>
+            <data android:mimeType="application/octet-stream"/>
 		    </intent-filter>
 		    
 		    <!-- FOR Http  -->
