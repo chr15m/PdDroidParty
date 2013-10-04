@@ -15,7 +15,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 			
-					<!-- FOR FILE Manager -->
+					<!-- FOR default ANDROID FILE Manager -->
 		<intent-filter>
 		    <action android:name="android.intent.action.VIEW" />
 		    <category android:name="android.intent.category.DEFAULT" />
@@ -23,11 +23,18 @@
 		    <data android:scheme="file"  android:pathPattern=".*\\.dpz"  />
 		    </intent-filter>
 		    
+		<!-- FOR ES and ASTRO like FILE Managers -->
+		<intent-filter>
+		    <action android:name="android.intent.action.VIEW" />
+		    <category android:name="android.intent.category.DEFAULT" />
+		    <category android:name="android.intent.category.BROWSABLE" />
+		    <data android:scheme="file"  android:mimeType="*/*" android:host="*" android:pathPattern=".*\\.dpz" />
+		    </intent-filter>
+		    
 		    <!-- For Email -->
 		    <intent-filter>
 		    <action android:name="android.intent.action.VIEW" />
 		    <category android:name="android.intent.category.DEFAULT" />
-		    <category android:name="android.intent.category.BROWSABLE" />
             <data android:mimeType="application/dpz"/>
             <data android:mimeType="application/octet-stream"/>
 		    </intent-filter>
