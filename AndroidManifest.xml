@@ -19,16 +19,17 @@
 		<intent-filter>
 		    <action android:name="android.intent.action.VIEW" />
 		    <category android:name="android.intent.category.DEFAULT" />
-		    <data android:scheme="file" android:mimeType="*/*"  android:pathPattern=".*\\.dpz"  android:host="*"/>
+		    <category android:name="android.intent.category.BROWSABLE" />
+		    <data android:scheme="file"  android:pathPattern=".*\\.dpz"  />
 		    </intent-filter>
 		    
 		    <!-- For Email -->
 		    <intent-filter>
 		    <action android:name="android.intent.action.VIEW" />
 		    <category android:name="android.intent.category.DEFAULT" />
+		    <category android:name="android.intent.category.BROWSABLE" />
             <data android:mimeType="application/dpz"/>
             <data android:mimeType="application/octet-stream"/>
-            <data android:mimeType="*/*"/>
 		    </intent-filter>
 		    
 		    <!-- FOR Http  -->
