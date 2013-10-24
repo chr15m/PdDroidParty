@@ -2,35 +2,54 @@ package cx.mccormick.pddroidparty;
 
 /* Based on SceneSelection code by Peter Brinkmann (thanks!) */
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.lang.System;
 
-import org.puredata.android.utils.Properties;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.IoUtils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.graphics.Color;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
@@ -40,12 +59,21 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private ListView patchList;
 	private final Map<String, String> patches = new HashMap<String, String>();
 	Resources res = null;
+	private String pdzZipPath;
+	private String folderName;
+	private float version;
+	private float latestVersion;
+	ProgressDialog progress, httpProgress;
+	Handler handler;
+	private String dpMainfileName;
 	private static long SPLASHTIME = 2000;
+	private boolean foundmainPd = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		res = getResources();
+		handler=new Handler();
 		// if we have a baked patch, jump straight into Pd initialisation
 		if (testForBakedPatch()) {
 			doSplash();
@@ -54,6 +82,216 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		}
 	}
 	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		Log.d("PatchSelector", "+ onStart");
+		final Intent intent = getIntent();
+		if (intent != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
+			 Log.d("PatchSelector", "> Got intent : " + intent);
+			 final Uri data = intent.getData();
+			 if (data != null) {
+				 Log.d("PatchSelector", "> Got data   : " + data);
+				 if(data.toString().contains("http")){
+					 new DownloadFileFromURL().execute(data.toString());
+				 }
+				 String scheme = data.getScheme();
+				 if (ContentResolver.SCHEME_CONTENT.equals(scheme)) { // if the URI is of type content://
+					// handle content uri to get sdcardPath
+					 processContentUri(data);
+						 
+				 } else {
+					// handle as file uri
+					 pdzZipPath = data.getPath();
+					 Log.d("PatchSelector", "> Open file  : " + pdzZipPath);
+					 getLatestVersion(); // check the version of pdz we just clicked on
+					 process();
+				 }
+			 }
+		}
+		return;
+	}
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		 httpProgress = new ProgressDialog(this);
+	        httpProgress.setMessage("Downloading file. Please wait...");
+	        httpProgress.setIndeterminate(false);
+	        httpProgress.setMax(100);
+	        httpProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+	        httpProgress.setCancelable(true);
+	        httpProgress.show();
+	        return httpProgress;
+	}
+	private void processContentUri(Uri data) {
+		try 
+	    {
+	        InputStream attachment = getContentResolver().openInputStream(data);
+	        if (attachment == null)
+	            Log.e("onCreate", "cannot access mail attachment");
+	        else
+	        {
+	            FileOutputStream tmp = new FileOutputStream("/sdcard/temp.dpz");
+	            byte []buffer = new byte[1024];
+	            while (attachment.read(buffer) > 0)
+	                tmp.write(buffer);
+
+	            tmp.close();
+	            attachment.close();
+	        }
+	        pdzZipPath = "/sdcard/temp.dpz";
+	        getLatestVersion(); // check the version of pdz we just clicked on
+	        process();
+	    } 
+	    catch (FileNotFoundException e) {
+	        e.printStackTrace();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+		
+	}
+
+	private void process() {
+		if (!getDiskVersion()) {
+			extract();
+		}  else {
+			String Latestversion = Float.toString(latestVersion);
+			String Thisversion = Float.toString(version);
+			if(Latestversion.contains(".0"));
+			{
+				Latestversion = Latestversion.substring(0, Latestversion.lastIndexOf("."));
+			}
+			if(Thisversion.contains(".0"));
+			{
+				Thisversion = Thisversion.substring(0, Thisversion.lastIndexOf("."));
+			}
+			new AlertDialog.Builder(PatchSelector.this)
+			.setTitle("New .dpz File")
+			.setMessage("Would you like to replace " + Thisversion
+					+ " with latest version " + Latestversion
+					+ " ?").setCancelable(false)
+					.setPositiveButton("Okay", new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							extract();
+						}
+					}).setNegativeButton("Cancel", new OnClickListener() {
+						@Override
+						 public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							finish();
+						}
+					}).show();
+		} 
+		
+	}
+
+	private void extract() {
+		// TODO Auto-generated method stub
+		try {
+			List<File> listMain = IoUtils.extractZipResource(new FileInputStream(pdzZipPath), new File("/sdcard/PdDroidParty"), true);
+			 if (listMain.size() != 0) {
+				 for (File file : listMain) {
+					 Log.d("Extracting", file.getAbsolutePath());
+					
+				 }
+				 launchDroidParty("sdcard/PdDroidParty/"+folderName+"/"+dpMainfileName);
+			 }
+		}  catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	private boolean getDiskVersion() {
+		// TODO Auto-generated method stub
+		List<File> listpdMain = IoUtils.find(new File("/sdcard/PdDroidParty"+ "/" + folderName), ".*droidparty_main\\.pd$");
+		if (listpdMain.size() != 0) {
+			 for (File f : listpdMain) {
+				 Log.d("DiskFile", f.getAbsolutePath());
+				 try {
+					 InputStream is = new FileInputStream(f);
+					 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+					 String line;
+					 while ((line = reader.readLine()) != null) {
+						 String version;
+						 if (line.contains(" version: ")) {
+							 Log.d("VersionLine", line);
+							 version = line.substring(line.lastIndexOf(":") + 1,line.length() - 1);
+							 this.version = Float.parseFloat(version);
+							 break;
+						 } else {
+							 version = "0";
+							 this.version = Float.parseFloat(version);
+						 }
+						 
+					 }
+					 reader.close();
+					 Log.d("DiskVersion", version+"");
+					 Toast.makeText(PatchSelector.this, "DiskVersion"+version+"", Toast.LENGTH_SHORT).show();
+				 } catch (Exception e) {
+					 e.printStackTrace();
+					 return false;
+				 }
+			 }
+		}
+		 return listpdMain.size() != 0;
+	}
+
+	private void getLatestVersion() {
+		// TODO Auto-generated method stub
+		File temp = new File("/sdcard/pdTemp");
+		try{
+			List<File> listMain = IoUtils.extractZipResource(new FileInputStream(pdzZipPath), temp, true);
+			if (listMain.size() != 0) {
+				for (File f : listMain) {
+					if(f.isDirectory())
+						folderName = f.getName();
+					  if (f.getAbsolutePath().toLowerCase().contains("droidparty_main.pd")) {
+						  foundmainPd = true;
+						  dpMainfileName = f.getName();
+							 InputStream is = new FileInputStream(f);
+							 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+							 String line;
+							 while ((line = reader.readLine()) != null) {
+								 String version;
+								 if (line.contains(" version: ")) {
+									 Log.d("LatestVersionLine", line);
+									 version = line.substring(line.lastIndexOf(":") + 1, line.length() - 1);
+									 this.latestVersion = Float.parseFloat(version);
+									 break;
+								 } else {
+									 version = "0";
+									 this.latestVersion = Float.parseFloat(version);
+								 }
+								 
+							 }
+							 reader.close();
+							 Log.d("LatestVersion", latestVersion+"");
+							 break;
+						 } 
+				} if(!foundmainPd){
+					closePd();
+					}
+			}
+			else{
+				closePd();
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void closePd() {
+		// TODO Auto-generated method stub
+		Toast.makeText(PatchSelector.this, "PdDroidParty: File Format not Supported, or bad file", Toast.LENGTH_LONG).show();
+		if(progress!=null){
+			progress.dismiss();
+		}
+		finish();
+	}
+
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
 		TextView item = (TextView) v;
@@ -64,7 +302,11 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private void launchDroidParty(String path) {
 		Intent intent = new Intent(this, PdDroidParty.class);
 		intent.putExtra(PdDroidParty.PATCH, path);
+		if(progress!=null){
+			progress.dismiss();
+		}
 		startActivity(intent);
+		finish();
 	}
 	
 	private boolean testForBakedPatch() {
@@ -137,6 +379,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						// exclude generic patch directories found in apps based on PdDroidParty
 						if (!parts[parts.length - 1].equals("patch")) {
 							patches.put(parts[parts.length - 1], f.getAbsolutePath());
+							Log.d("AbsPath", f.getAbsolutePath());
 						}
 					}
 					ArrayList<String> keyList = new ArrayList<String>(patches.keySet());
@@ -146,7 +389,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						}
 					});
 					final ArrayAdapter<String> adapter = new ArrayAdapter<String>(PatchSelector.this, android.R.layout.simple_list_item_1, keyList);
-					patchList.getHandler().post(new Runnable() {
+					handler.post(new Runnable() {
 						@Override
 						public void run() {
 							patchList.setAdapter(adapter);
@@ -182,12 +425,90 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private void initGui() {
 		setContentView(R.layout.patch_selector);
 		patchList = (ListView) findViewById(R.id.patch_selector);
-		final ProgressDialog progress = new ProgressDialog(this);
+		progress = new ProgressDialog(this);
 		progress.setMessage("Finding patches...");
 		progress.setCancelable(false);
 		progress.setIndeterminate(true);
 		progress.show();
 		initPd(progress);
 		patchList.setOnItemClickListener(this);
+	}
+	class DownloadFileFromURL extends AsyncTask<String, String, String> {
+		 
+	    /**
+	     * Before starting background thread
+	     * Show Progress Bar Dialog
+	     * */
+	    @Override
+	    protected void onPreExecute() {
+	        super.onPreExecute();
+	        showDialog(0);
+	    }
+	 
+	    /**
+	     * Downloading file in background thread
+	     * */
+	    @Override
+	    protected String doInBackground(String... f_url) {
+	        int count;
+	        try {
+	            URL url = new URL(f_url[0]);
+	            URLConnection conection = url.openConnection();
+	            conection.connect();
+	            // getting file length
+	            int lenghtOfFile = conection.getContentLength();
+	 
+	            // input stream to read file - with 8k buffer
+	            InputStream input = new BufferedInputStream(url.openStream(), 8192);
+	 
+	            // Output stream to write file
+	            OutputStream output = new FileOutputStream("/sdcard/temp.dpz");
+	 
+	            byte data[] = new byte[1024];
+	 
+	            long total = 0;
+	 
+	            while ((count = input.read(data)) != -1) {
+	                total += count;
+	                // publishing the progress....
+	                // After this onProgressUpdate will be called
+	                publishProgress(""+(int)((total*100)/lenghtOfFile));
+	 
+	                // writing data to file
+	                output.write(data, 0, count);
+	            }
+	 
+	            // flushing output
+	            output.flush();
+	 
+	            // closing streams
+	            output.close();
+	            input.close();
+	 
+	        } catch (Exception e) {
+	            Log.e("Error: ", e.getMessage());
+	        }
+	 
+	        return null;
+	    }
+	 
+	   
+	    protected void onProgressUpdate(String... progress) {
+	        // setting progress percentage
+	        httpProgress.setProgress(Integer.parseInt(progress[0]));
+	   }
+	 
+	    
+	    @Override
+	    protected void onPostExecute(String file_url) {
+	        // dismiss the dialog after the file was downloaded
+	        dismissDialog(0);
+	 
+	     
+	        pdzZipPath = Environment.getExternalStorageDirectory().toString() + "/temp.dpz";
+	        getLatestVersion();
+	        process();
+	    }
+	 
 	}
 }

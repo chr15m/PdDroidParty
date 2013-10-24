@@ -14,7 +14,41 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+			
+					<!-- FOR default ANDROID FILE Manager -->
+		<intent-filter>
+		    <action android:name="android.intent.action.VIEW" />
+		    <category android:name="android.intent.category.DEFAULT" />
+		    <category android:name="android.intent.category.BROWSABLE" />
+		    <data android:scheme="file"  android:pathPattern=".*\\.dpz"  />
+		    </intent-filter>
+		    
+		<!-- FOR ES and ASTRO like FILE Managers -->
+		<intent-filter>
+		    <action android:name="android.intent.action.VIEW" />
+		    <category android:name="android.intent.category.DEFAULT" />
+		    <category android:name="android.intent.category.BROWSABLE" />
+		    <data android:scheme="file"  android:mimeType="*/*" android:host="*" android:pathPattern=".*\\.dpz" />
+		    </intent-filter>
+		    
+		    <!-- For Email -->
+		    <intent-filter>
+		    <action android:name="android.intent.action.VIEW" />
+		    <category android:name="android.intent.category.DEFAULT" />
+            <data android:mimeType="application/dpz"/>
+            <data android:mimeType="application/octet-stream"/>
+		    </intent-filter>
+		    
+		    <!-- FOR Http  -->
+		    <intent-filter>
+		    <action android:name="android.intent.action.VIEW" />
+		    <category android:name="android.intent.category.DEFAULT" />
+		    <category android:name="android.intent.category.BROWSABLE" />
+		    <data  android:scheme="http" android:host="*"
+                    android:pathPattern=".*\\.dpz" />
+                </intent-filter>
 		</activity>
+
 		<activity android:name=".PdDroidParty" android:launchMode="singleTask"
 			android:label="@string/app_name" android:screenOrientation="landscape">
 		</activity>
