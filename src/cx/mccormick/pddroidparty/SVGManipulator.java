@@ -1,21 +1,15 @@
 package cx.mccormick.pddroidparty;
 
 import java.io.File;
-import java.io.StringWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.lang.StringBuffer;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.OutputKeys;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Document;
 
 import android.util.Log;
 

@@ -1,50 +1,48 @@
 package cx.mccormick.pddroidparty;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.io.File;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
-import java.lang.NoClassDefFoundError;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.puredata.android.io.AudioParameters;
-import org.puredata.android.service.PdService;
-import org.puredata.android.midi.PdToMidiAdapter;
 import org.puredata.android.midi.MidiToPdAdapter;
+import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.PdDispatcher;
 
-import android.app.ProgressDialog;
-import android.app.AlertDialog;
 import android.app.Activity;
-import android.text.Html;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Context;
 import android.content.ServiceConnection;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.content.res.AssetManager;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.widget.Toast;
-import android.widget.TextView;
-import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.text.util.Linkify;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.noisepages.nettoyeur.midi.MidiReceiver;
 import com.noisepages.nettoyeur.usb.ConnectionFailedException;
@@ -57,9 +55,6 @@ import com.noisepages.nettoyeur.usb.midi.UsbMidiDevice.UsbMidiOutput;
 import com.noisepages.nettoyeur.usb.midi.util.UsbMidiInputSelector;
 import com.noisepages.nettoyeur.usb.midi.util.UsbMidiOutputSelector;
 import com.noisepages.nettoyeur.usb.util.AsyncDeviceInfoLookup;
-import com.noisepages.nettoyeur.usb.util.UsbDeviceSelector;
-
-import cx.mccormick.pddroidparty.PdParser;
 
 public class PdDroidParty extends Activity {
 	public PdDroidPatchView patchview = null;

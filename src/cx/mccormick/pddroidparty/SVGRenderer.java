@@ -1,13 +1,10 @@
 package cx.mccormick.pddroidparty;
 
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.File;
 import java.util.HashMap;
 
-import android.util.Log;
 import android.graphics.Picture;
+import android.util.Log;
 
 import com.larvalabs.svgandroid.SVGParser;
 

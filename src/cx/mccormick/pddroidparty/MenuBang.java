@@ -1,18 +1,17 @@
 package cx.mccormick.pddroidparty;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
-import android.view.Menu;
-import android.view.MenuItem;
+import org.puredata.core.PdBase;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.util.Log;
 import android.util.DisplayMetrics;
-
-import org.puredata.core.PdBase;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class MenuBang {
 	private static final String TAG = "Widget";

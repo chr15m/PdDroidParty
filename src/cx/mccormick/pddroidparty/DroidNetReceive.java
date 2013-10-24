@@ -1,27 +1,12 @@
 package cx.mccormick.pddroidparty;
 
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.Math;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.RectF;
-import android.graphics.Paint;
-import android.view.MotionEvent;
-import android.os.SystemClock;
 import android.util.Log;
-
-import org.puredata.core.PdBase;
 
 public class DroidNetReceive extends Widget {
 	private static final String TAG = "DroidNetReceive";

@@ -1,26 +1,22 @@
 package cx.mccormick.pddroidparty;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.File;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.ArrayAdapter;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.content.Intent;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.puredata.core.utils.IoUtils;
 
-import cx.mccormick.pddroidparty.R; 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class LoadDialog extends Activity {
 	private static final String TAG = "LoadDialog";

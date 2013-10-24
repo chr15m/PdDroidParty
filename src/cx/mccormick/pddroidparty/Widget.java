@@ -3,20 +3,16 @@ package cx.mccormick.pddroidparty;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.puredata.core.PdBase;
+
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.Picture;
+import android.graphics.Paint;
 import android.graphics.RectF;
-import android.view.MotionEvent;
-import android.text.StaticLayout;
-import android.text.Layout;
-import android.text.TextPaint;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.Log;
-
-import org.puredata.core.PdBase;
+import android.view.MotionEvent;
 
 public class Widget {
 	private static final String TAG = "Widget";
