@@ -17,15 +17,14 @@ public class DroidNetReceive extends Widget {
 	
 	public DroidNetReceive(PdDroidPatchView app, String[] atomline) {
 		super(app);
-
+		
 		port = (int)Float.parseFloat(atomline[5]);
-		sendname = app.app.replaceDollarZero(atomline[6]) + "-snd";
+		sendname = app.app.replaceDollarZero(atomline[6]);
 		receivename = app.app.replaceDollarZero(atomline[6]) + "-rcv";
 		if (atomline.length > 7) {
 			connection_type = app.app.replaceDollarZero(atomline[7]);
 			
 		}
-		setupreceive();
 		Log.e(TAG, "Connection type: " + connection_type);
 		
 		ServerThread = new Thread(ServerRun);
@@ -61,7 +60,19 @@ public class DroidNetReceive extends Widget {
 					if(Byte > 0) {
 						if (Byte == '\n') { /*do nothing, real end of line on pd is ';'. bufLen = 0;*/ }
 						else if (Byte == ';') { // pd end of line
-							if(bufLen != 0) send(String.copyValueOf(buffer, 0, bufLen));
+							if(bufLen != 0) {
+								String text = new String(buffer, 0, bufLen);
+								if (text.endsWith("\n")) {
+									text = text.substring(0, text.length() - 2);
+								}
+								if (text.endsWith("\r")) {
+									text = text.substring(0, text.length() - 2);
+								}
+								if (text.endsWith(";")) {
+									text = text.substring(0, text.length() - 2);
+								}
+								send(text);
+							}
 							bufLen = 0;
 						} else {
 							buffer[bufLen++] = (char)Byte;
@@ -95,27 +106,35 @@ public class DroidNetReceive extends Widget {
 					DatagramPacket p = new DatagramPacket(message, message.length);
 					s.receive(p);
 					String text = new String(message, 0, p.getLength());
+					if (text.endsWith("\n")) {
+						text = text.substring(0, text.length() - 2);
+					}
+					if (text.endsWith("\r")) {
+						text = text.substring(0, text.length() - 2);
+					}
+					if (text.endsWith(";")) {
+						text = text.substring(0, text.length() - 2);
+					}
 					send(text);
-					Log.d(TAG, "UDP packet: " + text);
 				}
 			} catch(IOException e) {
 				e.printStackTrace();
 			}
 		}
 	};
-	
+
 	public void receiveList(Object... args) {
 	}
-	
+
 	public void receiveSymbol(String symbol) {
 	}
-	
+
 	public void receiveFloat(float x) {
 	}
-	
+
 	public void receiveBang() {
 	}
-	
+
 	public void receiveMessage(String symbol, Object... args) {
 	}
 
