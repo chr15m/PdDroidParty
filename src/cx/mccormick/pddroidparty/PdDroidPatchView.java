@@ -11,6 +11,7 @@ import android.graphics.Picture;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.util.Log;
 
 import com.larvalabs.svgandroid.SVGParser;
 
@@ -215,16 +216,21 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 							} else if (line[4].equals("touch")) {
 								widgets.add(new Touch(this, line));
 							// things that aren't widgets
-							} else if (line[4].equals("droidnetreceive")) {
-								widgets.add(new DroidNetReceive(this, line));
-							} else if (line[4].equals("droidnetclient")) {
-								widgets.add(new DroidNetClient(this, line));
-							} else if (line[4].equals("menubang")) {
-								new MenuBang(this, line);
-							} else if (line[4].equals("loadsave")) {
-								new LoadSave(this, line);
 							}
 						}
+					}
+				}
+				
+				// things that can be found at any depth and still work
+				if (line.length >= 5) {
+					if (line[4].equals("droidnetreceive")) {
+						widgets.add(new DroidNetReceive(this, line));
+					} else if (line[4].equals("droidnetclient")) {
+						widgets.add(new DroidNetClient(this, line));
+					} else if (line[4].equals("menubang")) {
+						new MenuBang(this, line);
+					} else if (line[4].equals("loadsave")) {
+						new LoadSave(this, line);
 					}
 				}
 			}
