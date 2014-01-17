@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.util.Log;
 
 public class Numberbox2 extends Numberbox {
 	private static final String TAG = "Nbx";
@@ -29,12 +30,12 @@ public class Numberbox2 extends Numberbox {
 		paint.getTextBounds(">" + calclen.toString(), 0, calclen.length() + 1, tRect);
 		dRect.set(tRect);
 		dRect.sort();
-		dRect.offset((int)x, (int)y + fontsize);
+		dRect.offset((int)x, (int)y);
 		dRect.top -= 3;
 		dRect.bottom += 3;
 		dRect.left -= 3;
 		dRect.right += 3;
-		
+
 		float h = Float.parseFloat(atomline[6]) ;
 		float diff = h - dRect.height();
 		if (diff > 0) {
@@ -67,7 +68,7 @@ public class Numberbox2 extends Numberbox {
 		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
 		canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
 		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
-		canvas.drawText(">" + fmt.format(val), dRect.left + 3, dRect.bottom / 2 + fontsize / 2 + 3, paint);
+		canvas.drawText(">" + fmt.format(val), dRect.left + 3, dRect.centerY() + dRect.height() * (float)0.25, paint);
 	}
 }
 
