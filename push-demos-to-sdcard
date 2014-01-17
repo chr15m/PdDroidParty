@@ -1,2 +1,9 @@
 #!/bin/bash
-adb push droidparty-demos /sdcard/PdDroidParty/droidparty-demos
+
+if [ "$1" == "" ]
+then
+	adb push droidparty-demos /sdcard/PdDroidParty/droidparty-demos
+else
+	adb push droidparty-demos/$1 /sdcard/PdDroidParty/droidparty-demos/$1
+fi
+
