@@ -288,6 +288,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		Toast.makeText(PatchSelector.this, "PdDroidParty: File Format not Supported, or bad file", Toast.LENGTH_LONG).show();
 		if(progress!=null){
 			progress.dismiss();
+			progress = null;
 		}
 		finish();
 	}
@@ -304,6 +305,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		intent.putExtra(PdDroidParty.PATCH, path);
 		if(progress!=null){
 			progress.dismiss();
+			progress = null;
 		}
 		startActivity(intent);
 		finish();
@@ -394,7 +396,11 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						public void run() {
 							patchList.setAdapter(adapter);
 							if (progress != null) {
-								progress.dismiss();
+								try {
+									progress.dismiss();
+								} catch (Exception e) {
+									// nothing
+								}
 							}
 						}
 					});
