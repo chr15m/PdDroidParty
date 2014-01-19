@@ -287,10 +287,8 @@ public class PdDroidParty extends Activity {
 	private void initGui() {
 		//setContentView(R.layout.main);
 		int flags = WindowManager.LayoutParams.FLAG_FULLSCREEN |
-			WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED ;//|
-// [ant1r] apparently, the "setId(R.id.patch_view)" fix in PdDroidPatchView makes this unnecessary, 
-// but i keep it there for possible future use, because it works well :
-			//WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON; 		
+			WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+			WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON; 		
 		getWindow().setFlags(flags, flags);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		patchview = new PdDroidPatchView(this, this);
@@ -477,6 +475,8 @@ public class PdDroidParty extends Activity {
 	
 	// quit the Pd service and release other resources
 	private void cleanup() {
+		// let the screen blank again
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		// make sure to release all resources
 		if (pdService != null) {
 			pdService.stopAudio();
@@ -499,7 +499,7 @@ public class PdDroidParty extends Activity {
 		UsbMidiDevice.uninstallBroadcastHandler(this);
 		// release the lock on wifi multicasting
 		if (wifiMulticastLock != null && wifiMulticastLock.isHeld())
-		wifiMulticastLock.release();
+			wifiMulticastLock.release();
 	}
 	
 	public void launchDialog(Widget which, int type) {
