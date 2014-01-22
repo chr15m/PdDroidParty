@@ -138,6 +138,10 @@ support this<br/>buy CanOfBeats<br/><img src='45_avail_market_logo1.png'/></a>
 
 <p>6. Run PdDroidParty and you will find an entry named after your subdirectory. Tap it to load your patch.</p>
 
+<h3>Sharing your patches</h3>
+
+<p>You can share your PdDroidParty compatible patches with people by zipping up the folder with your patche in it and renaming the file extension from <code>.zip</code> to <code>.dpz</code>. When you send a <code>.dpz</code> file to somebody PdDroidParty will launch and run the patch on their device if they have the app installed. You should make sure the zip file contains the top level directory with the name of your patch, for example MyPatch.zip should contain a folder called <code>MyPatch</code> which contains your files like droidparty_main.pd etc. You can also include a Pd comment with the text "version: 99" to set the version of your patch so that people receiving them will know what version they are being asked to install. Each time you release a new version of your <code>.dpz</code> file you can increment the version number.</p>
+
 <h3>Abstractions</h3>
 
 <p>As well as the supported internal objects listed above the following abstractions work in Pd and are emulated natively on the device. Load the file droidparty-abstractions/_OVERVIEW.pd for more details and specific usage:</p>
@@ -149,7 +153,12 @@ support this<br/>buy CanOfBeats<br/><img src='45_avail_market_logo1.png'/></a>
 	<li>[touch] - Kaospad style 2d touch surface.</li>
 	<li>[menubang] - Puts an entry into the menu which sends a bang when the user selects it. Optional icon is called menubang-xxxx.png where xxxx is the name of your menubang.</li>
 	<li>[loadsave] - Wraps and openpanel/savepanel type of interface into a single abstraction that lets the user specify or choose filenames using the Android interface.</li>
+	<li>[droidnetreceive] - A special abstraction for sharing state and timing information between patches - check out <code>droidparty-demos/netro</code> and <code>droidparty-demos/droidnetreceive</code>.</li>
 </ul>
+
+<h3>MIDI</h3>
+
+<p>You can connect your MIDI controllers and keyboards to your device running PdDroidParty and use them to control your patches with Pd's built-in midi objects like [ctlin] and [notein]. You will probably need an OTG USB cable to plug in your MIDI devices and Android version 2.4 or higher. Once you have plugged in your MIDI device and loaded a PdDroidParty path, use the menu to enable access to the device in the software.</p>
 
 <h3>Fonts</h3>
 
