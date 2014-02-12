@@ -1,5 +1,8 @@
 package cx.mccormick.pddroidparty;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.puredata.core.PdBase;
 
 public class LoadSave extends Widget {
@@ -43,6 +46,12 @@ public class LoadSave extends Widget {
 	
 	public void gotFilename(String type, String newname) {
 		filename = newname;
+		List<Object> details = new ArrayList<Object>();
+		details.add(parent.app.getPatchRelativePath(directory));
+		details.add(filename);
+		details.add(extension);
+		Object[] ol = details.toArray();
+		PdBase.sendList(sendreceive + "-" + type + "-detail", ol);
 		PdBase.sendSymbol(sendreceive + "-" + type, parent.app.getPatchRelativePath(directory) + "/" + filename + "." + extension);
 	}
 }
