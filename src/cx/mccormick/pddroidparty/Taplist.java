@@ -75,8 +75,7 @@ public class Taplist extends Widget {
 			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom,
 					paint);
 		}
-		canvas.drawText(atoms.get((int) val), dRect.left + dRect.width() / 2,
-				(int) (dRect.top + dRect.height() * 0.75), paint);
+		drawCenteredText(canvas, atoms.get((int) val));
 	}
 
 	private void doSend() {

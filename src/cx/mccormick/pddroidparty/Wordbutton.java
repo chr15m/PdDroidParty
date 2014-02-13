@@ -67,8 +67,7 @@ public class Wordbutton extends Bang {
 			canvas.drawLine(dRect.right, dRect.top + 1, dRect.right,
 					dRect.bottom, paint);
 		}
-		canvas.drawText(spacereplace, dRect.left + dRect.width() / 2,
-				(int) (dRect.top + dRect.height() * 0.75), paint);
+		drawCenteredText(canvas, spacereplace);
 	}
 
 	public boolean touchdown(int pid,float x,float y)

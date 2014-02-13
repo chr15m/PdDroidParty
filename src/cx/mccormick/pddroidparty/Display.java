@@ -39,7 +39,7 @@ public class Display extends Widget {
 		setupreceive();
 
 		// try and load SVGs
-		svg = getSVG(TAG, "", sendname, receivename);
+		svg = getSVG(TAG, null, sendname, receivename);
 
 		setTextParametersFromSVG(svg);
 	}
@@ -55,9 +55,7 @@ public class Display extends Widget {
 			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom,
 					paint);
 		}
-		if (text != null) {
-			canvas.drawText(text, dRect.left + dRect.width() / 2, (int) (dRect.top + dRect.height() * 0.75), paint);
-		}
+		drawCenteredText(canvas, text);
 	}
 	
 	public void receiveList(Object... args) {

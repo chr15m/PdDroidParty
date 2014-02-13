@@ -75,7 +75,7 @@ public class Numberboxfixed extends Numberbox {
 			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);
 			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom, paint);
 		}
-		canvas.drawText(fmt.format(val), dRect.left + dRect.width() / 2, (int)(dRect.top + dRect.height() * 0.75), paint);
+		drawCenteredText(canvas, fmt.format(val));
 	}
 }
 
