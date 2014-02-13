@@ -69,7 +69,7 @@ public class Display extends Widget {
 	}
 	
 	public void receiveMessage(String symbol, Object... args) {
-		String result = "" + symbol;
+		String result = "" + (symbol.equals("set") ? "" : symbol);
 		for (Object s: args) {
 			result += " " + s.toString();
 		}
