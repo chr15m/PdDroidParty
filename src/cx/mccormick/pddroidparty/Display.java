@@ -12,7 +12,7 @@ import android.util.Log;
 public class Display extends Widget {
 	private static final String TAG = "Display";
 
-	SVGRenderer svg = null;
+	WImage bg = new WImage();
 
 	String text = null;
 	
@@ -38,14 +38,14 @@ public class Display extends Widget {
 		// listen out for symbols from Pd
 		setupreceive();
 
-		// try and load SVGs
-		svg = getSVG(TAG, null, sendname, receivename);
-
-		setTextParametersFromSVG(svg);
+		// try and load image
+		bg.load(TAG, null, sendname, receivename);
+		
+		setTextParametersFromSVG(bg.svg);
 	}
 
 	public void draw(Canvas canvas) {
-		if (drawPicture(canvas, svg)) {
+		if (bg.draw(canvas)) {
 			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1,
 					dRect.top, paint);
 			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1,

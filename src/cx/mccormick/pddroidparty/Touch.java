@@ -6,8 +6,8 @@ import android.graphics.RectF;
 public class Touch extends Widget {
 	private static final String TAG = "Touch";
 	
-	SVGRenderer on = null;
-	SVGRenderer off = null;
+	WImage on = new WImage();
+	WImage off = new WImage();
 	
 	boolean down = false;
 	int pid0 = -1; //pointer id when down
@@ -25,9 +25,9 @@ public class Touch extends Widget {
 		
 		sendname = app.app.replaceDollarZero(atomline[7]);
 		
-		// try and load SVGs
-		on = getSVG(TAG, "on", label);
-		off = getSVG(TAG, "off", label);
+		// try and load images
+		on.load(TAG, "on", sendname);
+		off.load(TAG, "off", sendname);
 	}
 	
 	public void draw(Canvas canvas) {
@@ -37,7 +37,7 @@ public class Touch extends Widget {
 			paint.setStrokeWidth(1);
 		}
 		
-		if (down ? drawPicture(canvas, on) : drawPicture(canvas, off)) {
+		if (down ? on.draw(canvas) : off.draw(canvas)) {
 			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
 			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1, dRect.bottom, paint);
 			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);

@@ -18,8 +18,8 @@ public class Slider extends Widget {
 	boolean down = false;
 	int steady = 1;
 	
-	SVGRenderer svg = null;
-	SVGRenderer slider = null;
+	WImage bg = new WImage();
+	WImage slider = new WImage();
 	
 	RectF sRect = new RectF();
 	
@@ -60,46 +60,33 @@ public class Slider extends Widget {
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
-		// load up the SVG to use and cache all positions
+		// load up the images to use and cache all positions
 		if (horizontal) {
-			svg = getSVG(TAG, "horizontal", label, sendname);
-			slider = getSVG(TAG, "widget-horizontal", label, sendname);
-			/*for (float sx = dRect.left; sx < dRect.left + dRect.width(); sx++) {
-				// hit the cache for this value
-				svg.interpolate("closed", "open", (sx - min) / (max - min));
-			}*/
+			bg.load(TAG, "horizontal", label, sendname);
+			slider.load(TAG, "widget-horizontal", label, sendname);
 		} else {
-			svg = getSVG(TAG, "vertical", label, sendname);
-			slider = getSVG(TAG, "widget-vertical", label, sendname);
-			/*for (float sy = dRect.top; sy < dRect.top + dRect.height(); sy++) {
-				// hit the cache for this value
-				svg.interpolate("closed", "open", (sy - min) / (max - min));
-			}*/
+			bg.load(TAG, "vertical", label, sendname);
+			slider.load(TAG, "widget-vertical", label, sendname);
 		}
 		
-		if (svg != null && slider != null) {
+		if ( (!bg.none()) && (!slider.none()) ) {
 			// create the slider rectangle thingy
 			if (orientation_horizontal) {
-				float ratio = Float.parseFloat(slider.getAttribute("height")) / h;
-				int rel = (int)(Float.parseFloat(slider.getAttribute("width")) / ratio);
+				float ratio = slider.getHeight() / h;
+				int rel = (int)(slider.getWidth() / ratio);
 				sRect = new RectF(x, y, x + rel, y + h);
 			} else {
-				float ratio = Float.parseFloat(slider.getAttribute("width")) / w;
-				int rel = (int)(Float.parseFloat(slider.getAttribute("height")) / ratio);
+				float ratio = slider.getHeight() / w;
+				int rel = (int)(slider.getHeight() / ratio);
 				sRect = new RectF(x, y, x + w, y + rel);
 			}
 		}
 		
 		setval(val);
-		
-		// interpolate the svg paths with ID "open" and "closed"
-		//if (svg != null) {
-		//	svg.interpolate("closed", "open", 0.5);
-		//}
 	}
 	
 	public void draw(Canvas canvas) {
-		if (drawPicture(canvas, svg)) {
+		if (bg.draw(canvas)) {
 			paint.setColor(bgcolor);
 			paint.setStyle(Paint.Style.FILL);
 			canvas.drawRect(dRect,paint);
@@ -118,23 +105,23 @@ public class Slider extends Widget {
 				canvas.drawLine(Math.round(dRect.left /*+ 2*/), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), Math.round(dRect.right /*- 2*/), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), paint);
 			}
 
-		} else if (slider != null) {
+		} else if (!slider.none()) {
 			if (orientation_horizontal) {
 				sRect.offsetTo((val - min) / (max - min) * (dRect.width() - sRect.width()) + dRect.left, dRect.top);
 			} else {
 				sRect.offsetTo(dRect.left, (1 - (val - min) / (max - min)) * (dRect.height() - sRect.height()) + dRect.top);
 			}
-			drawPicture(canvas, slider, sRect);
+			slider.draw(canvas,sRect);
 		}
 		drawLabel(canvas);
 	}
 
 	public void setval(float v) {
 		val = Math.min(max, Math.max(min, v));
-		if (svg != null) {
+		if (bg.svg != null) {
 			// Log.e("Slider", "" + ((val - min) / (max - min)));
-			if (slider == null) {
-				svg.interpolate("closed", "open", (val - min) / (max - min));
+			if (slider.none()) {
+				bg.svg.interpolate("closed", "open", (val - min) / (max - min));
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.puredata.core.PdBase;
 
+import cx.mccormick.pddroidparty.Widget.WImage;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -14,8 +15,8 @@ public class Taplist extends Widget {
 	String longest = null;
 	ArrayList<String> atoms = new ArrayList<String>();
 
-	SVGRenderer on = null;
-	SVGRenderer off = null;
+	WImage on = new WImage();
+	WImage off = new WImage();
 
 	boolean down = false;
 	int pid0 = -1; //pointer id when down
@@ -50,12 +51,12 @@ public class Taplist extends Widget {
 		// listen out for floats from Pd
 		setupreceive();
 
-		// try and load SVGs
-		on = getSVG(TAG, "on", sendname, receivename);
-		off = getSVG(TAG, "off", sendname, receivename);
+		// try and load images
+		on.load(TAG, "on", label, sendname, receivename);
+		off.load(TAG, "off", label, sendname, receivename);
 
-		setTextParametersFromSVG(on);
-		setTextParametersFromSVG(off);
+		setTextParametersFromSVG(on.svg);
+		setTextParametersFromSVG(off.svg);
 	}
 
 	public void draw(Canvas canvas) {
@@ -65,7 +66,7 @@ public class Taplist extends Widget {
 			paint.setStrokeWidth(1);
 		}
 
-		if (down ? drawPicture(canvas, on) : drawPicture(canvas, off)) {
+		if (down ? on.draw(canvas) : off.draw(canvas)) {
 			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1,
 					dRect.top, paint);
 			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1,

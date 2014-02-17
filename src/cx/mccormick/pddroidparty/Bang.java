@@ -15,8 +15,8 @@ public class Bang extends Widget {
 	long bangtime ;
 	int interrpt,hold; //interrpt and hold time, in ms.
 	
-	SVGRenderer on = null;
-	SVGRenderer off = null;
+	WImage on = new WImage();
+	WImage off = new WImage();
 	
 	public Bang(PdDroidPatchView app, String[] atomline) {
 		super(app);
@@ -47,9 +47,10 @@ public class Bang extends Widget {
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
-		// try and load SVGs
-		on = getSVG(TAG, "on", label, sendname, receivename);
-		off = getSVG(TAG, "off", label, sendname, receivename);
+		// try and load images
+		on.load(TAG, "on", label, sendname, receivename);
+		off.load(TAG, "off", label, sendname, receivename);
+
 	}
 
 	public Bang(PdDroidPatchView app) {
@@ -58,7 +59,7 @@ public class Bang extends Widget {
 
 	public void draw(Canvas canvas) {
 
-		if (drawPicture(canvas, off)) {
+		if (off.draw(canvas)) {
 			paint.setStyle(Paint.Style.FILL);
 			paint.setColor(bgcolor);
 			canvas.drawRect(dRect, paint);
@@ -69,7 +70,7 @@ public class Bang extends Widget {
 			canvas.drawLine(dRect.left + 0, dRect.bottom, dRect.right, dRect.bottom, paint);
 			canvas.drawLine(dRect.left, dRect.top + 0, dRect.left, dRect.bottom, paint);
 			canvas.drawLine(dRect.right, dRect.top + 0, dRect.right, dRect.bottom, paint);
-			if (bang && drawPicture(canvas, on)) {
+			if (bang && on.draw(canvas)) {
 				if((SystemClock.uptimeMillis()-bangtime)>hold) bang = false;
 				//paint.setStyle(Paint.Style.FILL);
 				

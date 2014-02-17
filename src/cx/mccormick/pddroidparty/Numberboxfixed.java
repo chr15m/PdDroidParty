@@ -9,8 +9,8 @@ import android.graphics.RectF;
 public class Numberboxfixed extends Numberbox {
 	private static final String TAG = "Numberbox";
 	
-	SVGRenderer on = null;
-	SVGRenderer off = null;
+	WImage on = new WImage();
+	WImage off = new WImage();
 	
 	public Numberboxfixed(PdDroidPatchView app, String[] atomline) {
 		super(app);
@@ -54,12 +54,12 @@ public class Numberboxfixed extends Numberbox {
 		
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		
-		// try and load SVGs
-		on = getSVG(TAG, "on", sendname, receivename);
-		off = getSVG(TAG, "off", sendname, receivename);
+		// try and load images
+		on.load(TAG, "on", label, sendname, receivename);
+		off.load(TAG, "off", label, sendname, receivename);
 		
-		setTextParametersFromSVG(on);
-		setTextParametersFromSVG(off);
+		setTextParametersFromSVG(on.svg);
+		setTextParametersFromSVG(off.svg);
 	}
 	
 	public void draw(Canvas canvas) {
@@ -69,7 +69,7 @@ public class Numberboxfixed extends Numberbox {
 			paint.setStrokeWidth(1);
 		}
 		
-		if (down ? drawPicture(canvas, on) : drawPicture(canvas, off)) {
+		if (down ? on.draw(canvas) : off.draw(canvas)) {
 			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
 			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1, dRect.bottom, paint);
 			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);
