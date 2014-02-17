@@ -172,7 +172,7 @@ support this<br/>buy CanOfBeats<br/><img src='45_avail_market_logo1.png'/></a>
 
 <p>The SVG renderer is not very robust, so the best way to design your own widget graphics is to start with the widget graphics in droidparty-tests/svg-widgets/*.svg and modify them. The renderer only really works on plain paths, so make sure you convert any objects like rectangles or circles to plain SVG paths. The renderer used is a fork of <a href="http://code.google.com/p/svg-android/">svg-android</a> with some support for <a href="http://inkscape.org/">Inkscape</a> hacked in.</p>
 
-<p>You can put three special attributes on the SVG element using a text editor, for font customisation. They are textFont, textColor, and textAntialias.</p>
+<p>You can put three special attributes on the SVG element using a text editor, for font customisation. They are textFont, textColor, textOffset and textAntialias. textOffset is a relative value like "0.25 0.25" which will move the text down and to the right relative to the center of the widget being drawn. textFont should be the name of the font file excluding the extension. textAntialias should be "true" or "false". textColor is a hex string like "#ffffff".</p>
 
 <h3>Standalone apps</h3>
 

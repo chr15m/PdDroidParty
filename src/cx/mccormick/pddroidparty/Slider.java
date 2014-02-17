@@ -118,7 +118,6 @@ public class Slider extends Widget {
 				canvas.drawLine(Math.round(dRect.left /*+ 2*/), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), Math.round(dRect.right /*- 2*/), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), paint);
 			}
 
-			drawLabel(canvas);
 		} else if (slider != null) {
 			if (orientation_horizontal) {
 				sRect.offsetTo((val - min) / (max - min) * (dRect.width() - sRect.width()) + dRect.left, dRect.top);
@@ -127,6 +126,7 @@ public class Slider extends Widget {
 			}
 			drawPicture(canvas, slider, sRect);
 		}
+		drawLabel(canvas);
 	}
 
 	public void setval(float v) {

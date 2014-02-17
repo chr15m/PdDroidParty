@@ -34,9 +34,10 @@ public class Widget {
 	int labelsize=14;
 	Typeface font = Typeface.create("Courier", Typeface.BOLD);
 	int fontsize = 0;
+	float[] textoffset = new float[2];
 	//StaticLayout textLayout = null;
 
-	int bgcolor=0xFFFFFFFF, fgcolor=0xFF000000,labelcolor=0xFF000000;
+	int bgcolor=0xFFFFFFFF, fgcolor=0xFF000000, labelcolor=0xFF000000;
 	
 	PdDroidPatchView parent = null;
 	
@@ -77,6 +78,8 @@ public class Widget {
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		paint.setTypeface(font);
 		paint.setTextSize(fontsize);
+		textoffset[0] = 0.0f;
+		textoffset[1] = 0.0f;
 	}
 	
 	public static int getColor(int iemcolor) {
@@ -140,6 +143,16 @@ public class Widget {
 			}
 			if (svg.getAttribute("textAntialias") != null) {
 				paint.setAntiAlias(true);
+			}
+			if (svg.getAttribute("textOffset") != null) {
+				try {
+					String[] xy = svg.getAttribute("textOffset").split(" ");
+					textoffset[0] = Float.parseFloat(xy[0]);
+					textoffset[1] = Float.parseFloat(xy[1]);
+				} catch (Exception e) {
+					Log.e("PdDroidParty", "Bad text offset: " + svg.getAttribute("textOffset"));
+					Log.e("PdDroidParty", e.toString());
+				}
 			}
 		}
 	}
@@ -205,6 +218,12 @@ public class Widget {
 		paint.setColor(Color.BLACK);
 	}
 	
+	public void drawCenteredText(Canvas canvas, String text) {
+		paint.setStrokeWidth(0);
+		if (text != null) {
+			canvas.drawText(text, dRect.left + dRect.width() / 2 + dRect.width() * textoffset[0], (int) (dRect.top + dRect.height() * 0.75 + dRect.height() * textoffset[1]), paint);
+		}
+	}
 	
 	/* Set the label (checking for special null values) */
 	public String setLabel(String incoming) {

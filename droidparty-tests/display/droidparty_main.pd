@@ -1,0 +1,6 @@
+#N canvas 474 196 459 213 10;
+#X obj 152 115 display 150 50 output;
+#X obj 152 53 taplist 150 50 stick stick pointy brown lightning;
+#X obj 29 94 r stick;
+#X msg 29 116 \; output \$1 stick;
+#X connect 2 0 3 0;
