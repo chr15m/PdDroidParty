@@ -258,6 +258,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 						new MenuBang(this, line);
 					} else if (line[4].equals("loadsave")) {
 						new LoadSave(this, line);
+					} else if (line[4].equals("droidsystem")) {
+						new DroidSystem(this, line);
 					}
 				}
 			}
