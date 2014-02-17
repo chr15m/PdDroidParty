@@ -77,16 +77,17 @@ public class Bang extends Widget {
 		drawLabel(canvas);
 	}
 
+	// visual bang :
 	private void bang() {
 		bang = true;
 		bangtime = SystemClock.uptimeMillis();
-		PdBase.sendBang(sendname);
 	}
 
 	public boolean touchdown(int pid, float x, float y)
 	{
 		if (dRect.contains(x, y)) {
 			bang();
+			PdBase.sendBang(sendname);
 			return true;
 		}
 		

@@ -39,9 +39,6 @@ public class Toggle extends Widget {
 		// listen out for floats from Pd
 		setupreceive();
 
-		// send initial value if we have one
-		initval();
-
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
 				Math.round(y + h));
@@ -81,12 +78,6 @@ public class Toggle extends Widget {
 			val = toggleval;
 		} else {
 			val = 0;
-		}
-	}
-
-	public void initval() {
-		if (init != 0) {
-			sendFloat(val);
 		}
 	}
 			
@@ -129,11 +120,9 @@ public class Toggle extends Widget {
 
 	public void receiveFloat(float v) {
 		setval(v);
-		sendFloat(val);
 	}
 
 	public void receiveBang() {
 		toggle();
-		sendFloat(val);
 	}
 }

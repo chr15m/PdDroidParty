@@ -55,7 +55,7 @@ public class Slider extends Widget {
 		setupreceive();
 		
 		// send initial value if we have one
-		initval();
+		//initval();
 		
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
@@ -205,7 +205,6 @@ public class Slider extends Widget {
 	
 	public void receiveFloat(float v) {
 		setval(v);
-		sendFloat(val);
 	}
 }
 
