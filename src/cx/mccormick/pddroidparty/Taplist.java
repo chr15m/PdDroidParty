@@ -114,4 +114,11 @@ public class Taplist extends Widget {
 		val = ((v % atoms.size()) + atoms.size()) % atoms.size();
 		doSend();
 	}
+	
+	public void receiveMessage(String symbol, Object... args) {
+		if(widgetreceiveSymbol(symbol,args)) return;
+		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
+			receiveFloat((Float)args[0]);
+		}
+	}
 }
