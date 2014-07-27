@@ -155,7 +155,7 @@ public class Numberbox extends Widget {
 		/*if (down) {
 			//Log.e(TAG, "touch:" + val);
 			if (event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) {
-				// calculate the new valimport com.csipsimple.R;ue based on touch
+				// calculate the new value based on touch
 				if (orientation_horizontal) {
 					val = (((ex - x) / w) * (max - min) + min);
 				} else {
