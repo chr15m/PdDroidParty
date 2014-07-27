@@ -7,6 +7,7 @@ import org.puredata.core.PdBase;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.util.Log;
 
 public class Taplist extends Widget {
 	private static final String TAG = "Taplist";
@@ -79,8 +80,8 @@ public class Taplist extends Widget {
 	}
 
 	private void doSend() {
-		parent.app.send(sendname, atoms.get((int) val));
 		PdBase.sendFloat(sendname + "/idx", val);
+		parent.app.send(sendname, atoms.get((int) val));
 	}
 
 	public boolean touchdown(int pid, float x,float y) {
@@ -108,9 +109,9 @@ public class Taplist extends Widget {
 			receiveFloat((Float) args[0]);
 		}
 	}
-
+	
 	public void receiveFloat(float v) {
-		val = v % atoms.size();
+		val = ((v % atoms.size()) + atoms.size()) % atoms.size();
 		doSend();
 	}
 }
