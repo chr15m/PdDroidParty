@@ -130,7 +130,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	            Log.e("onCreate", "cannot access mail attachment");
 	        else
 	        {
-	            FileOutputStream tmp = new FileOutputStream("/sdcard/temp.dpz");
+	            FileOutputStream tmp = new FileOutputStream(Environment.getExternalStorageDirectory().toString() + "/temp.dpz");
 	            byte []buffer = new byte[1024];
 	            while (attachment.read(buffer) > 0)
 	                tmp.write(buffer);
@@ -138,7 +138,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	            tmp.close();
 	            attachment.close();
 	        }
-	        pdzZipPath = "/sdcard/temp.dpz";
+	        pdzZipPath = Environment.getExternalStorageDirectory().toString() + "/temp.dpz";
 	        getLatestVersion(); // check the version of pdz we just clicked on
 	        process();
 	    } 
@@ -188,13 +188,13 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private void extract() {
 		// TODO Auto-generated method stub
 		try {
-			List<File> listMain = IoUtils.extractZipResource(new FileInputStream(pdzZipPath), new File("/sdcard/PdDroidParty"), true);
+			List<File> listMain = IoUtils.extractZipResource(new FileInputStream(pdzZipPath), new File(Environment.getExternalStorageDirectory().toString() + "/PdDroidParty"), true);
 			 if (listMain.size() != 0) {
 				 for (File file : listMain) {
 					 Log.d("Extracting", file.getAbsolutePath());
 					
 				 }
-				 launchDroidParty("sdcard/PdDroidParty/"+folderName+"/"+dpMainfileName);
+				 launchDroidParty(Environment.getExternalStorageDirectory().toString() + "/PdDroidParty/" + folderName + "/" + dpMainfileName);
 			 }
 		}  catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -206,7 +206,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 
 	private boolean getDiskVersion() {
 		// TODO Auto-generated method stub
-		List<File> listpdMain = IoUtils.find(new File("/sdcard/PdDroidParty"+ "/" + folderName), ".*droidparty_main\\.pd$");
+		List<File> listpdMain = IoUtils.find(new File(Environment.getExternalStorageDirectory().toString() + "/PdDroidParty"+ "/" + folderName), ".*droidparty_main\\.pd$");
 		if (listpdMain.size() != 0) {
 			 for (File f : listpdMain) {
 				 Log.d("DiskFile", f.getAbsolutePath());
@@ -241,7 +241,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 
 	private void getLatestVersion() {
 		// TODO Auto-generated method stub
-		File temp = new File("/sdcard/pdTemp");
+		File temp = new File(Environment.getExternalStorageDirectory().toString() + "/pdTemp");
 		try{
 			List<File> listMain = IoUtils.extractZipResource(new FileInputStream(pdzZipPath), temp, true);
 			if (listMain.size() != 0) {
@@ -321,7 +321,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 			//IoUtils.extractZipResource(res.openRawResource(R.raw.abstractions), libDir, false);
 			//IoUtils.extractZipResource(res.openRawResource(Properties.hasArmeabiV7a ? R.raw.externals_v7a : R.raw.externals), libDir, false);
 			// where we will be storing the patch on the sdcard
-			String basedir = "/sdcard/" + res.getString(res.getIdentifier("dirname", "string", getPackageName()));
+			String basedir = Environment.getExternalStorageDirectory().toString() + "/" + res.getString(res.getIdentifier("dirname", "string", getPackageName()));
 			// version file for the existing patch
 			File version = new File(basedir + "/patch/VERSION-" + res.getInteger(res.getIdentifier("revno", "integer", getPackageName())));
 			// if the version file does not exist
@@ -375,7 +375,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					launchDroidParty(bakedpatch);
 					finish();
 				} else {
-					List<File> list = IoUtils.find(new File("/sdcard/PdDroidParty"), ".*droidparty_main\\.pd$");
+					List<File> list = IoUtils.find(new File(Environment.getExternalStorageDirectory().toString() + "/PdDroidParty"), ".*droidparty_main\\.pd$");
 					for (File f: list) {
 						String[] parts = f.getParent().split("/");
 						// exclude generic patch directories found in apps based on PdDroidParty
@@ -468,7 +468,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	            InputStream input = new BufferedInputStream(url.openStream(), 8192);
 	 
 	            // Output stream to write file
-	            OutputStream output = new FileOutputStream("/sdcard/temp.dpz");
+	            OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory().toString() + "/temp.dpz");
 	 
 	            byte data[] = new byte[1024];
 	 
