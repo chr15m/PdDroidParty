@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import org.puredata.core.PdBase;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,9 +18,6 @@ import android.view.MotionEvent;
 
 public class Widget {
 	private static final String TAG = "Widget";
-	//int screenwidth=0;
-	//int screenheight=0;
-	//int WRAPWIDTH = 360;
 	
  	RectF dRect = new RectF();
 	
@@ -35,8 +34,7 @@ public class Widget {
 	Typeface font = Typeface.create("Courier", Typeface.BOLD);
 	int fontsize = 0;
 	float[] textoffset = new float[2];
-	//StaticLayout textLayout = null;
-
+	
 	int bgcolor=0xFFFFFFFF, fgcolor=0xFF000000, labelcolor=0xFF000000;
 	
 	PdDroidPatchView parent = null;
@@ -54,9 +52,6 @@ public class Widget {
 	
 	public Widget(PdDroidPatchView app) {
 		parent = app;
-		//screenwidth = parent.getWidth();
-		//screenheight = parent.getHeight();
-		//fontsize = (int)((float)parent.fontsize / parent.patchheight * screenheight) - 2;
 		fontsize = (int)((float)parent.fontsize);
 		
 		File f = null;
@@ -193,19 +188,6 @@ public class Widget {
 	public float getval() {
 		return val;
 	}
-	
-	/* Draw the label */	
-	/*public void drawLabel(Canvas canvas) {
-		if (label != null) {
-			if (textLayout == null) {
-				textLayout = new StaticLayout((CharSequence)label, new TextPaint(paint), (int)((float)WRAPWIDTH / parent.patchwidth * screenwidth), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
-			}
-			canvas.save();
-			canvas.translate(dRect.left + labelpos[0] + 2, dRect.top + labelpos[1] + 2 - fontsize / 2);
-			textLayout.draw(canvas);
-			canvas.restore();
-		}
-	}*/
 	
 	public void drawLabel(Canvas canvas) {
 		if (label != null) {
@@ -349,59 +331,140 @@ public class Widget {
 	}
 	
 	/***** Special SVG GUI drawing stuff *****/
-	
-	public SVGRenderer getSVG(String prefix, String suffix, Object... args) {
-		// split the string into parts on underscore, so we test on e.g.
-		// blah_x_y, blah, blah_x, blah_x_y
-		ArrayList<String> testnames = new ArrayList<String>();
-		ArrayList<String> parts = new ArrayList<String>();
-		if (prefix != null)
-			parts.add(prefix);
-		if (suffix != null)
-			parts.add(suffix);
-		testnames.add(TextUtils.join("-", parts));
+	public class WImage {
 		
-		for (int a=0; a<args.length; a++) {
-			String teststring = (String)args[a];
-			if (teststring != null && !teststring.equals("null") && !teststring.equals("empty") && !teststring.equals("-")) {
-				String[] tries = teststring.split("_");
-				ArrayList<String> buffer = new ArrayList<String>();
-				for (int p=0; p<tries.length; p++) {
+		SVGRenderer svg = null;
+		Bitmap bitmap = null;
+		
+		public WImage(){
+			svg = null;
+			bitmap = null;
+		}
+		
+		public boolean none(){
+			return (svg == null && bitmap == null);
+		}
+		
+		// ***** Loading :
+		
+		public SVGRenderer getSVG(String prefix, String suffix, Object... args) {
+			// split the string into parts on underscore, so we test on e.g.
+			// blah_x_y, blah, blah_x, blah_x_y
+			ArrayList<String> testnames = new ArrayList<String>();
+			ArrayList<String> parts = new ArrayList<String>();
+			if (prefix != null)
+				parts.add(prefix);
+			if (suffix != null)
+				parts.add(suffix);
+			testnames.add(TextUtils.join("-", parts));
+			
+			for (int a=0; a<args.length; a++) {
+				String teststring = (String)args[a];
+				if (teststring != null && !teststring.equals("null") && !teststring.equals("empty") && !teststring.equals("-")) {
+					String[] tries = teststring.split("_");
+					ArrayList<String> buffer = new ArrayList<String>();
+					for (int p=0; p<tries.length; p++) {
+						parts.clear();
+						buffer.add(tries[p]);
+						if (prefix != null)
+							parts.add(prefix);
+						parts.add(TextUtils.join("_", buffer));
+						if (suffix != null)
+							parts.add(suffix);
+						testnames.add(TextUtils.join("-", parts));
+					}
 					parts.clear();
-					buffer.add(tries[p]);
-					if (prefix != null)
-						parts.add(prefix);
-					parts.add(TextUtils.join("_", buffer));
-					if (suffix != null)
-						parts.add(suffix);
-					testnames.add(TextUtils.join("-", parts));
 				}
-				parts.clear();
 			}
+			
+			// now test every combination we have come up with
+			// we want to check from most specific to least specific
+			for (int s = testnames.size() - 1; s >= 0; s--) {
+				SVGRenderer svg = SVGRenderer.getSVGRenderer(parent, testnames.get(s));
+				if (svg != null) {
+					return svg;
+				}
+			}
+			
+			return null;
 		}
 		
-		// now test every combination we have come up with
-		// we want to check from most specific to least specific
-		for (int s = testnames.size() - 1; s >= 0; s--) {
-			SVGRenderer svg = SVGRenderer.getSVGRenderer(parent, testnames.get(s));
-			if (svg != null) {
-				return svg;
+		public Bitmap getBitmap(String prefix, String suffix, Object... args) {
+			// split the string into parts on underscore, so we test on e.g.
+			// blah_x_y, blah, blah_x, blah_x_y
+			ArrayList<String> testnames = new ArrayList<String>();
+			ArrayList<String> parts = new ArrayList<String>();
+			if (prefix != null)
+				parts.add(prefix);
+			if (suffix != null)
+				parts.add(suffix);
+			testnames.add(TextUtils.join("-", parts));
+			
+			for (int a=0; a<args.length; a++) {
+				String teststring = (String)args[a];
+				if (teststring != null && !teststring.equals("null") && !teststring.equals("empty") && !teststring.equals("-")) {
+					String[] tries = teststring.split("_");
+					ArrayList<String> buffer = new ArrayList<String>();
+					for (int p=0; p<tries.length; p++) {
+						parts.clear();
+						buffer.add(tries[p]);
+						if (prefix != null)
+							parts.add(prefix);
+						parts.add(TextUtils.join("_", buffer));
+						if (suffix != null)
+							parts.add(suffix);
+						testnames.add(TextUtils.join("-", parts));
+					}
+					parts.clear();
+				}
 			}
+			
+			// now test every combination we have come up with
+			// we want to check from most specific to least specific
+			for (int s = testnames.size() - 1; s >= 0; s--) {
+				File f = new File(parent.app.getPatchFile().getParent() + "/" + testnames.get(s) + ".png");
+				if (f.exists() && f.canRead() && f.isFile()) {
+					return BitmapFactory.decodeFile(f.getAbsolutePath() );
+				}
+			}
+			
+			return null;
 		}
 		
-		return null;
-	}
-	
-	public boolean drawPicture(Canvas c, SVGRenderer p) {
-		return drawPicture(c, p, dRect);
-	}
-	
-	public boolean drawPicture(Canvas c, SVGRenderer p, RectF rect) {
-		if (p != null) {
-			c.drawPicture(p.getPicture(), rect);
+		public void load(String prefix, String suffix, Object... args) {	
+			svg = getSVG(prefix, suffix, args);
+			if (svg == null) bitmap = getBitmap(prefix, suffix, args);
+		}
+		
+		// ***** Get attributes
+		
+		public float getWidth() {
+			if(svg != null) return Float.parseFloat(svg.getAttribute("width"));
+			else if(bitmap != null) return bitmap.getWidth();
+			else return 0;
+		}
+		
+		
+		public float getHeight() {
+			if(svg != null) return Float.parseFloat(svg.getAttribute("height"));
+			else if(bitmap != null) return bitmap.getHeight();
+			else return 0;
+		}
+		
+		// ***** Drawing :
+		
+		public boolean draw(Canvas c) {
+			return draw(c, dRect);
+		}
+		
+		public boolean draw(Canvas c, RectF rect) {
+			if(svg != null) c.drawPicture(svg.getPicture(), rect);
+			else if(bitmap != null) c.drawBitmap(bitmap, null, rect, paint);
+			else return true;
+			
 			return false;
-		} else {
-			return true;
-		}
-	}
+		}	
+
+	} // end of class WImage
+	
 }

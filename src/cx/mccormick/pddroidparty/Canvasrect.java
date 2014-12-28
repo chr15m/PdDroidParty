@@ -7,7 +7,7 @@ import android.graphics.RectF;
 public class Canvasrect extends Widget {
 	private static final String TAG = "Canvas";
 	
-	SVGRenderer vis = null;
+	WImage image = new WImage();
 	
 	public Canvasrect(PdDroidPatchView app, String[] atomline) {
 		super(app);
@@ -28,7 +28,7 @@ public class Canvasrect extends Widget {
 		
 		setupreceive();
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
-		vis = getSVG(TAG, null, receivename);
+		image.load(TAG, null, receivename);
 		
 		if(receivename.equals("ViewPort")) {
 			parent.viewX=(int)dRect.left;
@@ -41,7 +41,7 @@ public class Canvasrect extends Widget {
 		
 	public void draw(Canvas canvas) {
 		if(receivename.equals("ViewPort")) return;
-		if (drawPicture(canvas, vis)) {
+		if (image.draw(canvas)) {
 			paint.setStyle(Paint.Style.FILL);
 			paint.setColor(bgcolor);			
 			canvas.drawRect(dRect.left, dRect.top, dRect.right, dRect.bottom, paint); 
@@ -58,14 +58,7 @@ public class Canvasrect extends Widget {
 			dRect.right = dRect.left + w;
 			dRect.bottom = dRect.top + h;
 			
-		} /*else if( symbol.equals("color")
-		&& args.length > 1 && args[0].getClass().equals(Float.class)
-		&& args[1].getClass().equals(Float.class)
-		) {
-			bgcolor = getColor24((int)(float)(Float)args[0]);
-			labelcolor = getColor24((int)(float)(Float)args[1]);
-			//Log.e(TAG, "msg bgcolor = "+(int)(float)(Float)args[0]+", bgcolor = "+bgcolor);
-		}*/
+		} 
 		else widgetreceiveSymbol(symbol,args);
 		
 		if(receivename.equals("ViewPort")) {

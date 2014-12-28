@@ -1,5 +1,6 @@
 package cx.mccormick.pddroidparty;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -8,6 +9,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Picture;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.RectF;
+import android.graphics.drawable.PictureDrawable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -22,10 +28,10 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	public int patchwidth;
 	public int patchheight;
 	//view port :
-	public int viewX=0;
-	public int viewY=0;
-	public int viewW=1;
-	public int viewH=1;
+	public int viewX = 0;
+	public int viewY = 0;
+	public int viewW = 1;
+	public int viewH = 1;
 
 	public int fontsize;
 	ArrayList<Widget> widgets = new ArrayList<Widget>();
@@ -33,6 +39,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	private int splash_res = 0;
 	private Resources res = null;
 	private Picture background = null;
+	private Bitmap bgbitmap = null;
+	private RectF bgrect = new RectF();
 	
 	public PdDroidPatchView(Context context, PdDroidParty parent) {
 		super(context);
@@ -60,13 +68,29 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		}
 	}
 	
+	private static Bitmap picture2Bitmap(Picture picture){
+	    PictureDrawable pictureDrawable = new PictureDrawable(picture);
+	    Bitmap bitmap = Bitmap.createBitmap(pictureDrawable.getIntrinsicWidth(), pictureDrawable.getIntrinsicHeight(), Config.ARGB_8888);
+	    //Log.e(TAG, "picture size: " + pictureDrawable.getIntrinsicWidth() + " " + pictureDrawable.getIntrinsicHeight());
+	    Canvas canvas = new Canvas(bitmap);
+	    canvas.drawPicture(pictureDrawable.getPicture());
+	    return bitmap;
+	}
+
 	private void loadBackground() {
 		// if we have a splash_res or we don't have a background
-		if (background == null || splash_res != 0) {
+		if (bgbitmap == null || splash_res != 0) {
 			// load the background image
 			SVGRenderer renderer = SVGRenderer.getSVGRenderer(this, "background");
 			if (renderer != null) {
 				background = renderer.getPicture();
+				bgbitmap = picture2Bitmap(background);
+			}
+			else {
+				File f = new File(app.getPatchFile().getParent() + "/" + "background" + ".png");
+				if (f.exists() && f.canRead() && f.isFile()) {
+					bgbitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
+				}
 			}
 		}
 	}
@@ -74,35 +98,34 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	@Override
 	public void onDraw(Canvas canvas) {
 		canvas.drawPaint(paint);
-		if (background != null) {
-			canvas.save();
-			canvas.scale((float)this.getWidth() / background.getWidth(), (float)this.getHeight() / background.getHeight());
-			canvas.drawPicture(background);
-			canvas.restore();
+		canvas.save();
+
+		canvas.scale(getWidth() / (float)viewW, getHeight() / (float)viewH);
+		canvas.translate(-viewX, -viewY );
+
+		bgrect.set(0, 0, patchwidth, patchheight);
+		if (bgbitmap != null) {
+			canvas.drawBitmap(bgbitmap, null, bgrect, null);
 		}
-		// draw all widgets
-		if (widgets != null) {
-			canvas.save();
-			canvas.scale(getWidth()/(float)viewW,getHeight()/(float)viewH);
-			canvas.translate(-viewX ,-viewY );
-			for (Widget widget: widgets) {
-				widget.draw(canvas);
-			}
-			canvas.restore();
+	
+		if (widgets != null) for (Widget widget: widgets) {
+			widget.draw(canvas);
 		}
+
+		canvas.restore();
 	}
 	
 	public float PointerX(float x){
-		return (x*((float)viewW)/getWidth()+viewX);
+		return (x * ((float)viewW) / getWidth() + viewX);
 	}
 	
 	public float PointerY(float y){
-		return (y*((float)viewH)/getHeight()+viewY);
+		return (y * ((float)viewH) / getHeight() + viewY);
 	}
 	
 	public boolean onTouch(View view, MotionEvent event) {
-		int index,pid,action;
-		float x,y;
+		int index, pid, action;
+		float x, y;
 		
 		if (widgets != null) {
 			action = event.getActionMasked();
@@ -206,8 +229,11 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 								widgets.add(new Numberbox2(this, line));
 							} else if (line[4].equals("cnv")) {
 								widgets.add(new Canvasrect(this, line));
+							} else if (line[4].equals("mknob")) {
+								widgets.add(new Knob(this, line));
+							}
 							// special PdDroidParty abstractions
-							} else if (line[4].equals("wordbutton")) {
+							else if (line[4].equals("wordbutton")) {
 								widgets.add(new Wordbutton(this, line));
 							} else if (line[4].equals("numberbox")) {
 								widgets.add(new Numberboxfixed(this, line));
@@ -232,6 +258,8 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 						new MenuBang(this, line);
 					} else if (line[4].equals("loadsave")) {
 						new LoadSave(this, line);
+					} else if (line[4].equals("droidsystem")) {
+						new DroidSystem(this, line);
 					}
 				}
 			}
