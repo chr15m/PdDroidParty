@@ -3,6 +3,7 @@ package cx.mccormick.pddroidparty;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -17,6 +18,7 @@ import android.graphics.drawable.PictureDrawable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.os.Build;
 import android.util.Log;
 
 import com.larvalabs.svgandroid.SVGParser;
@@ -45,6 +47,13 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	public PdDroidPatchView(Context context, PdDroidParty parent) {
 		super(context);
 		
+		// disable graphic acceleration to have SVG properly rendered
+		// not needed prior to API level 17
+		// not possible prior to API level 11
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+			setSoftwareMode();
+		}
+		
 		app = parent;
 
 		setFocusable(true);
@@ -66,6 +75,12 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		} else {
 			loadBackground();
 		}
+	}
+	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void setSoftwareMode()
+	{
+		setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 	}
 	
 	private static Bitmap picture2Bitmap(Picture picture){
