@@ -31,8 +31,8 @@
                                 <category android:name="android.intent.category.BROWSABLE"/>
                                 <category android:name="android.intent.category.LAUNCHER"/>
                                 <category android:name="android.intent.category.OPENABLE"/>
-                                <data android:host="" android:scheme="file" android:pathPattern=".*\\.dpz"/>
-                                <data android:host="" android:scheme="content" android:pathPattern=".*\\.dpz"/>
+                                <data android:scheme="file" android:pathPattern=".*\\.dpz"/>
+                                <data android:scheme="content" android:pathPattern=".*\\.dpz"/>
                         </intent-filter>
 
 			<!-- ES File Explorer -->
@@ -46,8 +46,8 @@
                                 <category android:name="android.intent.category.BROWSABLE"/>
                                 <category android:name="android.intent.category.LAUNCHER"/>
                                 <category android:name="android.intent.category.OPENABLE"/>
-                                <data android:host="" android:scheme="file" android:mimeType="*/*" android:pathPattern=".*\\.dpz"/>
-                                <data android:host="" android:scheme="content" android:mimeType="*/*" android:pathPattern=".*\\.dpz"/>
+                                <data android:scheme="file" android:mimeType="*/*" android:pathPattern=".*\\.dpz"/>
+                                <data android:scheme="content" android:mimeType="*/*" android:pathPattern=".*\\.dpz"/>
                         </intent-filter>
 			
 			<!-- k-9

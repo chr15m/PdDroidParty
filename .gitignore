@@ -7,3 +7,10 @@ bin
 website/PdDroidParty-debug*.apk
 website/droidparty-*.zip
 website/index.html
+
+.gradle
+build
+
+# Android Studio IDE Files
+.idea
+*.iml
