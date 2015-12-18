@@ -5,29 +5,13 @@ http://droidparty.net/
 
 **PdDroidParty is currently looking for a new maintainer.**
 
-Building
---------
+Similar projects
+----------------
 
-Run these on a fresh checkout to get the libpd dependencies and get set up:
+Make sure you check out [PdParty for iOS](https://github.com/danomatika/PdParty) and [MobMuPlat](https://github.com/monkeyswarm/MobMuPlat) which runs on multiple platforms.
 
-	# get the latest version of pd-for-android
-	git submodule init
-	git submodule update
-	# get pd-for-android's own submodules
-	cd pd-for-android
-	git submodule init
-	git sudmodule update
-	# make the PdCore component build with ant
-	cd PdCore
-	android update project --path .
-	# now go back to the top level and configure out project
-	cd ..
-	cd ..
-	android update project --name PdDroidParty --path .
-
-Then to build simply:
-
-	ant debug install
+Notes
+-----
 
 You can push the existing test suite and the demos to your device's sdcard using adb:
 
@@ -37,9 +21,9 @@ You can push the existing test suite and the demos to your device's sdcard using
 Copyright
 ---------
 
-Copyright Chris McCormick, 2011-2013.
+Copyright Chris McCormick, 2011-2015.
 
-With contributions from: Kishan Muddu, Antoine Rousseau.
+With contributions from: Kishan Muddu, Antoine Rousseau, Tal Kirshboim.
 
 GPLv3 Licensed - see LICENSE for details.
 
