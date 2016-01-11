@@ -3,7 +3,7 @@
 #X msg 422 456 bang;
 #X obj 422 478 pack \$0 \$1 \$2;
 #X obj 657 9 namecanvas pd-\$0-self;
-#X obj 1 1 cnv 15 16 16 empty \$0-display 2  20 12 0 14 -233017 -66577
+#X obj 1 1 cnv 15 16 16 empty \$0-display ? 20 12 0 14 -233017 -66577
 0;
 #X msg 422 501 \; pd-\$1-self donecanvasdialog 1 1 2 0 0 1 1 \$2 \$3
 0 0 1 1 1 \; pd-\$1-self dirty 0 \;;
@@ -85,4 +85,4 @@
 #X connect 36 0 37 0;
 #X connect 36 1 12 0;
 #X connect 37 0 12 0;
-#X coords 0 0 1 1 150 50 2 0 0;
+#X coords 0 0 1 1 200 140 2 0 0;
