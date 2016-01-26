@@ -1,3 +1,5 @@
+### PdDroidParty is looking for a new maintainer. ###
+
 ![PdDroidParty Logo](http://droidparty.net/icon.png)
 Run your Pure Data patches on Android with native GUIs emulated.
 
