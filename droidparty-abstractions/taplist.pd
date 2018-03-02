@@ -21,7 +21,7 @@
 #X obj 617 3 namecanvas pd-\$0-self;
 #X obj 543 426 t a a;
 #X obj 582 470 s \$0/setsymbol;
-#N canvas 12 22 450 300 filter-zeros 0;
+#N canvas 12 23 450 300 filter-zeros 0;
 #X obj 8 8 inlet;
 #X obj 148 71 t l;
 #X obj 35 92 list trim;
@@ -68,12 +68,11 @@
 #X obj 326 326 r \$0/setsymbol;
 #X obj 326 348 list prepend \$0;
 #X msg 326 370 \; \$1/display label \$2;
-#X obj 2 1 bng 8 250 50 0 \$0/tap \$0/tap-in empty 17 7 0 10 -262144
+#X obj 2 1 bng 14 250 50 0 \$0/tap \$0/tap-in empty 17 7 0 10 -262144
 -262144 -262144;
 #X msg 352 274 _;
-#X obj 1 1 cnv 12 1 1 empty \$0/display _ 2 0 0 4 -262144 -1 0;
-#X msg 5 509 \; pd-\$1-self donecanvasdialog 1 1 2 0 0 1 1 \$2 \$3
-0 0 1 1 1 \; pd-\$1-self dirty 0;
+#X obj 1 1 cnv 12 98 14 empty \$0/display HE/$L 2 8 0 8 -262144 -1
+0;
 #N canvas 345 145 597 322 size 0;
 #X obj 402 207 pack \$0 f f;
 #X obj 402 123 t b b b;
@@ -127,10 +126,12 @@
 #X connect 22 1 19 0;
 #X connect 22 2 6 0;
 #X restore 24 432 pd size;
+#X msg 5 509 \; pd-\$1-self donecanvasdialog 1 1 3 0 0 1 1 \$2 \$3
+0 0 1 1 1 \; pd-\$1-self dirty 0;
 #X connect 0 0 4 0;
 #X connect 1 0 2 0;
-#X connect 1 0 45 0;
-#X connect 2 0 44 0;
+#X connect 1 0 44 0;
+#X connect 2 0 45 0;
 #X connect 3 0 15 0;
 #X connect 4 0 1 0;
 #X connect 4 1 3 0;
@@ -173,4 +174,4 @@
 #X connect 38 0 39 0;
 #X connect 39 0 40 0;
 #X connect 42 0 39 0;
-#X coords 0 0 1 1 200 140 2 0 0;
+#X coords 0 0 1 1 100 16 2 0 0;
