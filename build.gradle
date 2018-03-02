@@ -48,5 +48,5 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'org.puredata.android:pd-core:1.0.0-rc3'
+    compile 'org.puredata.android:pd-core:1.0.0'
 }

@@ -1,14 +1,17 @@
+### PdDroidParty is looking for a new maintainer. Contact me if you want to take it over! ###
+
 ![PdDroidParty Logo](http://droidparty.net/icon.png)
 Run your Pure Data patches on Android with native GUIs emulated.
 
 http://droidparty.net/
 
-**PdDroidParty is currently looking for a new maintainer.**
-
 Similar projects
 ----------------
 
 Make sure you check out [PdParty for iOS](https://github.com/danomatika/PdParty) and [MobMuPlat](https://github.com/monkeyswarm/MobMuPlat) which runs on multiple platforms.
+
+Also check out [PdDroidPublisher](https://github.com/b2renger/PdDroidPublisher/) which
+is a fork of this codebase with a focus on creating distributable music apps.
 
 Notes
 -----
