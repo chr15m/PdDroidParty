@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.midi.MidiToPdAdapter;
+import org.puredata.android.midi.PdToMidiAdapter;
 import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.PdDispatcher;
@@ -81,8 +82,8 @@ public class PdDroidParty extends Activity {
 	private MenuItem menumidi = null;
 
 	private UsbMidiDevice midiDevice = null;
-	private MidiReceiver midiOut = null;
 	private MidiToPdAdapter receiver = new MidiToPdAdapter();
+	private PdToMidiAdapter sender;
 	
 	private final PdDispatcher dispatcher = new PdDispatcher() {
 		@Override
@@ -323,7 +324,8 @@ public class PdDroidParty extends Activity {
 					protected void onOutputSelected(UsbMidiOutput output, UsbMidiDevice device, int iface, int index) {
 						post("Output selection: Interface " + iface + ", Output " + index);
 						try {
-							midiOut = output.getMidiOut();
+							sender = new PdToMidiAdapter(output.getMidiOut());
+							PdBase.setMidiReceiver(sender);
 						} catch (DeviceNotConnectedException e) {
 							post("MIDI device has been disconnected");
 						} catch (InterfaceNotAvailableException e) {
