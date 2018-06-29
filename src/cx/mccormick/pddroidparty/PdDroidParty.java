@@ -550,40 +550,15 @@ public class PdDroidParty extends Activity {
 				// ok we are done
 				progress.dismiss();
 				if (!devices.isEmpty()) {
-					String devicenames[] = new String[devices.size()];
-					// loop through the devices and get their names
+					// loop through all devices and add them
 					for (int i = 0; i < devices.size(); ++i) {
-						devicenames[i] = devices.get(i).getCurrentDeviceInfo().toString();
+						midiDevice = devices.get(i);
+						midiDevice.requestPermission(PdDroidParty.this);
 					}
-					// construct the alert we will show
-					new AlertDialog.Builder(PdDroidParty.this)
-					// make the alert and show it
-					.setTitle("Midi device")
-					.setItems(devicenames, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							// The 'which' argument contains the index position
-							// of the selected item
-							midiDevice = devices.get(which);
-							midiDevice.requestPermission(PdDroidParty.this);
-						}
-					})
-					.show();
+					post("Added all midi devices.");
 				} else {
 					post("No midi devices found.");
 				}
-
-				/*new UsbDeviceSelector<UsbMidiDevice>(devices) {
-					@Override
-					protected void onDeviceSelected(UsbMidiDevice device) {
-						midiDevice = device;
-						midiDevice.requestPermission(PdDroidParty.this);
-					}
-
-					@Override
-					protected void onNoSelection() {
-						post("No device selected");
-					}
-				}.show(getSupportFragmentManager(), null);*/
 			}
 		}.execute(devices.toArray(new UsbMidiDevice[devices.size()]));
 	}
