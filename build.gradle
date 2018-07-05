@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         applicationId "cx.mccormick.pddroidparty"
-        minSdkVersion 11
+        minSdkVersion 17
         targetSdkVersion 11
     }
 
@@ -50,5 +50,5 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'org.puredata.android:pd-core:1.0.0'
+    implementation 'org.puredata.android:pd-core:1.1.0'
 }
