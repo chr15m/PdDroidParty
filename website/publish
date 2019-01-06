@@ -9,7 +9,7 @@ do
 done
 
 rm PdDroidParty-debug.apk
-cp ../bin/PdDroidParty-debug.apk PdDroidParty-debug-$revno.apk
+cp ../build/outputs/apk/debug/PdDroidParty-debug.apk PdDroidParty-debug-$revno.apk
 ln -s PdDroidParty-debug-$revno.apk PdDroidParty-debug.apk
 
 sed "s/PdDroidParty-debug-REVNO.apk*/PdDroidParty-debug-$revno.apk/g" index-template.html > index.html
