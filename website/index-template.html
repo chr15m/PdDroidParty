@@ -174,6 +174,19 @@ support this<br/>buy CanOfBeats<br/><img src='45_avail_market_logo1.png'/></a>
 
 <p>You can put three special attributes on the SVG element using a text editor, for font customisation. They are textFont, textColor, textOffset and textAntialias. textOffset is a relative value like "0.25 0.25" which will move the text down and to the right relative to the center of the widget being drawn. textFont should be the name of the font file excluding the extension. textAntialias should be "true" or "false". textColor is a hex string like "#ffffff".</p>
 
+<h3>ViewPort canvas</h3>
+
+<p>It is possible to map only a part of the main Pd window to the actual device screen, by using a specially configured canvas GUI:</p>
+
+<ul>
+	<li>In the main pd window, create a canvas gui (menu Put -> Canvas)</li>
+	<li>Make sure the canvas is in the background (select all the objects but the canvas, cut, copy)</li>
+	<li>Edit the canvas properties, set the receive name to "ViewPort" and configure its size and position to select the part of the window you want to display on  PdDroidParty</li>
+	<li>You can dynamically change the viewport by sending "pos" and "vis_size" messages to "ViewPort", so you have visual indication of the portion of the screen that will be displayed on PdDroidParty</li>
+</ul>
+
+<p>The selected viewport area will be rescaled in order to fill the screen of the device.</p>
+
 <h3>Standalone apps</h3>
 
 <p>You can use the PdDroidParty code base to bundle your own Pd patches as standalone Android apps.</p>
