@@ -112,16 +112,14 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	
 	@Override
 	public void onDraw(Canvas canvas) {
-
+		canvas.drawPaint(paint);
 		if (background != null) {
 			canvas.save();
 			canvas.scale((float)this.getWidth() / background.getWidth(), (float)this.getHeight() / background.getHeight());
 			canvas.drawPicture(background);
 			canvas.restore();
 		} else if (bgbitmap != null) {
-			canvas.drawPaint(paint);
 			canvas.save();
-
 			canvas.scale(getWidth() / (float)viewW, getHeight() / (float)viewH);
 			canvas.translate(-viewX, -viewY );
 			bgrect.set(0, 0, patchwidth, patchheight);
