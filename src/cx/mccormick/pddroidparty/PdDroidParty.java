@@ -307,7 +307,7 @@ public class PdDroidParty extends Activity {
 		wifiMulticastLock.acquire();
 		Log.e(TAG, "Got Multicast Lock (after)? " + wifiMulticastLock.isHeld());
 		// set up the midi stuff
-		UsbMidiDevice.installBroadcastHandler(this, new UsbBroadcastHandler() {
+		/*UsbMidiDevice.installBroadcastHandler(this, new UsbBroadcastHandler() {
 			@Override
 			public void onPermissionGranted(UsbDevice device) {
 				if (midiDevice == null || !midiDevice.matches(device)) return;
@@ -379,7 +379,8 @@ public class PdDroidParty extends Activity {
 				midiDevice = null;
 				post("MIDI device disconnected");
 			}
-		});
+		});*/
+
 		// set a progress dialog running
 		final ProgressDialog progress = new ProgressDialog(this);
 		progress.setMessage("Loading...");
