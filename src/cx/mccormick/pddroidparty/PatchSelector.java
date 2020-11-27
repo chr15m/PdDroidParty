@@ -130,7 +130,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	            Log.e("onCreate", "cannot access mail attachment");
 	        else
 	        {
-	            FileOutputStream tmp = new FileOutputStream(Environment.getExternalStorageDirectory().toString() + "/temp.dpz");
+	            FileOutputStream tmp = new FileOutputStream(Environment.getExternalStorageDirectory().toString() + "/temp.pdz");
 	            byte []buffer = new byte[1024];
 	            while (attachment.read(buffer) > 0)
 	                tmp.write(buffer);
@@ -138,7 +138,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	            tmp.close();
 	            attachment.close();
 	        }
-	        pdzZipPath = Environment.getExternalStorageDirectory().toString() + "/temp.dpz";
+	        pdzZipPath = Environment.getExternalStorageDirectory().toString() + "/temp.pdz";
 	        getLatestVersion(); // check the version of pdz we just clicked on
 	        process();
 	    } 
@@ -165,7 +165,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 				Thisversion = Thisversion.substring(0, Thisversion.lastIndexOf("."));
 			}
 			new AlertDialog.Builder(PatchSelector.this)
-			.setTitle("New .dpz File")
+			.setTitle("New .pdz File")
 			.setMessage("Would you like to replace " + Thisversion
 					+ " with latest version " + Latestversion
 					+ " ?").setCancelable(false)
@@ -468,7 +468,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	            InputStream input = new BufferedInputStream(url.openStream(), 8192);
 	 
 	            // Output stream to write file
-	            OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory().toString() + "/temp.dpz");
+	            OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory().toString() + "/temp.pdz");
 	 
 	            byte data[] = new byte[1024];
 	 
@@ -511,7 +511,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	        dismissDialog(0);
 	 
 	     
-	        pdzZipPath = Environment.getExternalStorageDirectory().toString() + "/temp.dpz";
+	        pdzZipPath = Environment.getExternalStorageDirectory().toString() + "/temp.pdz";
 	        getLatestVersion();
 	        process();
 	    }

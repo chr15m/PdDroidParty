@@ -1,103 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="cx.mccormick.pddroidparty" android:versionCode="2" android:versionName="0.3.0">
-	<supports-screens android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:anyDensity="true" />
-	<application android:icon="@drawable/icon" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
-		<activity android:name=".PatchSelector" android:label="@string/app_name" android:configChanges="orientation" android:launchMode="singleTask">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
+  package="cx.mccormick.pddroidparty" android:versionCode="2" android:versionName="0.3.0">
+  <supports-screens android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:anyDensity="true" />
+  <application android:icon="@drawable/icon" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
+    <activity android:name=".PatchSelector" android:label="@string/app_name" android:configChanges="orientation" android:launchMode="singleTask">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
 
-			<!-- catch http -->
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-                                <action android:name="android.intent.action.EDIT"/>
-				<action android:name="android.intent.action.RUN" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.BROWSABLE" />
-				<data android:scheme="http" android:host="*" android:pathPattern=".*\\.dpz" />
-				<data android:scheme="https" android:host="*" android:pathPattern=".*\\.dpz" />
-			</intent-filter>
+             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:mimeType="*/*" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:port="*" />
+                <data android:pathPattern=".*..*..*..*..*..*.pdz" />
+                <data android:pathPattern=".*..*..*..*..*.pdz" />
+                <data android:pathPattern=".*..*..*..*.pdz" />
+                <data android:pathPattern=".*..*..*.pdz" />
+                <data android:pathPattern=".*..*.pdz" />
+                <data android:pathPattern=".*.pdz" />
+            </intent-filter>
 
-			<!-- Open Intents File Manager -->
-                        <intent-filter>
-                                <action android:name="android.intent.action.VIEW"/>
-                                <action android:name="android.intent.action.EDIT"/>
-				<action android:name="android.intent.action.PICK" />
-				<action android:name="android.intent.action.RUN" />
-				<action android:name="android.intent.action.SEARCH" />
-                                <category android:name="android.intent.category.DEFAULT"/>
-                                <category android:name="android.intent.category.BROWSABLE"/>
-                                <category android:name="android.intent.category.LAUNCHER"/>
-                                <category android:name="android.intent.category.OPENABLE"/>
-                                <data android:scheme="file" android:pathPattern=".*\\.dpz"/>
-                                <data android:scheme="content" android:pathPattern=".*\\.dpz"/>
-                        </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
 
-			<!-- ES File Explorer -->
-                        <intent-filter>
-                                <action android:name="android.intent.action.VIEW"/>
-                                <action android:name="android.intent.action.EDIT"/>
-				<action android:name="android.intent.action.PICK" />
-				<action android:name="android.intent.action.RUN" />
-				<action android:name="android.intent.action.SEARCH" />
-                                <category android:name="android.intent.category.DEFAULT"/>
-                                <category android:name="android.intent.category.BROWSABLE"/>
-                                <category android:name="android.intent.category.LAUNCHER"/>
-                                <category android:name="android.intent.category.OPENABLE"/>
-                                <data android:scheme="file" android:mimeType="*/*" android:pathPattern=".*\\.dpz"/>
-                                <data android:scheme="content" android:mimeType="*/*" android:pathPattern=".*\\.dpz"/>
-                        </intent-filter>
-			
-			<!-- k-9
-				android.intent.action.VIEW
-				content://com.fsck.k9.attachmentprovider/36f16509-7119-4091-911f-f7b9870bcef8/25/VIEW
-				application/octet-stream
-				flg=0x80001
-			-->
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-                                <data android:host="com.fsck.k9.attachmentprovider" android:scheme="content" android:mimeType="application/octet-stream"/>
-				<!-- once k9 mails start having the correct extension, use this intead:
-                                <data android:host="com.fsck.k9.attachmentprovider" android:scheme="content" android:mimeType="application/octet-stream" android:pathPattern=".*\\.dpz"/>-->
-				<!--<data android:mimeType="application/zip"/>
-				<data android:mimeType="message/rfc822" android:scheme="http" />
-				<data android:mimeType="multipart/related" android:scheme="http" />
-				<data android:mimeType="message/rfc822" android:scheme="https" />
-				<data android:mimeType="multipart/related" android:scheme="https" />-->
-			</intent-filter>
+    </activity>
 
-			<!-- gmail -->
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.BROWSABLE" />
-                                <data android:scheme="content" android:mimeType="application/octet-stream" android:pathPattern=".*\\.dpz"/>
-                                <data android:scheme="file" android:mimeType="application/octet-stream" android:pathPattern=".*\\.dpz"/>
-				<!--<data android:mimeType="application/zip"/>
-				<data android:mimeType="message/rfc822" android:scheme="http" />
-				<data android:mimeType="multipart/related" android:scheme="http" />
-				<data android:mimeType="message/rfc822" android:scheme="https" />
-				<data android:mimeType="multipart/related" android:scheme="https" />-->
-			</intent-filter>
-		</activity>
-
-		<activity android:name=".PdDroidParty" android:launchMode="singleTask" android:label="@string/app_name" android:screenOrientation="landscape"></activity>
-		<activity android:name=".NumberboxDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Numberbox"></activity>
-		<activity android:name=".SaveDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Save"></activity>
-		<activity android:name=".LoadDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Load"></activity>
-		<service android:name="org.puredata.android.service.PdService" />
-	</application>
-	<uses-sdk android:minSdkVersion="17" android:targetSdkVersion="11"/>
-	<uses-permission android:name="android.permission.RECORD_AUDIO" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-	<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-	<uses-permission android:name="android.permission.CHANGE_NETWORK_MULTICAST_STATE" />
-	<uses-permission android:name="android.permission.VIBRATE" />
+    <activity android:name=".PdDroidParty" android:launchMode="singleTask" android:label="@string/app_name" android:screenOrientation="landscape"></activity>
+    <activity android:name=".NumberboxDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Numberbox"></activity>
+    <activity android:name=".SaveDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Save"></activity>
+    <activity android:name=".LoadDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Load"></activity>
+    <service android:name="org.puredata.android.service.PdService" />
+  </application>
+  <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="11"/>
+  <uses-permission android:name="android.permission.RECORD_AUDIO" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+  <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+  <uses-permission android:name="android.permission.CHANGE_NETWORK_MULTICAST_STATE" />
+  <uses-permission android:name="android.permission.VIBRATE" />
 </manifest>
