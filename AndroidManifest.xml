@@ -17,7 +17,6 @@
                 <data android:scheme="file" />
                 <data android:scheme="content" />
                 <data android:host="*" />
-                <data android:port="*" />
                 <data android:pathPattern=".*..*..*..*..*..*.pdz" />
                 <data android:pathPattern=".*..*..*..*..*.pdz" />
                 <data android:pathPattern=".*..*..*..*.pdz" />
