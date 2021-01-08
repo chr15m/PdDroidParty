@@ -22,7 +22,7 @@ You can push the existing test suite and the demos to your device's sdcard using
 Copyright
 ---------
 
-Copyright Chris McCormick, 2011-2015.
+Copyright Chris McCormick, 2011-2021.
 
 With contributions from: Kishan Muddu, Antoine Rousseau, Tal Kirshboim.
 
