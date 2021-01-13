@@ -33,7 +33,10 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.support.v4.content.ContextCompat;
+import android.Manifest;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -68,6 +71,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private String dpMainfileName;
 	private static long SPLASHTIME = 2000;
 	private boolean foundmainPd = false;
+	private int READ_EXTERNAL_STORAGE_PERMISSION_CODE = 54035940;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +117,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	}
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		 httpProgress = new ProgressDialog(this);
+		httpProgress = new ProgressDialog(this);
 	        httpProgress.setMessage("Downloading file. Please wait...");
 	        httpProgress.setIndeterminate(false);
 	        httpProgress.setMax(100);
@@ -357,7 +361,65 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		return null;
 	}
 	
-	private void initPd(final ProgressDialog progress) {
+	private void buildPatchList() {
+		Log.e("PdDroidParty.PatchSelector.initPd", "HI");
+
+		Log.e("PdDroidParty search path:", Environment.getExternalStorageDirectory().toString() + "/PdDroidParty");
+		List<File> list = IoUtils.find(new File(Environment.getExternalStorageDirectory().toString() + "/PdDroidParty"), ".*droidparty_main\\.pd$");
+		
+		Log.e("PdDroidParty.PatchSelector.initPd", list.toString());
+
+		for (File f: list) {
+			String[] parts = f.getParent().split("/");
+			// exclude generic patch directories found in apps based on PdDroidParty
+			if (!parts[parts.length - 1].equals("patch")) {
+				patches.put(parts[parts.length - 1], f.getAbsolutePath());
+				Log.d("AbsPath", f.getAbsolutePath());
+			}
+		}
+		ArrayList<String> keyList = new ArrayList<String>(patches.keySet());
+		Collections.sort(keyList, new Comparator<String>() {
+			public int compare(String a, String b) {
+				return a.toLowerCase().compareTo(b.toLowerCase());
+			}
+		});
+		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(PatchSelector.this, android.R.layout.simple_list_item_1, keyList);
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				patchList.setAdapter(adapter);
+				if (progress != null) {
+					try {
+						progress.dismiss();
+					} catch (Exception e) {
+						// nothing
+					}
+				}
+			}
+		});
+	}
+
+	@Override
+	public void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode == READ_EXTERNAL_STORAGE_PERMISSION_CODE) {
+		    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+			buildPatchList();
+		    } else {
+			// they'll just see an empty patch list
+		    }
+		}
+	}
+
+	private void initPd(boolean showprogress) {
+		if (showprogress) {
+			progress = new ProgressDialog(PatchSelector.this);
+			progress.setMessage("Finding patches...");
+			progress.setCancelable(false);
+			progress.setIndeterminate(true);
+			progress.show();
+		}
+
 		new Thread() {
 			@Override
 			public void run() {
@@ -375,35 +437,16 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					launchDroidParty(bakedpatch);
 					finish();
 				} else {
-					List<File> list = IoUtils.find(new File(Environment.getExternalStorageDirectory().toString() + "/PdDroidParty"), ".*droidparty_main\\.pd$");
-					for (File f: list) {
-						String[] parts = f.getParent().split("/");
-						// exclude generic patch directories found in apps based on PdDroidParty
-						if (!parts[parts.length - 1].equals("patch")) {
-							patches.put(parts[parts.length - 1], f.getAbsolutePath());
-							Log.d("AbsPath", f.getAbsolutePath());
-						}
+					/* val externalStorageVolumes: Array<out File> = ContextCompat.getExternalFilesDirs(applicationContext, null)
+					val primaryExternalStorage = externalStorageVolumes[0]*/
+
+					// check if we have permission to acess external storage yet
+					if (ContextCompat.checkSelfPermission(PatchSelector.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+					    // ask for permission to access it
+					    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERMISSION_CODE);
+					} else {
+						buildPatchList();
 					}
-					ArrayList<String> keyList = new ArrayList<String>(patches.keySet());
-					Collections.sort(keyList, new Comparator<String>() {
-						public int compare(String a, String b) {
-							return a.toLowerCase().compareTo(b.toLowerCase());
-						}
-					});
-					final ArrayAdapter<String> adapter = new ArrayAdapter<String>(PatchSelector.this, android.R.layout.simple_list_item_1, keyList);
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							patchList.setAdapter(adapter);
-							if (progress != null) {
-								try {
-									progress.dismiss();
-								} catch (Exception e) {
-									// nothing
-								}
-							}
-						}
-					});
 				}
 			};
 		}.start();		
@@ -425,18 +468,13 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 			setContentView(imageView);
 		}
 		// initialise Pd without a progress thing
-		initPd(null);
+		initPd(false);
 	}
 	
 	private void initGui() {
 		setContentView(R.layout.patch_selector);
 		patchList = (ListView) findViewById(R.id.patch_selector);
-		progress = new ProgressDialog(this);
-		progress.setMessage("Finding patches...");
-		progress.setCancelable(false);
-		progress.setIndeterminate(true);
-		progress.show();
-		initPd(progress);
+		initPd(true);
 		patchList.setOnItemClickListener(this);
 	}
 	class DownloadFileFromURL extends AsyncTask<String, String, String> {
