@@ -27,6 +27,9 @@ import android.content.ServiceConnection;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
+import android.Manifest;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.wifi.WifiManager;
@@ -387,6 +390,7 @@ public class PdDroidParty extends Activity {
 		progress.setCancelable(false);
 		progress.setIndeterminate(true);
 		progress.show();
+
 		new Thread() {
 			@Override
 			public void run() {
@@ -400,6 +404,9 @@ public class PdDroidParty extends Activity {
 				Log.e(TAG, "actual sample rate: " + sRate);
 				
 				int nIn = Math.min(AudioParameters.suggestInputChannels(), 1);
+				if (ContextCompat.checkSelfPermission(PdDroidParty.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
+					nIn = 0;
+				}
 				Log.e(TAG, "input channels: " + nIn);
 				if (nIn == 0) {
 					Log.e(TAG, "warning: audio input not available");
@@ -425,9 +432,9 @@ public class PdDroidParty extends Activity {
 					// some devices don't have a mic and might be buggy
 					// so don't create the audio in unless we really need it
 					// TODO: check a config option for this
-					//if (!hasADC(atomlines)) {
-					//	nIn = 0;
-					//}
+					/*if (!hasADC(atomlines)) {
+						nIn = 0;
+					}*/
 					// go ahead and intialise the audio
 					try {
 						pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
