@@ -81,6 +81,7 @@ public class PdDroidParty extends Activity {
 	ArrayList<String[]> atomlines = null;
 	Widget widgetpopped = null;
 	MulticastLock wifiMulticastLock = null;
+	private ProgressDialog progress = null;
 	
 	private MenuItem menuabout = null;
 	private MenuItem menuexit = null;
@@ -89,6 +90,8 @@ public class PdDroidParty extends Activity {
 	private UsbMidiDevice midiDevice = null;
 	private MidiToPdAdapter receiver = new MidiToPdAdapter();
 	private PdToMidiAdapter sender;
+
+	private int RECORD_AUDIO_PERMISSION_CODE = 49295197;
 	
 	private final PdDispatcher dispatcher = new PdDispatcher() {
 		@Override
@@ -387,7 +390,7 @@ public class PdDroidParty extends Activity {
 		});*/
 
 		// set a progress dialog running
-		final ProgressDialog progress = new ProgressDialog(this);
+		progress = new ProgressDialog(this);
 		progress.setMessage("Loading...");
 		progress.setCancelable(false);
 		progress.setIndeterminate(true);
@@ -396,84 +399,120 @@ public class PdDroidParty extends Activity {
 		new Thread() {
 			@Override
 			public void run() {
-				int sRate = AudioParameters.suggestSampleRate();
-				Log.e(TAG, "suggested sample rate: " + sRate);
-				if (sRate < SAMPLE_RATE) {
-					Log.e(TAG, "warning: sample rate is only " + sRate);
-				}
-				// clamp it
-				sRate = Math.min(sRate, SAMPLE_RATE);
-				Log.e(TAG, "actual sample rate: " + sRate);
-				
-				int nIn = Math.min(AudioParameters.suggestInputChannels(), 1);
-				if (ContextCompat.checkSelfPermission(PdDroidParty.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
-					nIn = 0;
-				}
-				Log.e(TAG, "input channels: " + nIn);
-				if (nIn == 0) {
-					Log.e(TAG, "warning: audio input not available");
-				}
-				
-				int nOut = Math.min(AudioParameters.suggestOutputChannels(), 2);
-				Log.e(TAG, "output channels: " + nOut);
-				if (nOut == 0) {
-					Log.e(TAG, "audio output not available; exiting");
-					finish();
-					return;
-				}
-				
-				Resources res = getResources();
-				PdBase.setReceiver(dispatcher);
-				
-				try {
-					// parse the patch for GUI elements
-					PdParser p = new PdParser();
-					// p.printAtoms(p.parsePatch(path));
-					// get the actual lines of atoms from the patch
-					atomlines = PdParser.parsePatch(path);
-					// some devices don't have a mic and might be buggy
-					// so don't create the audio in unless we really need it
-					// TODO: check a config option for this
-					/*if (!hasADC(atomlines)) {
-						nIn = 0;
-					}*/
-					// go ahead and intialise the audio
-					try {
-						pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
-					} catch (IOException e) {
-						Log.e(TAG, e.toString());
-						finish();
-					}
-					dollarzero = PdBase.openPatch(path.toString());
-					patchview.buildUI(p, atomlines);
-					// start the audio thread
-					String name = res.getString(R.string.app_name);
-					pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
-					// tell the patch view everything has been loaded
-					patchview.loaded();
-					// dismiss the progress meter
-					progress.dismiss();
-				} catch (IOException e) {
-					post(e.toString() + "; exiting now");
-					finish();
+				// get the actual lines of atoms from the patch
+				atomlines = PdParser.parsePatch(path);
+				String norecord = getFlag(atomlines, "norecord");
+
+				if (norecord == null && !hasRecordPermission()) {
+					// Show user dialog to grant permission to record audio
+					requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_PERMISSION_CODE);
+				} else {
+					startPd();
 				}
 			}
 		}.start();
 	}
-	
-	public boolean hasADC(ArrayList<String[]> al) {
-		boolean has = false;
+
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		if (requestCode == RECORD_AUDIO_PERMISSION_CODE) {
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				// nah
+			}
+			// regardless of whether permission to record is granted, we still start the patch
+			// (with no audio input if it has no permission)
+			new Thread() {
+				@Override
+				public void run() {
+					startPd();
+				}
+			}.start();
+		return;
+		}
+	}
+
+	public boolean hasRecordPermission() {
+		return ContextCompat.checkSelfPermission(PdDroidParty.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+	}
+
+	public void startPd() {
+		String norecord = getFlag(atomlines, "norecord");
+
+		int sRate = AudioParameters.suggestSampleRate();
+		Log.e(TAG, "suggested sample rate: " + sRate);
+		if (sRate < SAMPLE_RATE) {
+			Log.e(TAG, "warning: sample rate is only " + sRate);
+		}
+		// clamp it
+		sRate = Math.min(sRate, SAMPLE_RATE);
+		Log.e(TAG, "actual sample rate: " + sRate);
+
+		int nIn = Math.min(AudioParameters.suggestInputChannels(), 1);
+		int nOut = Math.min(AudioParameters.suggestOutputChannels(), 2);
+
+		PdBase.setReceiver(dispatcher);
+
+		if (norecord != null) {
+			Log.e(TAG, "norecord flag is set");
+			nIn = 0;
+		}
+
+		if (!hasRecordPermission()) {
+			Log.e(TAG, "no record permission given");
+			nIn = 0;
+		}
+
+		Log.e(TAG, "input channels: " + nIn);
+		if (nIn == 0) {
+			Log.e(TAG, "warning: audio input not available");
+		}
+
+		Log.e(TAG, "output channels: " + nOut);
+		if (nOut == 0) {
+			Log.e(TAG, "warning: audio output not available");
+		}
+
+		// go ahead and intialise the audio
+		try {
+			pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
+		} catch (IOException e) {
+			Log.e(TAG, e.toString());
+			finish();
+		}
+
+		try {
+			dollarzero = PdBase.openPatch(path.toString());
+		} catch (IOException e) {
+			post(e.toString() + "; exiting now");
+			finish();
+		}
+
+		// parse the patch for GUI elements
+		PdParser parser = new PdParser();
+
+		patchview.buildUI(parser, atomlines);
+		// start the audio thread
+		Resources res = getResources();
+		String name = res.getString(R.string.app_name);
+		pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
+		// tell the patch view everything has been loaded
+		patchview.loaded();
+		// dismiss the progress meter
+		progress.dismiss();
+	}
+
+	public String getFlag(ArrayList<String[]> al, String flagname) {
 		for (String[] line: al) {
 			if (line.length >= 5) {
-				// find canvas begin and end lines
-				if (line[4].equals("adc~")) {
-					has = true;
+				if (line[4].equals("PdDroidParty.config." + flagname)) {
+					return line[5];
 				}
 			}
 		}
-		return has;
+		return null;
 	}
-	
+
 	public File getPatchFile() {
 		return new File(path);
 	}
@@ -548,7 +587,7 @@ public class PdDroidParty extends Activity {
 	
 	private void chooseMidiDevice() {
 		// set a progress dialog running
-		final ProgressDialog progress = new ProgressDialog(this);
+		progress = new ProgressDialog(this);
 		progress.setMessage("Waiting for USB midi");
 		progress.setCancelable(false);
 		progress.setIndeterminate(true);
