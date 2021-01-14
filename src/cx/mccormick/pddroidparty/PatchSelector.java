@@ -374,18 +374,25 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	}
 	
 	private void buildPatchList() {
-		Log.e("PdDroidParty search path:", Environment.getExternalStorageDirectory().toString() + "/PdDroidParty");
-		List<File> list = IoUtils.find(new File(Environment.getExternalStorageDirectory().toString() + "/PdDroidParty"), ".*droidparty_main\\.pd$");
-		
-		Log.e("PdDroidParty.PatchSelector.initPd", list.toString());
-		for (File f: list) {
-			String[] parts = f.getParent().split("/");
-			// exclude generic patch directories found in apps based on PdDroidParty
-			if (!parts[parts.length - 1].equals("patch")) {
-				patches.put(parts[parts.length - 1], f.getAbsolutePath());
-				Log.d("AbsPath", f.getAbsolutePath());
+		File[] dirs = ContextCompat.getExternalFilesDirs(getApplicationContext(), null);
+
+		for (File d: dirs) {
+			// String path = d.toString().replace("/files/", "/");
+			String path = d.getParent().replace("/Android/data/","").replace(getPackageName(),"") + "/PdDroidParty";
+			Log.e("PdDroidParty search path:", path);
+			List<File> list = IoUtils.find(new File(path), ".*droidparty_main\\.pd$");
+
+			Log.e("PdDroidParty.PatchSelector.initPd", list.toString());
+			for (File f: list) {
+				String[] parts = f.getParent().split("/");
+				// exclude generic patch directories found in apps based on PdDroidParty
+				if (!parts[parts.length - 1].equals("patch")) {
+					patches.put(parts[parts.length - 1], f.getAbsolutePath());
+					Log.d("AbsPath", f.getAbsolutePath());
+				}
 			}
 		}
+
 		ArrayList<String> keyList = new ArrayList<String>(patches.keySet());
 		Collections.sort(keyList, new Comparator<String>() {
 			public int compare(String a, String b) {
