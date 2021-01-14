@@ -103,7 +103,6 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 				 if (ContentResolver.SCHEME_CONTENT.equals(scheme)) { // if the URI is of type content://
 					// handle content uri to get sdcardPath
 					 processContentUri(data);
-						 
 				 } else {
 					// handle as file uri
 					 pdzZipPath = data.getPath();
@@ -115,6 +114,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		}
 		return;
 	}
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		httpProgress = new ProgressDialog(this);
@@ -126,6 +126,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	        httpProgress.show();
 	        return httpProgress;
 	}
+
 	private void processContentUri(Uri data) {
 		try 
 	    {
@@ -198,7 +199,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					 Log.d("Extracting", file.getAbsolutePath());
 					
 				 }
-				 launchDroidParty(Environment.getExternalStorageDirectory().toString() + "/PdDroidParty/" + folderName + "/" + dpMainfileName);
+				 launchDroidParty(Environment.getExternalStorageDirectory().toString() + "/PdDroidParty/" + folderName + "/" + dpMainfileName, true);
 			 }
 		}  catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -301,12 +302,23 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
 		TextView item = (TextView) v;
 		String name = item.getText().toString();
-		launchDroidParty(patches.get(name));
+		launchDroidParty(patches.get(name), true);
 	}
-	
-	private void launchDroidParty(String path) {
+
+	@Override
+	public void onBackPressed() {
+		Log.e("PdDroidParty", "PatchSelector onBackPressed");
+	        //finish();
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+		intent.addCategory(Intent.CATEGORY_HOME);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
+	}
+
+	private void launchDroidParty(String path, boolean fromPatchSelector) {
 		Intent intent = new Intent(this, PdDroidParty.class);
 		intent.putExtra(PdDroidParty.PATCH, path);
+		intent.putExtra(PdDroidParty.FROM_SELECTOR, fromPatchSelector);
 		if(progress!=null){
 			progress.dismiss();
 			progress = null;
@@ -362,13 +374,10 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	}
 	
 	private void buildPatchList() {
-		Log.e("PdDroidParty.PatchSelector.initPd", "HI");
-
 		Log.e("PdDroidParty search path:", Environment.getExternalStorageDirectory().toString() + "/PdDroidParty");
 		List<File> list = IoUtils.find(new File(Environment.getExternalStorageDirectory().toString() + "/PdDroidParty"), ".*droidparty_main\\.pd$");
 		
 		Log.e("PdDroidParty.PatchSelector.initPd", list.toString());
-
 		for (File f: list) {
 			String[] parts = f.getParent().split("/");
 			// exclude generic patch directories found in apps based on PdDroidParty
@@ -434,7 +443,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					}
 				}
 				if (bakedpatch != null) {
-					launchDroidParty(bakedpatch);
+					launchDroidParty(bakedpatch, false);
 					finish();
 				} else {
 					/* val externalStorageVolumes: Array<out File> = ContextCompat.getExternalFilesDirs(applicationContext, null)

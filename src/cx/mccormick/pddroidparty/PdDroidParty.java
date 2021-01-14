@@ -63,6 +63,7 @@ import com.noisepages.nettoyeur.usb.util.AsyncDeviceInfoLookup;
 public class PdDroidParty extends Activity {
 	public PdDroidPatchView patchview = null;
 	public static final String PATCH = "PATCH";
+	public static final String FROM_SELECTOR = "FROM_SELECTOR";
 	private static final String PD_CLIENT = "PdDroidParty";
 	private static final String TAG = "PdDroidParty";
 	private static final int SAMPLE_RATE = 44100;
@@ -71,6 +72,7 @@ public class PdDroidParty extends Activity {
 	public static final int DIALOG_LOAD = 3;
 	public int dollarzero = -1;
 	
+	private boolean fromSelector = false;
 	private String path;
 	private PdService pdService = null;
 	private final Object lock = new Object();
@@ -127,6 +129,7 @@ public class PdDroidParty extends Activity {
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		path = intent.getStringExtra(PATCH);
+		fromSelector = intent.getBooleanExtra(FROM_SELECTOR, true);
 		initGui();
 		new Thread() {
 			@Override
@@ -231,25 +234,24 @@ public class PdDroidParty extends Activity {
 	// confirm quit :
 	@Override
 	public void onBackPressed() {
-	    String basename;
-	    
-	    basename = path.substring(0,path.lastIndexOf("/"));
-	    basename = basename.substring(basename.lastIndexOf("/")+1,basename.length());
-	    
-		new AlertDialog.Builder(this)
-	        .setIcon(android.R.drawable.ic_dialog_alert)
-	        .setTitle("Confirm Close")
-	        .setMessage("Are you sure you want to close " + basename + " ?")
-	        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-	    {
-	        @Override
-	        public void onClick(DialogInterface dialog, int which) {
-	            finish();    
-	        }
-
-	    })
-	    .setNegativeButton("No", null)
-	    .show();
+		Log.e("PdDroidParty", "BEFORE");
+		if (fromSelector) {
+			Log.e("PdDroidParty", "onBackPressed fromSelector ddd");
+			fromSelector = false;
+			Intent intent = new Intent(this, PatchSelector.class);
+			intent.setAction(Intent.ACTION_VIEW);
+			startActivity(intent);
+			cleanup();
+		} else {
+			Log.e("PdDroidParty", "onBackPressed");
+			Intent intent = new Intent(Intent.ACTION_MAIN);
+			intent.addCategory(Intent.CATEGORY_HOME);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);
+			//finish();
+			//super.onBackPressed();
+		}
+		Log.e("PdDroidParty", "AFTER");
 	}
 	
 	// send a Pd atom-string 's' to a particular receiver 'dest'
