@@ -43,6 +43,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -316,13 +317,13 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	}
 
 	private void launchDroidParty(String path, boolean fromPatchSelector) {
-		Intent intent = new Intent(this, PdDroidParty.class);
-		intent.putExtra(PdDroidParty.PATCH, path);
-		intent.putExtra(PdDroidParty.FROM_SELECTOR, fromPatchSelector);
 		if(progress!=null){
 			progress.dismiss();
 			progress = null;
 		}
+		Intent intent = new Intent(this, PdDroidParty.class);
+		intent.putExtra(PdDroidParty.PATCH, path);
+		intent.putExtra(PdDroidParty.FROM_SELECTOR, fromPatchSelector);
 		startActivity(intent);
 		finish();
 	}
@@ -377,18 +378,19 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		File[] dirs = ContextCompat.getExternalFilesDirs(getApplicationContext(), null);
 
 		for (File d: dirs) {
-			// String path = d.toString().replace("/files/", "/");
-			String path = d.getParent().replace("/Android/data/","").replace(getPackageName(),"") + "/PdDroidParty";
-			Log.e("PatchSelector", "search path:" + path);
-			List<File> list = IoUtils.find(new File(path), ".*droidparty_main\\.pd$");
+			if (d != null) {
+				String path = d.getParent().replace("/Android/data/","").replace(getPackageName(),"") + "/PdDroidParty";
+				Log.e("PatchSelector", "search path:" + path);
+				List<File> list = IoUtils.find(new File(path), ".*droidparty_main\\.pd$");
 
-			Log.e("PdDroidParty", "PatchSelector.initPd: " + list.toString());
-			for (File f: list) {
-				String[] parts = f.getParent().split("/");
-				// exclude generic patch directories found in apps based on PdDroidParty
-				if (!parts[parts.length - 1].equals("patch")) {
-					patches.put(parts[parts.length - 1], f.getAbsolutePath());
-					Log.d("AbsPath", f.getAbsolutePath());
+				Log.e("PdDroidParty", "PatchSelector.initPd: " + list.toString());
+				for (File f: list) {
+					String[] parts = f.getParent().split("/");
+					// exclude generic patch directories found in apps based on PdDroidParty
+					if (!parts[parts.length - 1].equals("patch")) {
+						patches.put(parts[parts.length - 1], f.getAbsolutePath());
+						Log.d("AbsPath", f.getAbsolutePath());
+					}
 				}
 			}
 		}
@@ -457,7 +459,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					val primaryExternalStorage = externalStorageVolumes[0]*/
 
 					// check if we have permission to acess external storage yet
-					if (ContextCompat.checkSelfPermission(PatchSelector.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+					if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(PatchSelector.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
 					    // ask for permission to access it
 					    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERMISSION_CODE);
 					} else {

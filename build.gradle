@@ -23,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId "cx.mccormick.pddroidparty"
-        minSdkVersion 23
-        targetSdkVersion 29
+        minSdkVersion 17
+        targetSdkVersion 17
     }
 
     sourceSets {

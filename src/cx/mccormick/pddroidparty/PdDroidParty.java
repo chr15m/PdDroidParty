@@ -36,6 +36,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Build;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -403,7 +404,7 @@ public class PdDroidParty extends Activity {
 				atomlines = PdParser.parsePatch(path);
 				String norecord = getFlag(atomlines, "norecord");
 
-				if (norecord == null && !hasRecordPermission()) {
+				if (Build.VERSION.SDK_INT >= 23 && norecord == null && !hasRecordPermission()) {
 					// Show user dialog to grant permission to record audio
 					requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_PERMISSION_CODE);
 				} else {
