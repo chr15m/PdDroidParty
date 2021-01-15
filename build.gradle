@@ -25,6 +25,8 @@ android {
         applicationId "cx.mccormick.pddroidparty"
         minSdkVersion 17
         targetSdkVersion 29
+        versionCode = project.hasProperty('versionCode') ? project.getProperty('versionCode').toInteger() : 1
+        versionName = project.hasProperty('versionName') ? project.getProperty('versionName') : ""
     }
 
     sourceSets {
