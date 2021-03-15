@@ -28,6 +28,7 @@ import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.pm.PackageManager;
+import android.content.pm.ActivityInfo;
 import android.support.v4.content.ContextCompat;
 import android.Manifest;
 import android.hardware.usb.UsbDevice;
@@ -83,6 +84,7 @@ public class PdDroidParty extends Activity {
 	Widget widgetpopped = null;
 	MulticastLock wifiMulticastLock = null;
 	private ProgressDialog progress = null;
+	private boolean orientationSet = false;
 	
 	private MenuItem menuabout = null;
 	private MenuItem menuexit = null;
@@ -130,10 +132,12 @@ public class PdDroidParty extends Activity {
 	// called when the app is launched
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.e(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		path = intent.getStringExtra(PATCH);
 		fromSelector = intent.getBooleanExtra(FROM_SELECTOR, true);
+		Log.e(TAG, "onCreate initGui");
 		initGui();
 		new Thread() {
 			@Override
@@ -146,8 +150,12 @@ public class PdDroidParty extends Activity {
 	// this callback makes sure that we handle orientation changes without audio glitches
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
+		Log.e(TAG, "onConfigurationChanged");
 		super.onConfigurationChanged(newConfig);
-		initGui();
+		if (!orientationSet) {
+			Log.e(TAG, "onConfigurationChanged initGui");
+			initGui();
+		}
 	}
 
 	// When the app shuts down
@@ -272,12 +280,24 @@ public class PdDroidParty extends Activity {
 	
 	// initialise the GUI with the OpenGL rendering engine
 	private void initGui() {
+		Log.e(TAG, "initGui runs");
 		//setContentView(R.layout.main);
 		int flags = WindowManager.LayoutParams.FLAG_FULLSCREEN |
 			WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
 			WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON; 		
 		getWindow().setFlags(flags, flags);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		atomlines = PdParser.parsePatch(path);
+		if (!orientationSet) {
+			Log.e(TAG, "initGui orientationSet");
+			Log.e(TAG, "initGui isLandscape:" + isLandscape(atomlines));
+			orientationSet = true;
+			if (isLandscape(atomlines)) {
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			} else {
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			}
+		}
 		patchview = new PdDroidPatchView(this, this);
 		setContentView(patchview);
 		patchview.requestFocus();
@@ -378,7 +398,6 @@ public class PdDroidParty extends Activity {
 			@Override
 			public void run() {
 				// get the actual lines of atoms from the patch
-				atomlines = PdParser.parsePatch(path);
 				String norecord = getFlag(atomlines, "norecord");
 
 				if (Build.VERSION.SDK_INT >= 23 && norecord == null && !hasRecordPermission()) {
@@ -485,6 +504,18 @@ public class PdDroidParty extends Activity {
 			}
 		}
 		return null;
+	}
+
+	public boolean isLandscape(ArrayList<String[]> al) {
+		for (String[] line: atomlines) {
+			if (line.length >= 4) {
+				// find canvas begin and end lines
+				if (line[1].equals("canvas")) {
+					return Integer.parseInt(line[4]) > Integer.parseInt(line[5]);
+				}
+			}
+		}
+		return true;
 	}
 
 	public File getPatchFile() {
