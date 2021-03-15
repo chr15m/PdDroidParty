@@ -235,29 +235,6 @@ public class PdDroidParty extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-	// confirm quit :
-	@Override
-	public void onBackPressed() {
-		Log.e("PdDroidParty", "BEFORE");
-		if (fromSelector) {
-			Log.e("PdDroidParty", "onBackPressed fromSelector ddd");
-			fromSelector = false;
-			Intent intent = new Intent(this, PatchSelector.class);
-			intent.setAction(Intent.ACTION_VIEW);
-			startActivity(intent);
-			cleanup();
-		} else {
-			Log.e("PdDroidParty", "onBackPressed");
-			Intent intent = new Intent(Intent.ACTION_MAIN);
-			intent.addCategory(Intent.CATEGORY_HOME);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(intent);
-			//finish();
-			//super.onBackPressed();
-		}
-		Log.e("PdDroidParty", "AFTER");
-	}
-	
 	// send a Pd atom-string 's' to a particular receiver 'dest'
 	public void send(String dest, String s) {
 		List<Object> list = new ArrayList<Object>();

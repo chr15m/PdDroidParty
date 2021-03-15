@@ -306,16 +306,6 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		launchDroidParty(patches.get(name), true);
 	}
 
-	@Override
-	public void onBackPressed() {
-		Log.e("PdDroidParty", "PatchSelector onBackPressed");
-	        //finish();
-		Intent intent = new Intent(Intent.ACTION_MAIN);
-		intent.addCategory(Intent.CATEGORY_HOME);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(intent);
-	}
-
 	private void launchDroidParty(String path, boolean fromPatchSelector) {
 		if(progress!=null){
 			progress.dismiss();
@@ -325,7 +315,6 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		intent.putExtra(PdDroidParty.PATCH, path);
 		intent.putExtra(PdDroidParty.FROM_SELECTOR, fromPatchSelector);
 		startActivity(intent);
-		finish();
 	}
 	
 	private boolean testForBakedPatch() {
