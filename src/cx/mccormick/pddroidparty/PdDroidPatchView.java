@@ -208,7 +208,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	}
 	
 	/** build a user interface using the lines of atoms found in the patch by the pd file parser */
-	public void buildUI(PdParser p, ArrayList<String[]> atomlines) {
+	public void buildUI(ArrayList<String[]> atomlines) {
 		//ArrayList<String> canvases = new ArrayList<String>();
 		int level = 0;
 		

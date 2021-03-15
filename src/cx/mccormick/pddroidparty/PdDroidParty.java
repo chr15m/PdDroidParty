@@ -465,11 +465,7 @@ public class PdDroidParty extends Activity {
 			post(e.toString() + "; exiting now");
 			finish();
 		}
-
-		// parse the patch for GUI elements
-		PdParser parser = new PdParser();
-
-		patchview.buildUI(parser, atomlines);
+		patchview.buildUI(atomlines);
 		// start the audio thread
 		Resources res = getResources();
 		String name = res.getString(R.string.app_name);
