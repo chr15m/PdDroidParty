@@ -31,10 +31,7 @@ public class Canvasrect extends Widget {
 		image.load(TAG, null, receivename);
 		
 		if(receivename.equals("ViewPort")) {
-			parent.viewX=(int)dRect.left;
-			parent.viewY=(int)dRect.top;
-			parent.viewW=(int)dRect.width();
-			parent.viewH=(int)dRect.height();
+			parent.setDimensions((int)dRect.left, (int)dRect.top, (int)dRect.width(), (int)dRect.height());
 		}
 	}
 	
@@ -63,10 +60,7 @@ public class Canvasrect extends Widget {
 		
 		if(receivename.equals("ViewPort")) {
 			if (symbol.equals("vis_size") || symbol.equals("pos") ) {
-				parent.viewX=(int)dRect.left;
-				parent.viewY=(int)dRect.top;
-				parent.viewW=(int)dRect.width();
-				parent.viewH=(int)dRect.height();
+				parent.setDimensions((int)dRect.left, (int)dRect.top, (int)dRect.width(), (int)dRect.height());
 			}
 		}
 	}

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -206,7 +207,20 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	public void loaded() {
 		loadBackground();
 	}
-	
+
+	/** set the dimensions of the patch and update orientation **/
+	public void setDimensions(int x, int y, int w, int h) {
+		viewX = x;
+		viewY = y;
+		viewW = w;
+		viewH = h;
+		if (viewW > viewH) {
+			app.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		} else {
+			app.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		}
+	}
+
 	/** build a user interface using the lines of atoms found in the patch by the pd file parser */
 	public void buildUI(ArrayList<String[]> atomlines) {
 		//ArrayList<String> canvases = new ArrayList<String>();
@@ -223,8 +237,9 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 					}*/
 					level += 1;
 					if (level == 1) {
-						viewW = patchwidth = Integer.parseInt(line[4]);
-						viewH = patchheight = Integer.parseInt(line[5]);
+						patchwidth = Integer.parseInt(line[4]);
+						patchheight = Integer.parseInt(line[5]);
+						setDimensions(0, 0, patchwidth, patchheight);
 						fontsize = Integer.parseInt(line[6]);
 					}
 				} else if (line[1].equals("restore")) {
