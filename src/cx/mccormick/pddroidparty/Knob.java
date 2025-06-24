@@ -34,16 +34,7 @@ public class Knob extends Widget {
 		max = Float.parseFloat(atomline[8]);
 		log = Integer.parseInt(atomline[9]);
 		init = Integer.parseInt(atomline[10]);
-		sendname = app.app.replaceDollarZero(atomline[11]);
-		receivename = atomline[12];
-		label = setLabel(atomline[13]);
-		labelpos[0] = Float.parseFloat(atomline[14]) ;
-		labelpos[1] = Float.parseFloat(atomline[15]) ;
-		labelfont = Integer.parseInt(atomline[16]);
-		labelsize = (int)(Float.parseFloat(atomline[17]));
-		bgcolor = getColor(Integer.parseInt(atomline[18]));
-		fgcolor = getColor(Integer.parseInt(atomline[19]));
-		labelcolor = getColor(Integer.parseInt(atomline[20]));
+		initCommonArgs(app, atomline, 11);
 		steady = Integer.parseInt(atomline[22]);
 
 		//setpos((float)(Float.parseFloat(atomline[21]) * 0.01 * (max - min) / ((orientation_horizontal ? Float.parseFloat(atomline[5]) : Float.parseFloat(atomline[6])) - 1) + min), min);

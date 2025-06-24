@@ -30,16 +30,7 @@ public class Bang extends Widget {
 		interrpt = (int)Float.parseFloat(atomline[7]) ;
 		init = (int)Float.parseFloat(atomline[8]) ;
 
-		sendname = app.app.replaceDollarZero(atomline[9]);
-		receivename = atomline[10];
-		label = setLabel(atomline[11]);
-		labelpos[0] = Float.parseFloat(atomline[12]) ;
-		labelpos[1] = Float.parseFloat(atomline[13]) ;
-		labelfont = Integer.parseInt(atomline[14]);
-		labelsize = (int)(Float.parseFloat(atomline[15]));
-		bgcolor = getColor(Integer.parseInt(atomline[16]));
-		fgcolor = getColor(Integer.parseInt(atomline[17]));
-		labelcolor = getColor(Integer.parseInt(atomline[18]));
+		initCommonArgs(app, atomline, 9);
 
 		// listen out for floats from Pd
 		setupreceive();

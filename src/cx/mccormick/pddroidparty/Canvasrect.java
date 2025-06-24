@@ -16,16 +16,7 @@ public class Canvasrect extends Widget {
 		float y = Float.parseFloat(atomline[3]) ;
 		float w = Float.parseFloat(atomline[6]) ;
 		float h = Float.parseFloat(atomline[7]) ;
-		sendname = atomline[8];
-		receivename = atomline[9];
-		label = setLabel(atomline[10]);
-		labelpos[0] = Float.parseFloat(atomline[11]);
-		labelpos[1] = Float.parseFloat(atomline[12]);
-		labelfont = Integer.parseInt(atomline[13]);
-		labelsize = (int)(Float.parseFloat(atomline[14]));
-		bgcolor = getColor(Integer.parseInt(atomline[15]));
-		labelcolor = getColor(Integer.parseInt(atomline[16]));
-		
+		initCommonArgs(app, atomline, 8, true);
 		setupreceive();
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		image.load(TAG, null, receivename);

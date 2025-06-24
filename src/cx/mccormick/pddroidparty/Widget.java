@@ -76,47 +76,44 @@ public class Widget {
 		textoffset[0] = 0.0f;
 		textoffset[1] = 0.0f;
 	}
-	
-	public static int getColor(int iemcolor) {
-		//Log.e("ORIGINAL COLOR", "" + iemcolor);
-		int color = 0;		
 
+	public static int getColor(String colorString, boolean fromFile) {
+		if(colorString.charAt(0) == '#') {
+			return Integer.parseInt(colorString.substring(1), 16) + 0xFF000000;
+		}
+		int iemcolor = (int)Float.parseFloat(colorString);
 		if(iemcolor < 0)
 		{
 			iemcolor = -1 - iemcolor;
-			color = ((iemcolor & 0x3f000) << 6 )
+			if(fromFile) return ((iemcolor & 0x3f000) << 6 )
 					+ ((iemcolor & 0xfc0) << 4 )
 					+ ((iemcolor & 0x3f) << 2 )
 					+ 0xFF000000;
-					//(iemcolor & 0xffffff) + 0xFF000000;
+			else return (iemcolor & 0xffffff) + 0xFF000000;
 		}
 		else
 		{
-			color = (iemgui_color_hex[iemcolor%IEM_GUI_MAX_COLOR] & 0xFFFFFF) | 0xFF000000;
+			return (iemgui_color_hex[iemcolor%IEM_GUI_MAX_COLOR] & 0xFFFFFF) | 0xFF000000;
 		}
-		
-		//Log.e("COLOR", "" + color);
-		return color;
 	}
-		
-	public static int getColor24(int iemcolor) {
-		//Log.e("ORIGINAL COLOR", "" + iemcolor);
-		int color = 0;		
 
-		if(iemcolor < 0)
-		{
-			iemcolor = -1 - iemcolor;
-			color = (iemcolor & 0xffffff) + 0xFF000000;
-		}
-		else
-		{
-			color = (iemgui_color_hex[iemcolor%IEM_GUI_MAX_COLOR] & 0xFFFFFF) | 0xFF000000;
-		}
-		
-		//Log.e("COLOR", "" + color);
-		return color;
+	public void initCommonArgs(PdDroidPatchView app, String[] atomline, int index, boolean isCanvas) {
+		sendname = app.app.replaceDollarZero(atomline[index++]);
+		receivename = atomline[index++];
+		label = setLabel(atomline[index++]);
+		labelpos[0] = Float.parseFloat(atomline[index++]) ;
+		labelpos[1] = Float.parseFloat(atomline[index++]) ;
+		labelfont = Integer.parseInt(atomline[index++]);
+		labelsize = (int)(Float.parseFloat(atomline[index++]));
+		bgcolor = getColor(atomline[index++], true);
+		fgcolor = getColor(atomline[index++], true);
+		labelcolor = isCanvas ? fgcolor : getColor(atomline[index++], true);
 	}
-	
+
+	public void initCommonArgs(PdDroidPatchView app, String[] atomline, int index) {
+		initCommonArgs(app, atomline, index, false);
+	}
+
 	public void setTextParametersFromSVG(SVGRenderer svg) {
 		if (svg != null) {
 			if (svg.getAttribute("textFont") != null) {
@@ -192,6 +189,7 @@ public class Widget {
 	public void drawLabel(Canvas canvas) {
 		if (label != null) {
 			paint.setStrokeWidth(0);
+			paint.setStyle(Paint.Style.FILL);
 			paint.setColor(labelcolor);
 			paint.setTextSize(labelsize);
 			canvas.drawText(label, dRect.left + labelpos[0], dRect.top + labelpos[1] + labelsize / 3, paint);
@@ -276,14 +274,11 @@ public class Widget {
 		}
 
 		if( symbol.equals("color")
-		&& args.length > 2 && args[0].getClass().equals(Float.class)
-		&& args[1].getClass().equals(Float.class)
-		&& args[2].getClass().equals(Float.class)
+		&& args.length > 2
 		) {
-			bgcolor = getColor24((int)(float)(Float)args[0]);
-			fgcolor = getColor24((int)(float)(Float)args[1]);
-			labelcolor = getColor24((int)(float)(Float)args[2]);
-			//Log.e(TAG, "msg bgcolor = "+(int)(float)(Float)args[0]+", bgcolor = "+bgcolor);
+			bgcolor		= getColor(args[0].toString(), false);
+			fgcolor		= getColor(args[1].toString(), false);
+			labelcolor	= getColor(args[2].toString(), false);
 			return true;
 		} 
 

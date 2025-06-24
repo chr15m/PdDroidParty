@@ -23,16 +23,7 @@ public class Toggle extends Widget {
 		toggleval = Float.parseFloat(atomline[18]);
 
 		init = Integer.parseInt(atomline[6]);
-		sendname = app.app.replaceDollarZero(atomline[7]);
-		receivename = atomline[8];
-		label = setLabel(atomline[9]);
-		labelpos[0] = Float.parseFloat(atomline[10]) ;
-		labelpos[1] = Float.parseFloat(atomline[11]) ;
-		labelfont = Integer.parseInt(atomline[12]);
-		labelsize = (int)(Float.parseFloat(atomline[13]) );
-		bgcolor = getColor(Integer.parseInt(atomline[14]));
-		fgcolor = getColor(Integer.parseInt(atomline[15]));
-		labelcolor = getColor(Integer.parseInt(atomline[16]));
+		initCommonArgs(app, atomline, 7);
 
 		setval(Float.parseFloat(atomline[17]), 0);
 
