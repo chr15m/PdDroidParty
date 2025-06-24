@@ -29,7 +29,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.pm.PackageManager;
 import android.content.pm.ActivityInfo;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
@@ -49,7 +49,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-
+/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
 import com.noisepages.nettoyeur.midi.MidiReceiver;
 import com.noisepages.nettoyeur.usb.ConnectionFailedException;
 import com.noisepages.nettoyeur.usb.DeviceNotConnectedException;
@@ -61,6 +61,7 @@ import com.noisepages.nettoyeur.usb.midi.UsbMidiDevice.UsbMidiOutput;
 import com.noisepages.nettoyeur.usb.midi.util.UsbMidiInputSelector;
 import com.noisepages.nettoyeur.usb.midi.util.UsbMidiOutputSelector;
 import com.noisepages.nettoyeur.usb.util.AsyncDeviceInfoLookup;
+*/
 
 public class PdDroidParty extends Activity {
 	public PdDroidPatchView patchview = null;
@@ -90,9 +91,11 @@ public class PdDroidParty extends Activity {
 	private MenuItem menuexit = null;
 	private MenuItem menumidi = null;
 
+	/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
 	private UsbMidiDevice midiDevice = null;
 	private MidiToPdAdapter receiver = new MidiToPdAdapter();
 	private PdToMidiAdapter sender;
+	*/
 
 	private int RECORD_AUDIO_PERMISSION_CODE = 49295197;
 	
@@ -229,6 +232,7 @@ public class PdDroidParty extends Activity {
 		} else if (item == menuexit) {
 			finish();
 		} else if (menumidi != null && item == menumidi) {
+			/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
 			if (midiDevice == null) {
 				chooseMidiDevice();
 			} else {
@@ -236,6 +240,7 @@ public class PdDroidParty extends Activity {
 				midiDevice = null;
 				post("USB MIDI connection closed");
 			}
+			*/
 		} else {
 			// pass the menu selection through to the MenuBang manager
 			MenuBang.hit(item);
@@ -549,10 +554,12 @@ public class PdDroidParty extends Activity {
 			pdService = null;
 		}
 		// release midi
+		/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
 		if (midiDevice != null) {
 			midiDevice.close();
 		}
 		UsbMidiDevice.uninstallBroadcastHandler(this);
+		*/
 		// release the lock on wifi multicasting
 		if (wifiMulticastLock != null && wifiMulticastLock.isHeld())
 			wifiMulticastLock.release();
@@ -590,6 +597,7 @@ public class PdDroidParty extends Activity {
 		}
 	}
 	
+	/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
 	private void chooseMidiDevice() {
 		// set a progress dialog running
 		progress = new ProgressDialog(this);
@@ -616,6 +624,7 @@ public class PdDroidParty extends Activity {
 			}
 		}.execute(devices.toArray(new UsbMidiDevice[devices.size()]));
 	}
+	*/
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

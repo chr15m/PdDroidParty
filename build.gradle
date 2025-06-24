@@ -18,13 +18,13 @@ allprojects {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 33
     buildToolsVersion "29.0.2"
 
     defaultConfig {
         applicationId "cx.mccormick.pddroidparty"
         minSdkVersion 17
-        targetSdkVersion 29
+        targetSdkVersion 33
         versionCode = project.hasProperty('versionCode') ? project.getProperty('versionCode').toInteger() : 1
         versionName = project.hasProperty('versionName') ? project.getProperty('versionName') : ""
     }
@@ -61,6 +61,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.core:core:1.1.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'org.puredata.android:pd-core:1.1.0'
+    implementation 'io.github.libpd.android:pd-core:1.2.1-rc6'
 }
