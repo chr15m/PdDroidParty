@@ -18,27 +18,27 @@ import android.view.MotionEvent;
 
 public class Widget {
 	private static final String TAG = "Widget";
-	
- 	RectF dRect = new RectF();
-	
+
+	RectF dRect = new RectF();
+
 	Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-	
+
 	float val = 0;
 	int init = 0;
 	String sendname = null;
 	String receivename = null;
 	String label = null;
 	float[] labelpos = new float[2];
-	int labelfont=0;
-	int labelsize=14;
+	int labelfont = 0;
+	int labelsize = 14;
 	Typeface font = Typeface.create("Courier", Typeface.BOLD);
 	int fontsize = 0;
 	float[] textoffset = new float[2];
-	
-	int bgcolor=0xFFFFFFFF, fgcolor=0xFF000000, labelcolor=0xFF000000;
-	
+
+	int bgcolor = 0xFFFFFFFF, fgcolor = 0xFF000000, labelcolor = 0xFF000000;
+
 	PdDroidPatchView parent = null;
-	
+
 	private static int IEM_GUI_MAX_COLOR = 30;
 	private static int iemgui_color_hex[] = {
 		16579836, 10526880, 4210752, 16572640, 16572608,
@@ -49,13 +49,12 @@ public class Widget {
 		7874580, 2641940, 17488, 5256, 5767248
 	};
 
-	
 	public Widget(PdDroidPatchView app) {
 		parent = app;
 		fontsize = (int)((float)parent.fontsize);
-		
+
 		File f = null;
-		
+
 		// set an aliased font
 		f = new File(parent.app.getPatchFile().getParent() + "/font.ttf");
 		if (f.exists() && f.canRead() && f.isFile()) {
@@ -68,7 +67,7 @@ public class Widget {
 				paint.setAntiAlias(true);
 			}
 		}
-		
+
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		paint.setTypeface(font);
@@ -86,14 +85,14 @@ public class Widget {
 		{
 			iemcolor = -1 - iemcolor;
 			if(fromFile) return ((iemcolor & 0x3f000) << 6 )
-					+ ((iemcolor & 0xfc0) << 4 )
-					+ ((iemcolor & 0x3f) << 2 )
-					+ 0xFF000000;
+				                    + ((iemcolor & 0xfc0) << 4 )
+				                    + ((iemcolor & 0x3f) << 2 )
+				                    + 0xFF000000;
 			else return (iemcolor & 0xffffff) + 0xFF000000;
 		}
 		else
 		{
-			return (iemgui_color_hex[iemcolor%IEM_GUI_MAX_COLOR] & 0xFFFFFF) | 0xFF000000;
+			return (iemgui_color_hex[iemcolor % IEM_GUI_MAX_COLOR] & 0xFFFFFF) | 0xFF000000;
 		}
 	}
 
@@ -148,13 +147,13 @@ public class Widget {
 			}
 		}
 	}
-	
+
 	public void send(String msg) {
 		if (sendname != null && !sendname.equals("") && !sendname.equals("empty")) {
 			parent.app.send(sendname, msg);
 		}
 	}
-	
+
 	public void sendFloat(float f) {
 		if (sendname != null && !sendname.equals("") && !sendname.equals("empty")) {
 			PdBase.sendFloat(sendname, f);
@@ -167,7 +166,7 @@ public class Widget {
 			parent.app.registerReceiver(receivename, this);
 		}
 	}
-	
+
 	public void setval(float v, float alt) {
 		if (init != 0) {
 			val = v;
@@ -175,17 +174,17 @@ public class Widget {
 			val = alt;
 		}
 	}
-	
+
 	public void initval() {
 		if (init != 0) {
 			send("" + val);
 		}
 	}
-	
+
 	public float getval() {
 		return val;
 	}
-	
+
 	public void drawLabel(Canvas canvas) {
 		if (label != null) {
 			paint.setStrokeWidth(0);
@@ -197,14 +196,14 @@ public class Widget {
 		}
 		paint.setColor(Color.BLACK);
 	}
-	
+
 	public void drawCenteredText(Canvas canvas, String text) {
 		paint.setStrokeWidth(0);
 		if (text != null) {
 			canvas.drawText(text, dRect.left + dRect.width() / 2 + dRect.width() * textoffset[0], (int) (dRect.top + dRect.height() * 0.75 + dRect.height() * textoffset[1]), paint);
 		}
 	}
-	
+
 	/* Set the label (checking for special null values) */
 	public String setLabel(String incoming) {
 		if (incoming.equals("-") || incoming.equals("empty")) {
@@ -213,24 +212,24 @@ public class Widget {
 			return incoming;
 		}
 	}
-	
+
 	/**
 	 * Generic draw method for all widgets.
 	 * @param canvas
 	 */
 	public void draw(Canvas canvas) {
 	}
-	
+
 	/**
 	 * Generic touch method for a hit test.
 	 * @param event
-	 */	
+	 */
 	public void touch(MotionEvent event) {
 	}
 
 	/**
 	 * Generic touch methods : pid=pointer id
-	 **/	
+	 **/
 	public boolean touchdown(int pid, float x, float y) {
 		return false;
 	}
@@ -243,48 +242,48 @@ public class Widget {
 
 	/**
 	 * Generic setval method
-	 **/	
+	 **/
 	public void setval(float v) {
-		val=v;
+		val = v;
 	}
 
 	public boolean widgetreceiveSymbol(String symbol, Object... args) {
 		if( symbol.equals("label")
-		&& args.length > 0 && args[0].getClass().equals(String.class)
+		        && args.length > 0 && args[0].getClass().equals(String.class)
 		) {
 			label = setLabel((String)args[0]);
 			return true;
 		}
 
 		if( symbol.equals("label_pos")
-		&& args.length > 1 && args[0].getClass().equals(Float.class)
-		&& args[1].getClass().equals(Float.class)
+			&& args.length > 1 && args[0].getClass().equals(Float.class)
+			&& args[1].getClass().equals(Float.class)
 		) {
-			labelpos[0]= (Float)args[0] ;
-			labelpos[1]= (Float)args[1] ;
+			labelpos[0] = (Float)args[0] ;
+			labelpos[1] = (Float)args[1] ;
 			return true;
 		}
 
 		if( symbol.equals("pos")
-		&& args.length > 1 && args[0].getClass().equals(Float.class)
-		&& args[1].getClass().equals(Float.class)
+			&& args.length > 1 && args[0].getClass().equals(Float.class)
+			&& args[1].getClass().equals(Float.class)
 		) {
-			dRect.offsetTo((Float)args[0] , (Float)args[1]);
+			dRect.offsetTo((Float)args[0], (Float)args[1]);
 			return true;
 		}
 
 		if( symbol.equals("color")
-		&& args.length > 2
+			&& args.length > 2
 		) {
 			bgcolor		= getColor(args[0].toString(), false);
 			fgcolor		= getColor(args[1].toString(), false);
 			labelcolor	= getColor(args[2].toString(), false);
 			return true;
-		} 
+		}
 
 		if( symbol.equals("label_font")
-		&& args.length > 1 && args[0].getClass().equals(Float.class)
-		&& args[1].getClass().equals(Float.class)
+			&& args.length > 1 && args[0].getClass().equals(Float.class)
+			&& args[1].getClass().equals(Float.class)
 		) {
 			labelfont = (Integer)args[0];
 			labelsize = (Integer)args[1];
@@ -292,56 +291,56 @@ public class Widget {
 		}
 
 		if( symbol.equals("set")
-		&& args.length > 0 && args[0].getClass().equals(Float.class)
+			&& args.length > 0 && args[0].getClass().equals(Float.class)
 		) {
 			setval((Float)args[0]);
 			return true;
 		}
-		
+
 		return false;
 
 	}
-		
+
 	public void receiveList(Object... args) {
 		Log.e(TAG, "dropped list");
 	}
-	
+
 	public void receiveMessage(String symbol, Object... args) {
 		Log.e(TAG, "dropped message");
 	}
-	
+
 	public void receiveSymbol(String symbol) {
 		Log.e(TAG, "dropped symbol");
 	}
-	
+
 	public void receiveFloat(float x) {
 		Log.e(TAG, "dropped float");
 	}
-	
+
 	public void receiveBang() {
 		Log.e(TAG, "dropped bang");
 	}
-	
+
 	public void receiveAny() {
 	}
-	
+
 	/***** Special SVG GUI drawing stuff *****/
 	public class WImage {
-		
+
 		SVGRenderer svg = null;
 		Bitmap bitmap = null;
-		
-		public WImage(){
+
+		public WImage() {
 			svg = null;
 			bitmap = null;
 		}
-		
-		public boolean none(){
+
+		public boolean none() {
 			return (svg == null && bitmap == null);
 		}
-		
+
 		// ***** Loading :
-		
+
 		public SVGRenderer getSVG(String prefix, String suffix, Object... args) {
 			// split the string into parts on underscore, so we test on e.g.
 			// blah_x_y, blah, blah_x, blah_x_y
@@ -352,13 +351,13 @@ public class Widget {
 			if (suffix != null)
 				parts.add(suffix);
 			testnames.add(TextUtils.join("-", parts));
-			
-			for (int a=0; a<args.length; a++) {
+
+			for (int a = 0; a < args.length; a++) {
 				String teststring = (String)args[a];
 				if (teststring != null && !teststring.equals("null") && !teststring.equals("empty") && !teststring.equals("-")) {
 					String[] tries = teststring.split("_");
 					ArrayList<String> buffer = new ArrayList<String>();
-					for (int p=0; p<tries.length; p++) {
+					for (int p = 0; p < tries.length; p++) {
 						parts.clear();
 						buffer.add(tries[p]);
 						if (prefix != null)
@@ -371,7 +370,7 @@ public class Widget {
 					parts.clear();
 				}
 			}
-			
+
 			// now test every combination we have come up with
 			// we want to check from most specific to least specific
 			for (int s = testnames.size() - 1; s >= 0; s--) {
@@ -380,10 +379,10 @@ public class Widget {
 					return svg;
 				}
 			}
-			
+
 			return null;
 		}
-		
+
 		public Bitmap getBitmap(String prefix, String suffix, Object... args) {
 			// split the string into parts on underscore, so we test on e.g.
 			// blah_x_y, blah, blah_x, blah_x_y
@@ -394,13 +393,13 @@ public class Widget {
 			if (suffix != null)
 				parts.add(suffix);
 			testnames.add(TextUtils.join("-", parts));
-			
-			for (int a=0; a<args.length; a++) {
+
+			for (int a = 0; a < args.length; a++) {
 				String teststring = (String)args[a];
 				if (teststring != null && !teststring.equals("null") && !teststring.equals("empty") && !teststring.equals("-")) {
 					String[] tries = teststring.split("_");
 					ArrayList<String> buffer = new ArrayList<String>();
-					for (int p=0; p<tries.length; p++) {
+					for (int p = 0; p < tries.length; p++) {
 						parts.clear();
 						buffer.add(tries[p]);
 						if (prefix != null)
@@ -413,7 +412,7 @@ public class Widget {
 					parts.clear();
 				}
 			}
-			
+
 			// now test every combination we have come up with
 			// we want to check from most specific to least specific
 			for (int s = testnames.size() - 1; s >= 0; s--) {
@@ -422,44 +421,42 @@ public class Widget {
 					return BitmapFactory.decodeFile(f.getAbsolutePath() );
 				}
 			}
-			
+
 			return null;
 		}
-		
-		public void load(String prefix, String suffix, Object... args) {	
+
+		public void load(String prefix, String suffix, Object... args) {
 			svg = getSVG(prefix, suffix, args);
 			if (svg == null) bitmap = getBitmap(prefix, suffix, args);
 		}
-		
+
 		// ***** Get attributes
-		
+
 		public float getWidth() {
 			if(svg != null) return Float.parseFloat(svg.getAttribute("width"));
 			else if(bitmap != null) return bitmap.getWidth();
 			else return 0;
 		}
-		
-		
+
+
 		public float getHeight() {
 			if(svg != null) return Float.parseFloat(svg.getAttribute("height"));
 			else if(bitmap != null) return bitmap.getHeight();
 			else return 0;
 		}
-		
+
 		// ***** Drawing :
-		
+
 		public boolean draw(Canvas c) {
 			return draw(c, dRect);
 		}
-		
+
 		public boolean draw(Canvas c, RectF rect) {
 			if(svg != null) c.drawPicture(svg.getPicture(), rect);
 			else if(bitmap != null) c.drawBitmap(bitmap, null, rect, paint);
 			else return true;
-			
-			return false;
-		}	
 
+			return false;
+		}
 	} // end of class WImage
-	
 }

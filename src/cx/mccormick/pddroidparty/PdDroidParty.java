@@ -74,7 +74,6 @@ public class PdDroidParty extends Activity {
 	public static final int DIALOG_SAVE = 2;
 	public static final int DIALOG_LOAD = 3;
 	public int dollarzero = -1;
-	
 	private boolean fromSelector = false;
 	private String path;
 	private PdService pdService = null;
@@ -86,7 +85,6 @@ public class PdDroidParty extends Activity {
 	MulticastLock wifiMulticastLock = null;
 	private ProgressDialog progress = null;
 	private boolean orientationSet = false;
-	
 	private MenuItem menuabout = null;
 	private MenuItem menuexit = null;
 	private MenuItem menumidi = null;
@@ -98,14 +96,14 @@ public class PdDroidParty extends Activity {
 	*/
 
 	private int RECORD_AUDIO_PERMISSION_CODE = 49295197;
-	
+
 	private final PdDispatcher dispatcher = new PdDispatcher() {
 		@Override
 		public void print(String s) {
 			Log.e("Pd [print]", s);
 		}
 	};
-	
+
 	// post a 'toast' alert to the Android UI
 	private void post(final String msg) {
 		runOnUiThread(new Runnable() {
@@ -115,7 +113,7 @@ public class PdDroidParty extends Activity {
 			}
 		});
 	}
-	
+
 	// our connection to the Pd service
 	private final ServiceConnection serviceConnection = new ServiceConnection() {
 		@Override
@@ -125,13 +123,13 @@ public class PdDroidParty extends Activity {
 				initPd();
 			}
 		}
-		
+
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			// this method will never be called
 		}
 	};
-	
+
 	// called when the app is launched
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +145,7 @@ public class PdDroidParty extends Activity {
 			public void run() {
 				bindService(new Intent(PdDroidParty.this, PdService.class), serviceConnection, BIND_AUTO_CREATE);
 			}
-		}.start();
+		} .start();
 	}
 
 	// this callback makes sure that we handle orientation changes without audio glitches
@@ -167,19 +165,19 @@ public class PdDroidParty extends Activity {
 		super.onDestroy();
 		cleanup();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		return true;
 	}
-	
+
 	// menu launch yeah
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		// about menu item
 		menuabout = menu.add(0, Menu.FIRST + menu.size(), 0, "About");
-		menuabout.setIcon(android.R.drawable.ic_menu_info_details); 
+		menuabout.setIcon(android.R.drawable.ic_menu_info_details);
 		// add the menu bang menu items
 		MenuBang.setMenu(menu);
 		// TODO: preferences = ic_menu_preferences
@@ -188,16 +186,16 @@ public class PdDroidParty extends Activity {
 		try {
 			UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
 			menumidi = menu.add(0, Menu.FIRST + menu.size(), 0, "Midi");
-			menumidi.setIcon(android.R.drawable.ic_menu_manage); 
+			menumidi.setIcon(android.R.drawable.ic_menu_manage);
 		} catch(NoClassDefFoundError e) {
 			// don't care
 		}
 		// exit menu item
 		menuexit = menu.add(0, Menu.FIRST + menu.size(), 0, "Exit");
-		menuexit.setIcon(android.R.drawable.ic_menu_close_clear_cancel); 
+		menuexit.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		return super.onPrepareOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item == menuabout) {
@@ -215,11 +213,11 @@ public class PdDroidParty extends Activity {
 			} catch (IOException e) {
 				sb.append("Copyright Chris McCormick, 2011");
 			}
-			
+
 			// convert the string to HTML for the about dialog
 			final SpannableString s = new SpannableString(Html.fromHtml(sb.toString()));
 			Linkify.addLinks(s, Linkify.ALL);
-			
+
 			AlertDialog ab = new AlertDialog.Builder(this)
 			.setTitle("About")
 			.setIcon(android.R.drawable.ic_dialog_info)
@@ -247,28 +245,28 @@ public class PdDroidParty extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	// send a Pd atom-string 's' to a particular receiver 'dest'
 	public void send(String dest, String s) {
 		List<Object> list = new ArrayList<Object>();
 		String[] bits = s.split(" ");
-		
-		for (int i=0; i < bits.length; i++) {
+
+		for (int i = 0; i < bits.length; i++) {
 			try {
 				list.add(Float.parseFloat(bits[i]));
 			} catch (NumberFormatException e) {
 				list.add(bits[i]);
 			}
 		}
-		
+
 		Object[] ol = list.toArray();
 		PdBase.sendList(dest, ol);
 	}
-	
+
 	public String replaceDollarZero(String name) {
 		return name.replace("\\$0", dollarzero + "").replace("$0", dollarzero + "");
 	}
-	
+
 	public void registerReceiver(String name, Widget w) {
 		// do $0 replacement
 		String realname = replaceDollarZero(name);
@@ -282,14 +280,14 @@ public class PdDroidParty extends Activity {
 			r.addWidget(w);
 		}
 	}
-	
+
 	// initialise the GUI with the OpenGL rendering engine
 	private void initGui() {
 		Log.e(TAG, "initGui runs");
 		//setContentView(R.layout.main);
 		int flags = WindowManager.LayoutParams.FLAG_FULLSCREEN |
-			WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-			WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON; 		
+		            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+		            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 		getWindow().setFlags(flags, flags);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		atomlines = PdParser.parsePatch(path);
@@ -308,7 +306,7 @@ public class PdDroidParty extends Activity {
 		patchview.requestFocus();
 		MenuBang.clear();
 	}
-	
+
 	// initialise Pd asking for the desired sample rate, parameters, etc.
 	private void initPd() {
 		Context context = this.getApplicationContext();
@@ -407,12 +405,12 @@ public class PdDroidParty extends Activity {
 
 				if (Build.VERSION.SDK_INT >= 23 && norecord == null && !hasRecordPermission()) {
 					// Show user dialog to grant permission to record audio
-					requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_PERMISSION_CODE);
+					requestPermissions(new String[] {Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_PERMISSION_CODE);
 				} else {
 					startPd();
 				}
 			}
-		}.start();
+		} .start();
 	}
 
 
@@ -429,8 +427,8 @@ public class PdDroidParty extends Activity {
 				public void run() {
 					startPd();
 				}
-			}.start();
-		return;
+			} .start();
+			return;
 		}
 	}
 
@@ -500,8 +498,8 @@ public class PdDroidParty extends Activity {
 		progress.dismiss();
 	}
 
-	public String getFlag(ArrayList<String[]> al, String flagname) {
-		for (String[] line: al) {
+	public static String getFlag(ArrayList<String[]> al, String flagname) {
+		for (String[] line : al) {
 			if (line.length >= 5) {
 				if (line[4].equals("PdDroidParty.config." + flagname)) {
 					return line[5];
@@ -511,8 +509,8 @@ public class PdDroidParty extends Activity {
 		return null;
 	}
 
-	public boolean isLandscape(ArrayList<String[]> al) {
-		for (String[] line: atomlines) {
+	public static boolean isLandscape(ArrayList<String[]> al) {
+		for (String[] line : al) {
 			if (line.length >= 4) {
 				// find canvas begin and end lines
 				if (line[1].equals("canvas")) {
@@ -526,14 +524,14 @@ public class PdDroidParty extends Activity {
 	public File getPatchFile() {
 		return new File(path);
 	}
-	
+
 	// close the app and exit
 	@Override
 	public void finish() {
 		cleanup();
 		super.finish();
 	}
-	
+
 	// quit the Pd service and release other resources
 	private void cleanup() {
 		// let the screen blank again
@@ -564,7 +562,7 @@ public class PdDroidParty extends Activity {
 		if (wifiMulticastLock != null && wifiMulticastLock.isHeld())
 			wifiMulticastLock.release();
 	}
-	
+
 	public void launchDialog(Widget which, int type) {
 		widgetpopped = which;
 		if (type == DIALOG_NUMBERBOX) {
@@ -585,7 +583,7 @@ public class PdDroidParty extends Activity {
 			startActivityForResult(it, DIALOG_LOAD);
 		}
 	}
-	
+
 	public String getPatchRelativePath(String dir) {
 		String root = getPatchFile().getParent();
 		if (dir.equals(".")) {
@@ -596,7 +594,7 @@ public class PdDroidParty extends Activity {
 			return dir;
 		}
 	}
-	
+
 	/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
 	private void chooseMidiDevice() {
 		// set a progress dialog running
@@ -625,10 +623,10 @@ public class PdDroidParty extends Activity {
 		}.execute(devices.toArray(new UsbMidiDevice[devices.size()]));
 	}
 	*/
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data); 
+		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
 			if (widgetpopped != null) {
 				if (requestCode == DIALOG_NUMBERBOX) {

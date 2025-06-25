@@ -15,7 +15,7 @@ public class Display extends Widget {
 	WImage bg = new WImage();
 
 	String text = null;
-	
+
 	public Display(PdDroidPatchView app, String[] atomline) {
 		super(app);
 
@@ -33,49 +33,49 @@ public class Display extends Widget {
 
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
-				Math.round(y + h));
+		                  Math.round(y + h));
 
 		// listen out for symbols from Pd
 		setupreceive();
 
 		// try and load image
 		bg.load(TAG, null, sendname, receivename);
-		
+
 		setTextParametersFromSVG(bg.svg);
 	}
 
 	public void draw(Canvas canvas) {
 		if (bg.draw(canvas)) {
 			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1,
-					dRect.top, paint);
+			                dRect.top, paint);
 			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1,
-					dRect.bottom, paint);
+			                dRect.bottom, paint);
 			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left,
-					dRect.bottom - 1, paint);
+			                dRect.bottom - 1, paint);
 			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom,
-					paint);
+			                paint);
 		}
 		drawCenteredText(canvas, text);
 	}
-	
+
 	public void receiveList(Object... args) {
 		String sep = "";
 		String result = "";
-		for (Object s: args) {
+		for (Object s : args) {
 			result += sep + s.toString();
 			sep = " ";
 		}
 		text = result;
 	}
-	
+
 	public void receiveMessage(String symbol, Object... args) {
 		String result = "" + (symbol.equals("set") ? "" : symbol);
-		for (Object s: args) {
+		for (Object s : args) {
 			result += " " + s.toString();
 		}
 		text = result;
 	}
-	
+
 	public void receiveSymbol(String v) {
 		text = "" + v;
 	}

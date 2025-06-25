@@ -11,27 +11,27 @@ import android.view.MotionEvent;
 
 public class Numberbox extends Widget {
 	private static final String TAG = "Floatatom";
-	
+
 	float min, max;
 	int numwidth;
-	
+
 	StaticLayout numLayout = null;
 	DecimalFormat fmt = null;
 	Rect tRect = new Rect();
-	
+
 	boolean down = false;
 	int pid0 = -1; //pointer id when down
-	
+
 	public Numberbox(PdDroidPatchView app, String[] atomline) {
 		super(app);
-		
+
 		float x = Float.parseFloat(atomline[2]) ;
 		float y = Float.parseFloat(atomline[3]) ;
-		
+
 		// calculate screen bounds for the numbers that can fit
 		numwidth = Integer.parseInt(atomline[4]);
 		StringBuffer calclen = new StringBuffer();
-		for (int s=0; s<numwidth; s++) {
+		for (int s = 0; s < numwidth; s++) {
 			if (s == 1) {
 				calclen.append(".");
 			} else {
@@ -47,7 +47,7 @@ public class Numberbox extends Widget {
 		dRect.bottom += 3;
 		dRect.left -= 3;
 		dRect.right += 3;
-		
+
 		min = Float.parseFloat(atomline[5]);
 		max = Float.parseFloat(atomline[6]);
 		sendname = app.app.replaceDollarZero(atomline[10]);
@@ -55,17 +55,17 @@ public class Numberbox extends Widget {
 		label = setLabel(atomline[8]);
 		labelpos[0] = x;
 		labelpos[1] = y;
-		
+
 		setval(0, 0);
-		
+
 		// listen out for floats from Pd
 		setupreceive();
 	}
-	
+
 	public Numberbox(PdDroidPatchView app) {
 		super(app);
 	}
-	
+
 	public void draw(Canvas canvas) {
 		paint.setColor(Color.BLACK);
 		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
@@ -75,8 +75,8 @@ public class Numberbox extends Widget {
 		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
 		drawLabel(canvas);
 	}
-	
-	public boolean touchdown(int pid, float x,float y) {
+
+	public boolean touchdown(int pid, float x, float y) {
 		if (dRect.contains(x, y)) {
 			down = true;
 			pid0 = pid;
@@ -84,8 +84,8 @@ public class Numberbox extends Widget {
 		}
 		return false;
 	}
-	
-	public boolean touchup(int pid, float x,float y) {
+
+	public boolean touchup(int pid, float x, float y) {
 		if (pid == pid0) {
 			parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
 			down = false;
@@ -95,7 +95,6 @@ public class Numberbox extends Widget {
 		return false;
 	}
 
-	
 	public void touch_(MotionEvent event) {
 
 		int action = event.getAction() & MotionEvent.ACTION_MASK;
@@ -115,9 +114,9 @@ public class Numberbox extends Widget {
 		case MotionEvent.ACTION_POINTER_DOWN:
 			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
 			index = event.findPointerIndex(pid);
-			Log.d("dwnNBoxBefore", index+"");
-			index=(index==-1)?1:index;
-			Log.d("dwnNBoxAfter", index+"");
+			Log.d("dwnNBoxBefore", index + "");
+			index = (index == -1) ? 1 : index;
+			Log.d("dwnNBoxAfter", index + "");
 			ex = event.getX(index);
 			ey = event.getY(index);
 			if (dRect.contains(ex, ey)) {
@@ -137,9 +136,9 @@ public class Numberbox extends Widget {
 		case MotionEvent.ACTION_POINTER_UP:
 			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
 			index = event.findPointerIndex(pid);
-			Log.d("upNBoxBefore", index+"");
-			index=(index==-1)?1:index;
-			Log.d("NBoxAfter", index+"");
+			Log.d("upNBoxBefore", index + "");
+			index = (index == -1) ? 1 : index;
+			Log.d("NBoxAfter", index + "");
 			ex = event.getX(index);
 			ey = event.getY(index);
 			if (dRect.contains(ex, ey)) {
@@ -150,7 +149,6 @@ public class Numberbox extends Widget {
 
 		}
 
-		
 		// TODO: allow dragging to set the number
 		/*if (down) {
 			//Log.e(TAG, "touch:" + val);
@@ -170,13 +168,13 @@ public class Numberbox extends Widget {
 			}
 		}*/
 	}
-	
+
 	public void receiveList(Object... args) {
 		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
 			receiveFloat((Float)args[0]);
 		}
 	}
-	
+
 	public void receiveFloat(float v) {
 		if (min != 0 || max != 0) {
 			val = Math.min(max, Math.max(v, min));
@@ -185,13 +183,12 @@ public class Numberbox extends Widget {
 		}
 		sendFloat(val);
 	}
-	
+
 	public void receiveMessage(String symbol, Object... args) {
-		if(widgetreceiveSymbol(symbol,args)) return;
+		if(widgetreceiveSymbol(symbol, args)) return;
 		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
 			receiveFloat((Float)args[0]);
 		}
 	}
-
 }
 

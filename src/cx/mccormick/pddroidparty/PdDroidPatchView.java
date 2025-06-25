@@ -26,7 +26,7 @@ import com.larvalabs.svgandroid.SVGParser;
 
 public class PdDroidPatchView extends View implements OnTouchListener {
 	private static final String TAG = "PdDroidPatchView";
-	
+
 	Paint paint = new Paint();
 	public int patchwidth;
 	public int patchheight;
@@ -44,30 +44,30 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	private Picture background = null;
 	private Bitmap bgbitmap = null;
 	private RectF bgrect = new RectF();
-	
+
 	public PdDroidPatchView(Context context, PdDroidParty parent) {
 		super(context);
-		
+
 		// disable graphic acceleration to have SVG properly rendered
 		// not needed prior to API level 17
 		// not possible prior to API level 11
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			setSoftwareMode();
 		}
-		
+
 		app = parent;
 
 		setFocusable(true);
 		setFocusableInTouchMode(true);
-		
+
 		this.setOnTouchListener(this);
 		this.setId(R.id.patch_view);
 		// default background color settings
 		paint.setColor(Color.WHITE);
 		paint.setAntiAlias(true);
-		
+
 		res = parent.getResources();
-		
+
 		// if there is a splash image, use it
 		splash_res = res.getIdentifier("splash", "raw", parent.getPackageName());
 		if (splash_res != 0) {
@@ -77,20 +77,20 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 			loadBackground();
 		}
 	}
-	
+
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setSoftwareMode()
 	{
 		setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 	}
-	
-	private static Bitmap picture2Bitmap(Picture picture){
-	    PictureDrawable pictureDrawable = new PictureDrawable(picture);
-	    Bitmap bitmap = Bitmap.createBitmap(pictureDrawable.getIntrinsicWidth(), pictureDrawable.getIntrinsicHeight(), Config.ARGB_8888);
-	    //Log.e(TAG, "picture size: " + pictureDrawable.getIntrinsicWidth() + " " + pictureDrawable.getIntrinsicHeight());
-	    Canvas canvas = new Canvas(bitmap);
-	    canvas.drawPicture(pictureDrawable.getPicture());
-	    return bitmap;
+
+	private static Bitmap picture2Bitmap(Picture picture) {
+		PictureDrawable pictureDrawable = new PictureDrawable(picture);
+		Bitmap bitmap = Bitmap.createBitmap(pictureDrawable.getIntrinsicWidth(), pictureDrawable.getIntrinsicHeight(), Config.ARGB_8888);
+		//Log.e(TAG, "picture size: " + pictureDrawable.getIntrinsicWidth() + " " + pictureDrawable.getIntrinsicHeight());
+		Canvas canvas = new Canvas(bitmap);
+		canvas.drawPicture(pictureDrawable.getPicture());
+		return bitmap;
 	}
 
 	private void loadBackground() {
@@ -110,7 +110,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 			}
 		}
 	}
-	
+
 	@Override
 	public void onDraw(Canvas canvas) {
 		canvas.drawPaint(paint);
@@ -130,68 +130,68 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		// draw all widgets
 		if (widgets != null) {
 			canvas.save();
-			canvas.scale(getWidth()/(float)viewW,getHeight()/(float)viewH);
-			canvas.translate(-viewX ,-viewY );
-			for (Widget widget: widgets) {
+			canvas.scale(getWidth() / (float)viewW, getHeight() / (float)viewH);
+			canvas.translate(-viewX, -viewY );
+			for (Widget widget : widgets) {
 				widget.draw(canvas);
 			}
 			canvas.restore();
 		}
 	}
-	
-	public float PointerX(float x){
+
+	public float PointerX(float x) {
 		return (x * ((float)viewW) / getWidth() + viewX);
 	}
-	
-	public float PointerY(float y){
+
+	public float PointerY(float y) {
 		return (y * ((float)viewH) / getHeight() + viewY);
 	}
-	
+
 	public boolean onTouch(View view, MotionEvent event) {
 		int index, pid, action;
 		float x, y;
-		
+
 		if (widgets != null) {
 			action = event.getActionMasked();
 			switch(action) {
-				case MotionEvent.ACTION_DOWN:
-				case MotionEvent.ACTION_POINTER_DOWN:
-					index = event.getActionIndex();
-					pid = event.getPointerId(index);
-					x = PointerX(event.getX(index));
-					y = PointerY(event.getY(index));
-					for (Widget widget: widgets) {
-						if( widget.touchdown(pid,x,y)) break;
+			case MotionEvent.ACTION_DOWN:
+			case MotionEvent.ACTION_POINTER_DOWN:
+				index = event.getActionIndex();
+				pid = event.getPointerId(index);
+				x = PointerX(event.getX(index));
+				y = PointerY(event.getY(index));
+				for (Widget widget : widgets) {
+					if( widget.touchdown(pid, x, y)) break;
+				}
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_POINTER_UP:
+				index = event.getActionIndex();
+				pid = event.getPointerId(index);
+				x = PointerX(event.getX(index));
+				y = PointerY(event.getY(index));
+				for (Widget widget : widgets) {
+					if( widget.touchup(pid, x, y)) break;
+				}
+				break;
+			case MotionEvent.ACTION_MOVE:
+				int pointerCount = event.getPointerCount();
+				for (int p = 0; p < pointerCount; p++) {
+					pid = event.getPointerId(p);
+					x = PointerX(event.getX(p));
+					y = PointerY(event.getY(p));
+					for (Widget widget : widgets) {
+						if( widget.touchmove(pid, x, y)) break;
 					}
-					break;
-				case MotionEvent.ACTION_UP:
-				case MotionEvent.ACTION_POINTER_UP:
-					index = event.getActionIndex();
-					pid = event.getPointerId(index);
-					x = PointerX(event.getX(index));
-					y = PointerY(event.getY(index));
-					for (Widget widget: widgets) {
-						if( widget.touchup(pid,x,y)) break;
-					}
-					break;
-				case MotionEvent.ACTION_MOVE:
-					int pointerCount = event.getPointerCount();
-					for (int p = 0; p < pointerCount; p++) {
-						pid = event.getPointerId(p);
-						x = PointerX(event.getX(p));
-						y = PointerY(event.getY(p));
-						for (Widget widget: widgets) {
-							if( widget.touchmove(pid,x,y)) break;
-						}
-					}
-					break;
-				default:
+				}
+				break;
+			default:
 			}
 		}
 		invalidate();
 		return true;
 	}
-	
+
 	/** Lets us invalidate this view from the audio thread */
 	public void threadSafeInvalidate() {
 		final PdDroidPatchView me = this;
@@ -202,7 +202,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 			}
 		});
 	}
-	
+
 	/** Main patch is done loading, now we should change the background from the splash. **/
 	public void loaded() {
 		loadBackground();
@@ -225,8 +225,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	public void buildUI(ArrayList<String[]> atomlines) {
 		//ArrayList<String> canvases = new ArrayList<String>();
 		int level = 0;
-		
-		for (String[] line: atomlines) {
+		for (String[] line : atomlines) {
 			if (line.length >= 4) {
 				// find canvas begin and end lines
 				if (line[1].equals("canvas")) {
@@ -245,7 +244,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 				} else if (line[1].equals("restore")) {
 					//canvases.remove(0);
 					level -= 1;
-				// find different types of UI element in the top level patch
+					// find different types of UI element in the top level patch
 				} else if (level == 1) {
 					if (line.length >= 2) {
 						// builtin pd things
@@ -285,7 +284,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 						}
 					}
 				}
-				
+
 				// things that can be found at any depth and still work
 				if (line.length >= 5) {
 					if (line[4].equals("droidnetreceive")) {

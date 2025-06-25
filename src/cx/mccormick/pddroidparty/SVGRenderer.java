@@ -19,7 +19,7 @@ public class SVGRenderer {
 	HashMap<Integer, Picture> interpolated_cache = new HashMap<Integer, Picture>();
 	// class shared static hashmap of all cached SVG images
 	private static HashMap<String, Picture> cache = new HashMap<String, Picture>();
-	
+
 	public SVGRenderer(File f) {
 		svgfile = f.toString();
 		Log.e(TAG, "Loading: " + svgfile);
@@ -30,18 +30,18 @@ public class SVGRenderer {
 			Log.e(TAG, "(cache store)");
 		}
 	}
-	
+
 	// only create an SVGRenderer if we can load the file name asked for
 	public static SVGRenderer getSVGRenderer(PdDroidPatchView parent, String name) {
 		// reads the SVG string from a file if the file with with name exists
-		// returns null if the file with name does not exist	
+		// returns null if the file with name does not exist
 		File f = new File(parent.app.getPatchFile().getParent() + "/" + name + ".svg");
 		if (f.exists() && f.canRead() && f.isFile()) {
 			return new SVGRenderer(f);
 		}
 		return null;
 	}
-	
+
 	// get a rendered version of the svg
 	public Picture getPicture() {
 		if (cached != null) {
@@ -52,12 +52,12 @@ public class SVGRenderer {
 		}
 		return cache.get(svgfile);
 	}
-	
+
 	// proxy to SVGManipulator to get attributes of the SVG
 	public String getAttribute(String s) {
 		return original.getAttribute(s);
 	}
-	
+
 	// interpolate between two paths in the SVG, making the second one invisible
 	public SVGRenderer interpolate(String startid, String endid, double amount) {
 		if (interpolated_cache.containsKey((int)(amount * 1000)) ) {

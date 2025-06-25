@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 public class LoadDialog extends Activity {
 	private static final String TAG = "LoadDialog";
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -29,7 +29,7 @@ public class LoadDialog extends Activity {
 		final ListView filelist = (ListView)findViewById(R.id.filelist);
 		Intent intent = getIntent();
 		List<File> list = IoUtils.find(new File(intent.getStringExtra("directory")), ".*\\." + intent.getStringExtra("extension") + "$");
-		for (File f: list) {
+		for (File f : list) {
 			String fn = f.getName();
 			int i = fn.lastIndexOf('.');
 			if (i > 0 && i < fn.length() - 1) {
@@ -40,7 +40,7 @@ public class LoadDialog extends Activity {
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(LoadDialog.this, android.R.layout.simple_list_item_1, filenames);
 			filelist.setAdapter(adapter);
 		}
-		
+
 		Button cancel = (Button)findViewById(R.id.cancel);
 		cancel.setOnClickListener(new OnClickListener() {
 			@Override
@@ -50,7 +50,7 @@ public class LoadDialog extends Activity {
 				finish();
 			}
 		});
-		
+
 		filelist.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {

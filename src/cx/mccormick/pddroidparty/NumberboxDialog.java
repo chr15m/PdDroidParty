@@ -13,12 +13,12 @@ public class NumberboxDialog extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.numberbox_dialog);
-		
+
 		//Context context = getApplicationContext();
 		final EditText number = (EditText)findViewById(R.id.number);
 		Intent intent = getIntent();
 		number.setText("" + intent.getFloatExtra("number", 0));
-		
+
 		Button ok = (Button)findViewById(R.id.ok);
 		ok.setOnClickListener(new OnClickListener() {
 			@Override
@@ -29,7 +29,7 @@ public class NumberboxDialog extends Activity {
 				finish();
 			}
 		});
-		
+
 		Button cancel = (Button)findViewById(R.id.cancel);
 		cancel.setOnClickListener(new OnClickListener() {
 			@Override

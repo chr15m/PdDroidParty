@@ -13,11 +13,11 @@ public class SaveDialog extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.save_dialog);
-		
+
 		final EditText filename = (EditText)findViewById(R.id.filename);
 		Intent intent = getIntent();
 		filename.setText(intent.getStringExtra("filename"));
-		
+
 		Button ok = (Button)findViewById(R.id.ok);
 		ok.setOnClickListener(new OnClickListener() {
 			@Override
@@ -34,7 +34,7 @@ public class SaveDialog extends Activity {
 				finish();
 			}
 		});
-		
+
 		Button cancel = (Button)findViewById(R.id.cancel);
 		cancel.setOnClickListener(new OnClickListener() {
 			@Override

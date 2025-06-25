@@ -21,7 +21,7 @@ public class Taplist extends Widget {
 
 	boolean down = false;
 	int pid0 = -1; //pointer id when down
-	
+
 	public Taplist(PdDroidPatchView app, String[] atomline) {
 		super(app);
 
@@ -47,7 +47,7 @@ public class Taplist extends Widget {
 
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
-				Math.round(y + h));
+		                  Math.round(y + h));
 
 		// listen out for floats from Pd
 		setupreceive();
@@ -69,13 +69,13 @@ public class Taplist extends Widget {
 
 		if (down ? on.draw(canvas) : off.draw(canvas)) {
 			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1,
-					dRect.top, paint);
+			                dRect.top, paint);
 			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1,
-					dRect.bottom, paint);
+			                dRect.bottom, paint);
 			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left,
-					dRect.bottom - 1, paint);
+			                dRect.bottom - 1, paint);
 			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom,
-					paint);
+			                paint);
 		}
 		drawCenteredText(canvas, atoms.get((int) val));
 	}
@@ -85,7 +85,7 @@ public class Taplist extends Widget {
 		parent.app.send(sendname, atoms.get((int) val));
 	}
 
-	public boolean touchdown(int pid, float x,float y) {
+	public boolean touchdown(int pid, float x, float y) {
 		if (dRect.contains(x, y)) {
 			val = (val + 1) % atoms.size();
 			doSend();
@@ -95,8 +95,8 @@ public class Taplist extends Widget {
 		}
 		return false;
 	}
-	
-	public boolean touchup(int pid, float x,float y) {
+
+	public boolean touchup(int pid, float x, float y) {
 		if (pid == pid0) {
 			down = false;
 			pid0 = -1;
@@ -104,20 +104,20 @@ public class Taplist extends Widget {
 		}
 		return false;
 	}
-	
+
 	public void receiveList(Object... args) {
 		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
 			receiveFloat((Float) args[0]);
 		}
 	}
-	
+
 	public void receiveFloat(float v) {
 		val = ((v % atoms.size()) + atoms.size()) % atoms.size();
 		doSend();
 	}
-	
+
 	public void receiveMessage(String symbol, Object... args) {
-		if(widgetreceiveSymbol(symbol,args)) return;
+		if(widgetreceiveSymbol(symbol, args)) return;
 		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
 			receiveFloat((Float)args[0]);
 		}

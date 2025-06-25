@@ -8,18 +8,18 @@ import android.util.Log;
 
 public class Numberbox2 extends Numberbox {
 	private static final String TAG = "Nbx";
-	
+
 	public Numberbox2(PdDroidPatchView app, String[] atomline) {
 		super(app);
-		
+
 		float x = Float.parseFloat(atomline[2]) ;
 		float y = Float.parseFloat(atomline[3]) ;
 		Rect tRect = new Rect();
-		
+
 		// calculate screen bounds for the numbers that can fit
 		numwidth = Integer.parseInt(atomline[5]);
 		StringBuffer calclen = new StringBuffer();
-		for (int s=0; s<numwidth; s++) {
+		for (int s = 0; s < numwidth; s++) {
 			if (s == 1) {
 				calclen.append(".");
 			} else {
@@ -42,7 +42,7 @@ public class Numberbox2 extends Numberbox {
 			dRect.bottom += diff / 2;
 			dRect.top -= diff / 2;
 		}
-		
+
 		min = Float.parseFloat(atomline[7]);
 		max = Float.parseFloat(atomline[8]);
 		init = Integer.parseInt(atomline[10]);
@@ -51,17 +51,17 @@ public class Numberbox2 extends Numberbox {
 		label = setLabel(atomline[13]);
 		labelpos[0] = Float.parseFloat(atomline[14]) ;
 		labelpos[1] = Float.parseFloat(atomline[15]) ;
-		
+
 		// set the value to the init value if possible
 		setval(Float.parseFloat(atomline[21]), 0);
-		
+
 		// listen out for floats from Pd
 		setupreceive();
-		
+
 		// send initial value if we have one
 		initval();
 	}
-	
+
 	public void draw(Canvas canvas) {
 		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
 		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);

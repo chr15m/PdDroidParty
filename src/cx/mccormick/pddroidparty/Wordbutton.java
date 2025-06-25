@@ -20,7 +20,7 @@ public class Wordbutton extends Bang {
 
 	boolean down = false;
 	int pid0 = -1; //pointer id when down
-	
+
 	String spacereplace = null;
 
 	public Wordbutton(PdDroidPatchView app, String[] atomline) {
@@ -41,7 +41,7 @@ public class Wordbutton extends Bang {
 		labelpos[1] = h / 2 - tRect.height() / 2;
 
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
-				Math.round(y + h));
+		                  Math.round(y + h));
 
 		// try and load images
 		on.load(TAG, "on", label, sendname, receivename);
@@ -60,18 +60,18 @@ public class Wordbutton extends Bang {
 
 		if (down ? on.draw(canvas) : off.draw(canvas)) {
 			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right, dRect.top,
-					paint);
+			                paint);
 			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right,
-					dRect.bottom, paint);
+			                dRect.bottom, paint);
 			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left,
-					dRect.bottom, paint);
+			                dRect.bottom, paint);
 			canvas.drawLine(dRect.right, dRect.top + 1, dRect.right,
-					dRect.bottom, paint);
+			                dRect.bottom, paint);
 		}
 		drawCenteredText(canvas, spacereplace);
 	}
 
-	public boolean touchdown(int pid,float x,float y)
+	public boolean touchdown(int pid, float x, float y)
 	{
 		if (dRect.contains(x, y)) {
 			down = true;
@@ -81,7 +81,7 @@ public class Wordbutton extends Bang {
 		return false;
 	}
 
-	public boolean touchup(int pid,float x,float y)
+	public boolean touchup(int pid, float x, float y)
 	{
 		if (pid == pid0) {
 			if (dRect.contains(x, y)) {
@@ -93,7 +93,7 @@ public class Wordbutton extends Bang {
 		}
 		return false;
 	}
-	
+
 	public void touch_(MotionEvent event) {
 
 		int action = event.getAction() & MotionEvent.ACTION_MASK;
@@ -105,7 +105,6 @@ public class Wordbutton extends Bang {
 			ex = event.getX();
 			ey = event.getY();
 			if (dRect.contains(ex, ey)) {
-
 				down = true;
 			}
 			break;
@@ -118,7 +117,6 @@ public class Wordbutton extends Bang {
 			ex = event.getX(index);
 			ey = event.getY(index);
 			if (dRect.contains(ex, ey)) {
-
 				down = true;
 			}
 			break;
@@ -126,7 +124,6 @@ public class Wordbutton extends Bang {
 			ex = event.getX();
 			ey = event.getY();
 			if (dRect.contains(ex, ey)) {
-
 				PdBase.sendBang(sendname);
 			}
 			down = false;
@@ -141,13 +138,10 @@ public class Wordbutton extends Bang {
 			ex = event.getX(index);
 			ey = event.getY(index);
 			if (dRect.contains(ex, ey)) {
-
 				PdBase.sendBang(sendname);
 			}
 			down = false;
 			break;
-
 		}
-
 	}
 }

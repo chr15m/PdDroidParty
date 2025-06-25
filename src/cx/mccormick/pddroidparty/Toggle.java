@@ -32,7 +32,7 @@ public class Toggle extends Widget {
 
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
-				Math.round(y + h));
+		                  Math.round(y + h));
 
 		// try and load images
 		on.load(TAG, "on", label, sendname, receivename);
@@ -43,7 +43,7 @@ public class Toggle extends Widget {
 		if (off.draw(canvas)) {
 			paint.setColor(bgcolor);
 			paint.setStyle(Paint.Style.FILL);
-			canvas.drawRect(dRect,paint);
+			canvas.drawRect(dRect, paint);
 
 			paint.setColor(Color.BLACK);
 			paint.setStrokeWidth(1);
@@ -52,7 +52,7 @@ public class Toggle extends Widget {
 			canvas.drawLine(dRect.left, dRect.top /*+ 1*/, dRect.left, dRect.bottom, paint);
 			canvas.drawLine(dRect.right, dRect.top /*+ 1*/, dRect.right, dRect.bottom, paint);
 		}
-		
+
 		if (val != 0) {
 			if (on.draw(canvas)) {
 				paint.setColor(fgcolor);
@@ -71,8 +71,8 @@ public class Toggle extends Widget {
 			val = 0;
 		}
 	}
-			
-	public boolean touchdown(int pid,float x,float y)
+
+	public boolean touchdown(int pid, float x, float y)
 	{
 		if (dRect.contains(x, y)) {
 			toggle();
@@ -84,7 +84,7 @@ public class Toggle extends Widget {
 
 	public void receiveMessage(String symbol, Object... args) {
 		// set message sets value without sending
-		if(widgetreceiveSymbol(symbol,args)) return;
+		if(widgetreceiveSymbol(symbol, args)) return;
 	}
 
 	public void receiveList(Object... args) {
@@ -98,7 +98,7 @@ public class Toggle extends Widget {
 					// set our value to the float supplied but don't pass it
 					// through
 					if (args.length > 1
-							&& args[1].getClass().equals(Float.class)) {
+					        && args[1].getClass().equals(Float.class)) {
 						val = (Float) args[1];
 					}
 				} else if (args[0].equals("bang")) {

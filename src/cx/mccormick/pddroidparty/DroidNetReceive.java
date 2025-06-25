@@ -13,24 +13,23 @@ public class DroidNetReceive extends Widget {
 	int port;
 	String connection_type = null;
 	Thread ServerThread;
-	Socket connection = null;	
-	
+	Socket connection = null;
+
 	public DroidNetReceive(PdDroidPatchView app, String[] atomline) {
 		super(app);
-		
+
 		port = (int)Float.parseFloat(atomline[5]);
 		sendname = app.app.replaceDollarZero(atomline[6]);
 		receivename = app.app.replaceDollarZero(atomline[6]) + "-rcv";
 		if (atomline.length > 7) {
 			connection_type = app.app.replaceDollarZero(atomline[7]);
-			
 		}
 		Log.e(TAG, "Connection type: " + connection_type);
-		
+
 		ServerThread = new Thread(ServerRun);
 		ServerThread.start();
 	}
-	
+
 	private Runnable ServerRun = new Runnable() {
 		@Override
 		public void run() {
@@ -42,18 +41,18 @@ public class DroidNetReceive extends Widget {
 				}
 			}
 		}
-		
+
 		void do_tcp_connection() {
-			ServerSocket server= null;
+			ServerSocket server = null;
 			char[] buffer = new char[1024];
 			int bufLen = 0;
 			int Byte;
-			
+
 			try {
 				server = new ServerSocket(port);
-				Log.d(TAG, "server running on port "+port );
+				Log.d(TAG, "server running on port " + port );
 				connection = server.accept(); // wait for connection
-				Log.d(TAG,"Connection from " + connection.getInetAddress().getHostName());
+				Log.d(TAG, "Connection from " + connection.getInetAddress().getHostName());
 
 				do {
 					Byte = connection.getInputStream().read();
@@ -86,7 +85,7 @@ public class DroidNetReceive extends Widget {
 			}
 			finally {
 				try {
-					Log.d(TAG,"connection closed");
+					Log.d(TAG, "connection closed");
 					connection.close();
 					connection = null;
 					server.close();
@@ -96,7 +95,7 @@ public class DroidNetReceive extends Widget {
 				}
 			}
 		}
-		
+
 		void do_udp_connection() {
 			try {
 				Log.d(TAG, "Server running on port " + port);
@@ -137,5 +136,4 @@ public class DroidNetReceive extends Widget {
 
 	public void receiveMessage(String symbol, Object... args) {
 	}
-
 }

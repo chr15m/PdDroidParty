@@ -12,26 +12,26 @@ public class LoadSave extends Widget {
 	private String directory = ".";
 	private String extension = "";
 	private String sendreceive = null;
-	
+
 	public LoadSave(PdDroidPatchView app, String[] atomline) {
 		super(app);
 		parent = app;
 		sendreceive = atomline[5];
 		parent.app.registerReceiver(sendreceive, this);
 	}
-	
+
 	public String getFilename() {
 		return filename;
 	}
-	
+
 	public String getDirectory() {
 		return directory;
 	}
-	
+
 	public String getExtension() {
 		return extension;
 	}
-	
+
 	public void receiveMessage(String symbol, Object... args) {
 		int type = 0;
 		if (symbol.equals("save")) {
@@ -43,7 +43,7 @@ public class LoadSave extends Widget {
 		extension = args.length > 1 ? (String)args[1] : "";
 		parent.app.launchDialog(this, type);
 	}
-	
+
 	public void gotFilename(String type, String newname) {
 		filename = newname;
 		List<Object> details = new ArrayList<Object>();

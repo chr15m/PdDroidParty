@@ -7,32 +7,32 @@ import android.graphics.RectF;
 
 public class Slider extends Widget {
 	private static final String TAG = "Slider";
-	
+
 	float min, max;
 	int log;
-	
-	int pid0=-1;			// pointer id,
-	float x0,y0,val0 ; 	// position of pointer, and value when pointer down.
-	
+
+	int pid0 = -1;			// pointer id,
+	float x0, y0, val0 ; 	// position of pointer, and value when pointer down.
+
 	boolean orientation_horizontal = true;
 	boolean down = false;
 	int steady = 1;
-	
+
 	WImage bg = new WImage();
 	WImage slider = new WImage();
-	
+
 	RectF sRect = new RectF();
-	
+
 	public Slider(PdDroidPatchView app, String[] atomline, boolean horizontal) {
 		super(app);
-		
+
 		orientation_horizontal = horizontal;
-		
+
 		float x = Float.parseFloat(atomline[2]) ;
 		float y = Float.parseFloat(atomline[3]) ;
 		float w = Float.parseFloat(atomline[5]) ;
 		float h = Float.parseFloat(atomline[6]) ;
-		
+
 		min = Float.parseFloat(atomline[7]);
 		max = Float.parseFloat(atomline[8]);
 		log = Integer.parseInt(atomline[9]);
@@ -41,16 +41,16 @@ public class Slider extends Widget {
 		steady = Integer.parseInt(atomline[22]);
 
 		setval((float)(Float.parseFloat(atomline[21]) * 0.01 * (max - min) / ((horizontal ? Float.parseFloat(atomline[5]) : Float.parseFloat(atomline[6])) - 1) + min), min);
-		
+
 		// listen out for floats from Pd
 		setupreceive();
-		
+
 		// send initial value if we have one
 		//initval();
-		
+
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
-		
+
 		// load up the images to use and cache all positions
 		if (horizontal) {
 			bg.load(TAG, "horizontal", label, sendname);
@@ -59,7 +59,7 @@ public class Slider extends Widget {
 			bg.load(TAG, "vertical", label, sendname);
 			slider.load(TAG, "widget-vertical", label, sendname);
 		}
-		
+
 		if ( (!bg.none()) && (!slider.none()) ) {
 			// create the slider rectangle thingy
 			if (orientation_horizontal) {
@@ -72,15 +72,15 @@ public class Slider extends Widget {
 				sRect = new RectF(x, y, x + w, y + rel);
 			}
 		}
-		
+
 		setval(val);
 	}
-	
+
 	public void draw(Canvas canvas) {
 		if (bg.draw(canvas)) {
 			paint.setColor(bgcolor);
 			paint.setStyle(Paint.Style.FILL);
-			canvas.drawRect(dRect,paint);
+			canvas.drawRect(dRect, paint);
 
 			paint.setColor(Color.BLACK);
 			paint.setStrokeWidth(1);
@@ -102,7 +102,7 @@ public class Slider extends Widget {
 			} else {
 				sRect.offsetTo(dRect.left, (1 - (val - min) / (max - min)) * (dRect.height() - sRect.height()) + dRect.top);
 			}
-			slider.draw(canvas,sRect);
+			slider.draw(canvas, sRect);
 		}
 		drawLabel(canvas);
 	}
@@ -116,23 +116,23 @@ public class Slider extends Widget {
 			}
 		}
 	}
-	
+
 	public float get_horizontal_val(float x) {
 		return (((x - dRect.left) / dRect.width()) * (max - min) + min);
 	}
-	
+
 	public float get_vertical_val(float y) {
 		return (((dRect.height() - (y - dRect.top)) / dRect.height()) * (max - min) + min);
 	}
-	
-	public boolean touchdown(int pid,float x,float y)
+
+	public boolean touchdown(int pid, float x, float y)
 	{
 		if (dRect.contains(x, y)) {
-			val0=val;
-			x0=x;
-			y0=y;
-			pid0=pid;
-			if(steady==0) {
+			val0 = val;
+			x0 = x;
+			y0 = y;
+			pid0 = pid;
+			if(steady == 0) {
 				if (orientation_horizontal) val = get_horizontal_val(x);
 				else val = get_vertical_val(y);
 			}
@@ -142,7 +142,7 @@ public class Slider extends Widget {
 		return false;
 	}
 
-	public boolean touchup(int pid,float x,float y)
+	public boolean touchup(int pid, float x, float y)
 	{
 		if(pid0 == pid) {
 			pid0 = -1;
@@ -151,7 +151,7 @@ public class Slider extends Widget {
 		return false;
 	}
 
-	public boolean touchmove(int pid,float x,float y)
+	public boolean touchmove(int pid, float x, float y)
 	{
 		if(pid0 == pid) {
 			if (orientation_horizontal) {
@@ -167,23 +167,22 @@ public class Slider extends Widget {
 		}
 		return false;
 	}
-	
+
 	public void receiveMessage(String symbol, Object... args) {
-		if(widgetreceiveSymbol(symbol,args)) return;
+		if(widgetreceiveSymbol(symbol, args)) return;
 		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
 			receiveFloat((Float)args[0]);
 		}
 	}
-	
+
 	public void receiveList(Object... args) {
 		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
 			receiveFloat((Float)args[0]);
 		}
 	}
-	
+
 	public void receiveFloat(float v) {
 		setval(v);
 	}
 }
-
 

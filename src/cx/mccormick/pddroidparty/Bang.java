@@ -13,11 +13,11 @@ public class Bang extends Widget {
 
 	boolean bang = false;
 	long bangtime ;
-	int interrpt,hold; //interrpt and hold time, in ms.
-	
+	int interrpt, hold; //interrpt and hold time, in ms.
+
 	WImage on = new WImage();
 	WImage off = new WImage();
-	
+
 	public Bang(PdDroidPatchView app, String[] atomline) {
 		super(app);
 
@@ -25,7 +25,7 @@ public class Bang extends Widget {
 		float y = Float.parseFloat(atomline[3]) ;
 		float w = Float.parseFloat(atomline[5]) ;
 		float h = Float.parseFloat(atomline[5]) ;
-		
+
 		hold = (int)Float.parseFloat(atomline[6]) ;
 		interrpt = (int)Float.parseFloat(atomline[7]) ;
 		init = (int)Float.parseFloat(atomline[8]) ;
@@ -37,11 +37,10 @@ public class Bang extends Widget {
 
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
-		
+
 		// try and load images
 		on.load(TAG, "on", label, sendname, receivename);
 		off.load(TAG, "off", label, sendname, receivename);
-
 	}
 
 	public Bang(PdDroidPatchView app) {
@@ -49,7 +48,6 @@ public class Bang extends Widget {
 	}
 
 	public void draw(Canvas canvas) {
-
 		if (off.draw(canvas)) {
 			paint.setStyle(Paint.Style.FILL);
 			paint.setColor(bgcolor);
@@ -62,13 +60,13 @@ public class Bang extends Widget {
 			canvas.drawLine(dRect.left, dRect.top + 0, dRect.left, dRect.bottom, paint);
 			canvas.drawLine(dRect.right, dRect.top + 0, dRect.right, dRect.bottom, paint);
 			if (bang && on.draw(canvas)) {
-				if((SystemClock.uptimeMillis()-bangtime)>hold) bang = false;
+				if((SystemClock.uptimeMillis() - bangtime) > hold) bang = false;
 				//paint.setStyle(Paint.Style.FILL);
-				
+
 				parent.threadSafeInvalidate();
 				canvas.drawCircle(dRect.centerX(), dRect.centerY(), Math.min(dRect.width(), dRect.height()) / 2, paint);
 				paint.setColor(fgcolor);
-				
+
 			}
 			paint.setColor(Color.BLACK);
 			paint.setStyle(Paint.Style.STROKE);
@@ -90,35 +88,31 @@ public class Bang extends Widget {
 			PdBase.sendBang(sendname);
 			return true;
 		}
-		
 		return false;
 	}
-	
+
 	/*public void receiveAny() {
 		bang();
 	}*/
-	
+
 	public void receiveList(Object... args) {
 		bang();
 	}
-	
-	
+
 	public void receiveSymbol(String symbol) {
 		bang();
 	}
-	
+
 	public void receiveFloat(float x) {
 		bang();
 	}
-	
+
 	public void receiveBang() {
 		bang();
 	}
 
-	
 	public void receiveMessage(String symbol, Object... args) {
-		if(widgetreceiveSymbol(symbol,args)) return;
+		if(widgetreceiveSymbol(symbol, args)) return;
 		else bang();
 	}
-
 }
