@@ -84,7 +84,6 @@ public class PdDroidParty extends Activity {
 	Widget widgetpopped = null;
 	MulticastLock wifiMulticastLock = null;
 	private ProgressDialog progress = null;
-	private boolean orientationSet = false;
 	private MenuItem menuabout = null;
 	private MenuItem menuexit = null;
 	private MenuItem menumidi = null;
@@ -153,10 +152,6 @@ public class PdDroidParty extends Activity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		Log.e(TAG, "onConfigurationChanged");
 		super.onConfigurationChanged(newConfig);
-		if (!orientationSet) {
-			Log.e(TAG, "onConfigurationChanged initGui");
-			initGui();
-		}
 	}
 
 	// When the app shuts down
@@ -291,16 +286,6 @@ public class PdDroidParty extends Activity {
 		getWindow().setFlags(flags, flags);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		atomlines = PdParser.parsePatch(path);
-		if (!orientationSet) {
-			Log.e(TAG, "initGui orientationSet");
-			Log.e(TAG, "initGui isLandscape:" + isLandscape(atomlines));
-			orientationSet = true;
-			if (isLandscape(atomlines)) {
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			} else {
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			}
-		}
 		patchview = new PdDroidPatchView(this, this);
 		setContentView(patchview);
 		patchview.requestFocus();
