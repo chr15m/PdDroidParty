@@ -214,11 +214,6 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		viewY = y;
 		viewW = w;
 		viewH = h;
-		if (viewW > viewH) {
-			app.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		} else {
-			app.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		}
 	}
 
 	/** build a user interface using the lines of atoms found in the patch by the pd file parser */
@@ -301,6 +296,14 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 				}
 			}
 		}
+
+		// switch screen orientation if needed, depending on the size of the main canvas OR ViewPort.
+		if (viewW > viewH) {
+			app.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		} else {
+			app.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		}
+
 		threadSafeInvalidate();
 	}
 }
