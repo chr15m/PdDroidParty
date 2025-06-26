@@ -38,7 +38,7 @@ jobs:
         echo "new_name=$DEBUG_APK_NAME" >> $GITHUB_OUTPUT
 
     - name: Upload Debug APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pddroidparty-debug-apk
         path: ${{ steps.rename_apk.outputs.new_path }}
