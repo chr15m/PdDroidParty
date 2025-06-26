@@ -27,20 +27,30 @@ jobs:
         chmod +x gradlew
         ./gradlew --no-daemon assembleDebug
 
-    - name: Rename APK
-      id: rename_apk
+    - name: Prepare for upload/release
+      id: prep
       run: |
         VERSION=$(git rev-list --count HEAD)
         REVNO=$(git rev-parse HEAD | cut -c1-8)
         NAME=${GITHUB_REPOSITORY#*/}
         APK_PATH=$(find build/outputs/apk/debug -name "*-debug.apk" | head -n 1)
         DEBUG_APK_NAME=${NAME}-${VERSION}-${REVNO}-debug.apk
-        mv "$APK_PATH" "build/outputs/apk/debug/$DEBUG_APK_NAME"
-        echo "new_path=build/outputs/apk/debug/$DEBUG_APK_NAME" >> $GITHUB_OUTPUT
-        echo "new_name=$DEBUG_APK_NAME" >> $GITHUB_OUTPUT
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+        echo "apk_name=$DEBUG_APK_NAME" >> $GITHUB_OUTPUT
 
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: pddroidparty-debug-apk
-        path: ${{ steps.rename_apk.outputs.new_path }}
+        path: ${{ steps.prep.outputs.apk_path }}
+
+    - name: Create Release
+      # if: github.ref == 'refs/heads/master'
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh release create v${{ steps.prep.outputs.version }} \
+          --title "Release v${{ steps.prep.outputs.version }}" \
+          --notes "Automated release for build ${{ steps.prep.outputs.version }}" \
+          "${{ steps.prep.outputs.apk_path }}#${{ steps.prep.outputs.apk_name }}"
