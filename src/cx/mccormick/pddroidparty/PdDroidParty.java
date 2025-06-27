@@ -579,10 +579,6 @@ public class PdDroidParty extends AppCompatActivity {
 				midiDevice = device;
 				post("MIDI device opened: " + device.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
 
-				// Input from device to Pd
-				// FIXME: This code is commented out due to a build error.
-				// It seems there's an incompatibility with the pd-for-android library version.
-				
 				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
 						MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
