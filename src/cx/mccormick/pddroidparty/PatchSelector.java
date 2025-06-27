@@ -63,6 +63,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 
 	private ListView patchList;
 	private final Map<String, String> patches = new HashMap<String, String>();
+	private final List<String> searchedPaths = new ArrayList<String>();
 	Resources res = null;
 	private String pdzZipPath;
 	private String folderName;
@@ -377,17 +378,20 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	}
 
 	private void buildPatchList() {
+		searchedPaths.clear();
 		File[] dirs = ContextCompat.getExternalFilesDirs(getApplicationContext(), null);
 
 		for (File d : dirs) {
 			if (d != null) {
+				searchedPaths.add(d.toString());
 				searchPath(d.toString());
 				String path = d.getParent().replace("/Android/data/", "").replace(getPackageName(), "") + "/PdDroidParty";
+				searchedPaths.add(path);
 				searchPath(path);
 			}
 		}
 
-		ArrayList<String> keyList = new ArrayList<String>(patches.keySet());
+		final ArrayList<String> keyList = new ArrayList<String>(patches.keySet());
 		Collections.sort(keyList, new Comparator<String>() {
 			public int compare(String a, String b) {
 				return a.toLowerCase().compareTo(b.toLowerCase());
@@ -405,6 +409,17 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						// nothing
 					}
 				}
+				if (keyList.isEmpty()) {
+					StringBuilder pathList = new StringBuilder();
+					for (String p : searchedPaths) {
+						pathList.append("- ").append(p).append("\n");
+					}
+					new AlertDialog.Builder(PatchSelector.this)
+							.setTitle("No Patches Found")
+							.setMessage("PdDroidParty searched for patches in the following locations but found none:\n\n" + pathList.toString() + "\nPlease place your patches in one of these directories.")
+							.setPositiveButton("OK", null)
+							.show();
+				}
 			}
 		});
 	}
@@ -416,7 +431,20 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 				buildPatchList();
 			} else {
-				// they'll just see an empty patch list
+				if (progress != null) {
+					progress.dismiss();
+				}
+				new AlertDialog.Builder(this)
+						.setTitle("Permission Required")
+						.setMessage("PdDroidParty requires permission to read external storage to find patches. Please grant this permission in your device's settings for this app and restart.")
+						.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								finish();
+							}
+						})
+						.setCancelable(false)
+						.show();
 			}
 		}
 	}
