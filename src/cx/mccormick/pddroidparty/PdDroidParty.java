@@ -573,6 +573,9 @@ public class PdDroidParty extends Activity {
 				post("MIDI device opened: " + device.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
 
 				// Input from device to Pd
+				// FIXME: This code is commented out due to a build error.
+				// It seems there's an incompatibility with the pd-for-android library version.
+				/*
 				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
 						MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
@@ -583,8 +586,12 @@ public class PdDroidParty extends Activity {
 						}
 					}
 				}
+				*/
 
 				// Output from Pd to device
+				// FIXME: This code is commented out due to a build error.
+				// It seems there's an incompatibility with the pd-for-android library version.
+				/*
 				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
 						MidiInputPort inputPort = device.openInputPort(portInfo.getPortNumber());
@@ -596,6 +603,7 @@ public class PdDroidParty extends Activity {
 						}
 					}
 				}
+				*/
 			}
 		}, null);
 	}
