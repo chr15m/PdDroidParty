@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.puredata.android.io.AudioParameters;
-import org.puredata.android.midi.MidiToPdAdapter;
 import org.puredata.android.midi.PdToMidiAdapter;
 import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.PdDispatcher;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -50,10 +50,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class PdDroidParty extends Activity {
+public class PdDroidParty extends AppCompatActivity {
 	public PdDroidPatchView patchview = null;
 	public static final String PATCH = "PATCH";
 	public static final String FROM_SELECTOR = "FROM_SELECTOR";
@@ -293,17 +294,23 @@ public class PdDroidParty extends Activity {
 	// initialise the GUI with the OpenGL rendering engine
 	private void initGui() {
 		Log.e(TAG, "initGui runs");
-		//setContentView(R.layout.main);
+
 		int flags = WindowManager.LayoutParams.FLAG_FULLSCREEN |
 		            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
 		            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 		getWindow().setFlags(flags, flags);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+		setContentView(R.layout.main);
+
 		atomlines = PdParser.parsePatch(path);
 		patchview = new PdDroidPatchView(this, this);
-		setContentView(patchview);
+		ViewGroup layout = (ViewGroup) findViewById(R.id.patch_view);
+		layout.addView(patchview);
 		patchview.requestFocus();
 		MenuBang.clear();
+		Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+		setSupportActionBar(myToolbar);
 	}
 
 	// initialise Pd asking for the desired sample rate, parameters, etc.
@@ -575,7 +582,7 @@ public class PdDroidParty extends Activity {
 				// Input from device to Pd
 				// FIXME: This code is commented out due to a build error.
 				// It seems there's an incompatibility with the pd-for-android library version.
-				/*
+				
 				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
 						MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
@@ -586,7 +593,7 @@ public class PdDroidParty extends Activity {
 						}
 					}
 				}
-				*/
+				
 
 				// Output from Pd to device
 				// FIXME: This code is commented out due to a build error.
