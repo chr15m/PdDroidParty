@@ -38,7 +38,7 @@
     <activity android:name=".NumberboxDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Numberbox"></activity>
     <activity android:name=".SaveDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Save"></activity>
     <activity android:name=".LoadDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Load"></activity>
-    <service android:name="org.puredata.android.service.PdService" />
+    <service android:name="org.puredata.android.service.PdService" android:foregroundServiceType="mediaPlayback|microphone"/>
   </application>
   <uses-permission android:name="android.permission.RECORD_AUDIO" />
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
