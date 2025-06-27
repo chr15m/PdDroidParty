@@ -31,8 +31,11 @@ import android.content.pm.PackageManager;
 import android.content.pm.ActivityInfo;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
+import android.media.midi.MidiDevice;
+import android.media.midi.MidiDeviceInfo;
+import android.media.midi.MidiInputPort;
+import android.media.midi.MidiManager;
+import android.media.midi.MidiOutputPort;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
@@ -49,19 +52,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
-import com.noisepages.nettoyeur.midi.MidiReceiver;
-import com.noisepages.nettoyeur.usb.ConnectionFailedException;
-import com.noisepages.nettoyeur.usb.DeviceNotConnectedException;
-import com.noisepages.nettoyeur.usb.InterfaceNotAvailableException;
-import com.noisepages.nettoyeur.usb.UsbBroadcastHandler;
-import com.noisepages.nettoyeur.usb.midi.UsbMidiDevice;
-import com.noisepages.nettoyeur.usb.midi.UsbMidiDevice.UsbMidiInput;
-import com.noisepages.nettoyeur.usb.midi.UsbMidiDevice.UsbMidiOutput;
-import com.noisepages.nettoyeur.usb.midi.util.UsbMidiInputSelector;
-import com.noisepages.nettoyeur.usb.midi.util.UsbMidiOutputSelector;
-import com.noisepages.nettoyeur.usb.util.AsyncDeviceInfoLookup;
-*/
 
 public class PdDroidParty extends Activity {
 	public PdDroidPatchView patchview = null;
@@ -88,11 +78,10 @@ public class PdDroidParty extends Activity {
 	private MenuItem menuexit = null;
 	private MenuItem menumidi = null;
 
-	/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
-	private UsbMidiDevice midiDevice = null;
-	private MidiToPdAdapter receiver = new MidiToPdAdapter();
-	private PdToMidiAdapter sender;
-	*/
+	private MidiManager midiManager = null;
+	private MidiDevice midiDevice = null;
+	private MidiToPdAdapter midiToPdAdapter = null;
+	private PdToMidiAdapter pdToMidiAdapter = null;
 
 	private int RECORD_AUDIO_PERMISSION_CODE = 49295197;
 
@@ -139,6 +128,11 @@ public class PdDroidParty extends Activity {
 		fromSelector = intent.getBooleanExtra(FROM_SELECTOR, true);
 		Log.e(TAG, "onCreate initGui");
 		initGui();
+
+		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
+			setupMidi();
+		}
+
 		new Thread() {
 			@Override
 			public void run() {
@@ -177,13 +171,9 @@ public class PdDroidParty extends Activity {
 		MenuBang.setMenu(menu);
 		// TODO: preferences = ic_menu_preferences
 		// midi menu
-		// test for platforms that don't support USB OTG devices
-		try {
-			UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
+		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
 			menumidi = menu.add(0, Menu.FIRST + menu.size(), 0, "Midi");
 			menumidi.setIcon(android.R.drawable.ic_menu_manage);
-		} catch(NoClassDefFoundError e) {
-			// don't care
 		}
 		// exit menu item
 		menuexit = menu.add(0, Menu.FIRST + menu.size(), 0, "Exit");
@@ -225,20 +215,44 @@ public class PdDroidParty extends Activity {
 		} else if (item == menuexit) {
 			finish();
 		} else if (menumidi != null && item == menumidi) {
-			/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
-			if (midiDevice == null) {
-				chooseMidiDevice();
+			if (midiDevice != null) {
+				disconnectMidiDevice();
 			} else {
-				midiDevice.close();
-				midiDevice = null;
-				post("USB MIDI connection closed");
+				chooseMidiDevice();
 			}
-			*/
 		} else {
 			// pass the menu selection through to the MenuBang manager
 			MenuBang.hit(item);
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void setupMidi() {
+		midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
+		if (midiManager == null) {
+			Log.w(TAG, "No MIDI support");
+			return;
+		}
+		midiManager.registerDeviceCallback(new MidiManager.DeviceCallback() {
+			@Override
+			public void onDeviceAdded(MidiDeviceInfo device) {
+				post("MIDI device added: " + device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+			}
+
+			@Override
+			public void onDeviceRemoved(MidiDeviceInfo device) {
+				post("MIDI device removed: " + device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				if (midiDevice != null && midiDevice.getInfo().equals(device)) {
+					try {
+						midiDevice.close();
+					} catch (IOException e) {
+						Log.e(TAG, "Error closing MIDI device", e);
+					}
+					midiDevice = null;
+					PdBase.setMidiReceiver(null);
+				}
+			}
+		}, null);
 	}
 
 	// send a Pd atom-string 's' to a particular receiver 'dest'
@@ -301,79 +315,7 @@ public class PdDroidParty extends Activity {
 		wifiMulticastLock.acquire();
 		Log.e(TAG, "Got Multicast Lock (after)? " + wifiMulticastLock.isHeld());
 		// set up the midi stuff
-		/*UsbMidiDevice.installBroadcastHandler(this, new UsbBroadcastHandler() {
-			@Override
-			public void onPermissionGranted(UsbDevice device) {
-				if (midiDevice == null || !midiDevice.matches(device)) return;
-				try {
-					midiDevice.open(PdDroidParty.this);
-				} catch (ConnectionFailedException e) {
-					post("USB connection failed");
-					midiDevice = null;
-					return;
-				}
-				final UsbMidiOutputSelector outputSelector = new UsbMidiOutputSelector(midiDevice) {
-
-					@Override
-					protected void onOutputSelected(UsbMidiOutput output, UsbMidiDevice device, int iface, int index) {
-						post("Output selection: Interface " + iface + ", Output " + index);
-						try {
-							sender = new PdToMidiAdapter(output.getMidiOut());
-							PdBase.setMidiReceiver(sender);
-						} catch (DeviceNotConnectedException e) {
-							post("MIDI device has been disconnected");
-						} catch (InterfaceNotAvailableException e) {
-							post("MIDI interface is unavailable");
-						}
-					}
-
-					@Override
-					protected void onNoSelection(UsbMidiDevice device) {
-						post("No output selected");
-					}
-				};
-				new UsbMidiInputSelector(midiDevice) {
-
-					@Override
-					protected void onInputSelected(UsbMidiInput input, UsbMidiDevice device, int iface,
-							int index) {
-						post("Input selection: Interface " + iface + ", Input " + index);
-						input.setReceiver(receiver);
-						try {
-							input.start();
-						} catch (DeviceNotConnectedException e) {
-							post("MIDI device has been disconnected");
-							return;
-						} catch (InterfaceNotAvailableException e) {
-							post("MIDI interface is unavailable");
-							return;
-						}
-						outputSelector.show(getFragmentManager(), null);
-					}
-
-					@Override
-					protected void onNoSelection(UsbMidiDevice device) {
-						post("No input selected");
-						outputSelector.show(getFragmentManager(), null);
-					}
-				}.show(getFragmentManager(), null);
-			}
-
-			@Override
-			public void onPermissionDenied(UsbDevice device) {
-				if (midiDevice == null || !midiDevice.matches(device)) return;
-				post("Permission denied for device " + midiDevice.getCurrentDeviceInfo());
-				midiDevice = null;
-			}
-
-			@Override
-			public void onDeviceDetached(UsbDevice device) {
-				if (midiDevice == null || !midiDevice.matches(device)) return;
-				midiDevice.close();
-				midiDevice = null;
-				post("MIDI device disconnected");
-			}
-		});*/
+		midiToPdAdapter = new MidiToPdAdapter();
 
 		// set a progress dialog running
 		progress = new ProgressDialog(this);
@@ -537,12 +479,12 @@ public class PdDroidParty extends Activity {
 			pdService = null;
 		}
 		// release midi
-		/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
-		if (midiDevice != null) {
-			midiDevice.close();
+		disconnectMidiDevice();
+		if (midiManager != null) {
+			// The callback cannot be unregistered, so we just null out the manager.
+			// See https://developer.android.com/reference/android/media/midi/MidiManager#unregisterDeviceCallback(android.media.midi.MidiManager.DeviceCallback)
+			midiManager = null;
 		}
-		UsbMidiDevice.uninstallBroadcastHandler(this);
-		*/
 		// release the lock on wifi multicasting
 		if (wifiMulticastLock != null && wifiMulticastLock.isHeld())
 			wifiMulticastLock.release();
@@ -569,6 +511,20 @@ public class PdDroidParty extends Activity {
 		}
 	}
 
+	private void disconnectMidiDevice() {
+		if (midiDevice != null) {
+			try {
+				post("Closing MIDI device: " + midiDevice.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				midiDevice.close();
+			} catch (IOException e) {
+				Log.e(TAG, "Error closing MIDI device", e);
+				post("Error closing MIDI device.");
+			}
+			midiDevice = null;
+			PdBase.setMidiReceiver(null);
+		}
+	}
+
 	public String getPatchRelativePath(String dir) {
 		String root = getPatchFile().getParent();
 		if (dir.equals(".")) {
@@ -580,34 +536,77 @@ public class PdDroidParty extends Activity {
 		}
 	}
 
-	/* remove com.noisepages.nettoyeur stuff for now (ant1r june 2025)
 	private void chooseMidiDevice() {
-		// set a progress dialog running
-		progress = new ProgressDialog(this);
-		progress.setMessage("Waiting for USB midi");
-		progress.setCancelable(false);
-		progress.setIndeterminate(true);
-		progress.show();
-		final List<UsbMidiDevice> devices = UsbMidiDevice.getMidiDevices(this);
-		new AsyncDeviceInfoLookup() {
+		if (midiManager == null) {
+			post("MIDI not available");
+			return;
+		}
+		final MidiDeviceInfo[] devices = midiManager.getDevices();
+		if (devices.length == 0) {
+			post("No MIDI devices found");
+			return;
+		}
+		final ArrayList<String> deviceNames = new ArrayList<>();
+		for (MidiDeviceInfo info : devices) {
+			deviceNames.add(info.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Choose MIDI Device");
+		builder.setItems(deviceNames.toArray(new String[0]), new DialogInterface.OnClickListener() {
 			@Override
-			protected void onLookupComplete() {
-				// ok we are done
-				progress.dismiss();
-				if (!devices.isEmpty()) {
-					// loop through all devices and add them
-					for (int i = 0; i < devices.size(); ++i) {
-						midiDevice = devices.get(i);
-						midiDevice.requestPermission(PdDroidParty.this);
-					}
-					post("Added all midi devices.");
-				} else {
-					post("No midi devices found.");
-				}
+			public void onClick(DialogInterface dialog, int which) {
+				connectMidiDevice(devices[which]);
 			}
-		}.execute(devices.toArray(new UsbMidiDevice[devices.size()]));
+		});
+		builder.create().show();
 	}
-	*/
+
+	private void connectMidiDevice(MidiDeviceInfo info) {
+		midiManager.openDevice(info, new MidiManager.OnDeviceOpenedListener() {
+			@Override
+			public void onDeviceOpened(MidiDevice device) {
+				if (device == null) {
+					post("Could not open MIDI device");
+					return;
+				}
+				midiDevice = device;
+				post("MIDI device opened: " + device.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+
+				// Input from device to Pd
+				// FIXME: This code is commented out due to a build error.
+				// It seems there's an incompatibility with the pd-for-android library version.
+				/*
+				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
+					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
+						MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
+						if (outputPort != null) {
+							outputPort.connect(midiToPdAdapter);
+							post("MIDI input enabled on port " + portInfo.getPortNumber());
+							break; // Connect to first available output port
+						}
+					}
+				}
+				*/
+
+				// Output from Pd to device
+				// FIXME: This code is commented out due to a build error.
+				// It seems there's an incompatibility with the pd-for-android library version.
+				/*
+				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
+					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
+						MidiInputPort inputPort = device.openInputPort(portInfo.getPortNumber());
+						if (inputPort != null) {
+							pdToMidiAdapter = new PdToMidiAdapter(inputPort);
+							PdBase.setMidiReceiver(pdToMidiAdapter);
+							post("MIDI output enabled on port " + portInfo.getPortNumber());
+							break; // Connect to first available input port
+						}
+					}
+				}
+				*/
+			}
+		}, null);
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
