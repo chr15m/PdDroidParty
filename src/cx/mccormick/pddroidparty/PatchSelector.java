@@ -436,7 +436,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 				}
 				new AlertDialog.Builder(this)
 						.setTitle("Permission Required")
-						.setMessage("PdDroidParty requires permission to read external storage to find patches. Please grant this permission in your device's settings for this app and restart.")
+						.setMessage("PdDroidParty requires permission to access external storage to find and manage patches. Please grant this permission in your device's settings for this app and restart.")
 						.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -482,9 +482,9 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 					val primaryExternalStorage = externalStorageVolumes[0]*/
 
 					// check if we have permission to acess external storage yet
-					if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(PatchSelector.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+					if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(PatchSelector.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
 						// ask for permission to access it
-						requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERMISSION_CODE);
+						requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERMISSION_CODE);
 					} else {
 						buildPatchList();
 					}
