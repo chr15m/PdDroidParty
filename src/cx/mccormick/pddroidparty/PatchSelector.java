@@ -440,6 +440,10 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
+								Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+								Uri uri = Uri.fromParts("package", getPackageName(), null);
+								intent.setData(uri);
+								startActivity(intent);
 								finish();
 							}
 						})
