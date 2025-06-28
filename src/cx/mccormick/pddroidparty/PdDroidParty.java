@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.puredata.android.io.AudioParameters;
-import org.puredata.android.midi.PdToMidiAdapter;
 import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.PdDispatcher;
@@ -579,6 +578,8 @@ public class PdDroidParty extends AppCompatActivity {
 				midiDevice = device;
 				post("MIDI device opened: " + device.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
 
+				// Input from device to Pd
+
 				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
 						MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
@@ -592,9 +593,7 @@ public class PdDroidParty extends AppCompatActivity {
 				
 
 				// Output from Pd to device
-				// FIXME: This code is commented out due to a build error.
-				// It seems there's an incompatibility with the pd-for-android library version.
-				/*
+
 				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
 						MidiInputPort inputPort = device.openInputPort(portInfo.getPortNumber());
@@ -606,7 +605,7 @@ public class PdDroidParty extends AppCompatActivity {
 						}
 					}
 				}
-				*/
+				
 			}
 		}, null);
 	}

@@ -1,10 +1,14 @@
 package cx.mccormick.pddroidparty;
 
 import android.media.midi.MidiReceiver;
-import android.util.Log;
-
 import org.puredata.core.PdBase;
-import java.util.ArrayList;
+
+/**
+ * Adapter class for connecting output from AndroidMidi to MIDI input for Pd.
+ * 
+ * Adapted from:
+ * https://github.com/nettoyeurny/btmidi/blob/master/AndroidMidi/src/com/noisepages/nettoyeur/midi/FromWireConverter.java
+ */
 
 public class MidiToPdAdapter extends MidiReceiver {
 	private static enum State {
@@ -19,7 +23,6 @@ public class MidiToPdAdapter extends MidiReceiver {
 		while(count-- != 0) processByte(msg[offset++]);
 	}
 
-	// adapted from https://github.com/nettoyeurny/btmidi/blob/master/AndroidMidi/src/com/noisepages/nettoyeur/midi/FromWireConverter.java
 	private void processByte(int b) {
 		if (b < 0) {
 			midiState = State.values()[(b >> 4) & 0x07];
