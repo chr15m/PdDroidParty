@@ -17,6 +17,28 @@ allprojects {
 
 apply plugin: 'com.android.application'
 
+tasks.register("createResRaw") {
+    mkdir "res/raw"
+}
+
+tasks.register("zipDemos", Zip) {
+    group = "Android"
+    description = "Zip the demo patches to resources"
+    archiveFileName = "demos.zip"
+    destinationDirectory = layout.projectDirectory.dir("res/raw");
+    from "droidparty-demos"
+    dependsOn("createResRaw")
+}
+
+tasks.register("zipAbs", Zip) {
+    group = "Android"
+    description = "Zip the bundle abstractions to resources"
+    archiveFileName = "abstractions.zip"
+    destinationDirectory = layout.projectDirectory.dir("res/raw");
+    from "bundled-abstractions"
+    dependsOn("createResRaw")
+}
+
 android {
     namespace = 'cx.mccormick.pddroidparty'
     compileSdkVersion 34
@@ -60,6 +82,11 @@ android {
             minifyEnabled false
             signingConfig signingConfigs.release
         }
+    }
+
+    tasks.named("preBuild") {
+        dependsOn("zipDemos")
+        dependsOn("zipAbs")
     }
 }
 
