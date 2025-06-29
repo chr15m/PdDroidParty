@@ -422,6 +422,25 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		}
 	}
 
+	private void copyDemos() {
+			// TODO: only copy on new install
+		List<File> demosFiles = null;
+		try {
+			Log.d("PdDroidParty", "getExternalFilesDir: " + getExternalFilesDir(null).toPath());
+			InputStream demos = getResources().openRawResource(R.raw.demos);
+			demosFiles = IoUtils.extractZipResource(demos, getExternalFilesDir(null), false);
+		} catch (Exception e) {
+			// do nothing
+			Log.d("PdDroidParty", "error extracting demos: " + e.toString());
+			return;
+		}
+		if (demosFiles != null && demosFiles.size() != 0) {
+			for (File file : demosFiles) {
+				Log.d("PdDroidParty", "extracted: " + file.getAbsolutePath());
+			}
+		}
+	}
+
 	private void initPd(boolean showprogress) {
 		if (showprogress) {
 			progress = new ProgressDialog(PatchSelector.this);
@@ -455,6 +474,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 						// ask for permission to access it
 						requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERMISSION_CODE);
 					} else {
+						copyDemos();
 						buildPatchList();
 					}
 				}
