@@ -11,12 +11,17 @@ import org.puredata.core.PdBase;
  */
 
 public class MidiToPdAdapter extends MidiReceiver {
+	private final int port;
 	private static enum State {
 		NOTE_OFF, NOTE_ON, POLY_TOUCH, CONTROL_CHANGE, PROGRAM_CHANGE, AFTERTOUCH, PITCH_BEND, NONE
 	}
 	private State midiState = State.NONE;
 	private int channel;
 	private int firstByte;
+
+	public MidiToPdAdapter(int port) {
+		this.port = port;
+	}
 
 	@Override
 	public void onSend(byte[] msg, int offset, int count, long timestamp) {
@@ -27,7 +32,7 @@ public class MidiToPdAdapter extends MidiReceiver {
 		if (b < 0) {
 			midiState = State.values()[(b >> 4) & 0x07];
 			if (midiState != State.NONE) {
-				channel = b & 0x0f;
+				channel = b & 0x0f + 16 * port;
 				firstByte = -1;
 			} else {
 				PdBase.sendMidiByte(0, b);

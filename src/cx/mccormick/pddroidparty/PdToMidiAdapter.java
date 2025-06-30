@@ -2,6 +2,9 @@ package cx.mccormick.pddroidparty;
 
 import org.puredata.core.PdMidiReceiver;
 import android.media.midi.MidiInputPort;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 /**
  * Adapter class for connecting MIDI output from Pd to input for AndroidMidi.
@@ -11,10 +14,32 @@ import android.media.midi.MidiInputPort;
  */
  
 public class PdToMidiAdapter implements PdMidiReceiver {
-	private final MidiInputPort inputPort;
+	private Map<Integer, MidiInputPort> inputPorts = new HashMap<Integer, MidiInputPort>();
 
-	public PdToMidiAdapter(MidiInputPort inputPort) {
-		this.inputPort = inputPort;
+	public void open(MidiInputPort inputPort, int pdPort) {
+		close(inputPort);
+		close(pdPort);
+		inputPorts.put(pdPort, inputPort);
+	}
+
+	public void close(MidiInputPort inputPort) {
+		if(! inputPorts.containsValue(inputPort)) return;
+		for (Entry<Integer, MidiInputPort> entry : inputPorts.entrySet()) {
+			if (entry.getValue().equals(inputPort)) {
+				close(entry.getKey());
+			}
+		}
+	}
+
+	public void close(int pdPort) {
+		MidiInputPort inputPort = inputPorts.get(pdPort);
+		if(inputPort != null) {
+			try {
+				inputPort.close();
+			} catch(Exception e) {}
+			inputPorts.remove(pdPort);
+		}
+		
 	}
 
 	@Override
@@ -51,7 +76,7 @@ public class PdToMidiAdapter implements PdMidiReceiver {
 	@Override
 	public void receiveMidiByte(int port, int value) {
 		final byte[] message = {(byte) value};
-		writeMessage(message);
+		writeMessage(port, message);
 	}
 
 	private static byte firstByte(int msg, int ch) {
@@ -60,16 +85,17 @@ public class PdToMidiAdapter implements PdMidiReceiver {
 
 	private void write(int msg, int ch, int a) {
 		final byte[] message = {firstByte(msg, ch), (byte) a};
-		writeMessage(message);
+		writeMessage(ch, message);
 	}
 
 	private void write(int msg, int ch, int a, int b) {
 		final byte[] message = {firstByte(msg, ch), (byte) a, (byte) b};
-		writeMessage(message);
+		writeMessage(ch, message);
 	}
 
-	private void writeMessage(byte[] message) {
-		try {
+	private void writeMessage(int channel, byte[] message) {
+		MidiInputPort inputPort = inputPorts.get(channel / 16);
+		if(inputPort != null) try {
 			inputPort.send(message, 0, message.length);
 		} catch(Exception e) {}
 	}
