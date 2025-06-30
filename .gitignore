@@ -15,3 +15,6 @@ build
 # Android Studio IDE Files
 .idea
 *.iml
+
+# Archive in res/raw are refreshed when building
+res/raw/*
