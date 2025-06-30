@@ -52,6 +52,7 @@ import android.view.WindowManager;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Handler;
 
 public class PdDroidParty extends AppCompatActivity {
 	public PdDroidPatchView patchview = null;
@@ -93,11 +94,24 @@ public class PdDroidParty extends AppCompatActivity {
 	};
 
 	// post a 'toast' alert to the Android UI
+	// Each new message is delayed by 3 secs.
+	private ArrayList<String> toastList = new ArrayList<String>();
+	private Handler handler = new Handler();
 	private void post(final String msg) {
+		int toastSize = toastList.size();
+		toastList.add(msg);
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(getApplicationContext(), PD_CLIENT + ": " + msg, Toast.LENGTH_LONG).show();
+				handler.postDelayed (new Runnable() {
+					@Override
+					public void run() {
+						if(toastList.size() == 0) return;
+						String message = toastList.get(0);
+						toastList.remove(0);
+						Toast.makeText(getApplicationContext(), PD_CLIENT + ": " + message, Toast.LENGTH_SHORT).show();
+					}
+				}, toastSize * 3000);
 			}
 		});
 	}
