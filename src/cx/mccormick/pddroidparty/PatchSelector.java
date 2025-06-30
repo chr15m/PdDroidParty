@@ -36,6 +36,11 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import androidx.core.content.ContextCompat;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 
 import android.Manifest;
 import android.graphics.Color;
@@ -74,12 +79,15 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 	private static long SPLASHTIME = 2000;
 	private boolean foundmainPd = false;
 	private int READ_EXTERNAL_STORAGE_PERMISSION_CODE = 54035940;
+	private boolean isFirstRun = false;
+	private boolean isNewInstall = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		res = getResources();
 		handler = new Handler();
+		checkIsFirstRun();
 		// if we have a baked patch, jump straight into Pd initialisation
 		if (testForBakedPatch()) {
 			doSplash();
@@ -421,8 +429,30 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		}
 	}
 
+	private void checkIsFirstRun() {
+		if(isFirstRun || isNewInstall) return;
+		try {
+			SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+			long lastInstalled = preferences.getLong("installed", 0);
+			PackageManager pm = getPackageManager();
+			ApplicationInfo appInfo = pm.getApplicationInfo(getPackageName(), 0);
+			String appFile = appInfo.sourceDir;
+			long installed = new File(appFile).lastModified();
+			if(installed > lastInstalled){
+				Editor editor = preferences.edit();
+				editor.putLong("installed", installed);
+				editor.apply();
+				isNewInstall = true;
+				Log.d("PdDroidParty", "new installation");
+			}
+			if(lastInstalled == 0) {
+				isFirstRun = true;
+				Log.d("PdDroidParty", "very first run!");
+			}
+		} catch(Exception e) {}
+	}
+
 	private void copyDemos() {
-			// TODO: only copy on new install
 		List<File> demosFiles = null;
 		try {
 			Log.d("PdDroidParty", "getExternalFilesDir: " + getExternalFilesDir(null).toPath());
@@ -467,13 +497,13 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 				} else {
 					/* val externalStorageVolumes: Array<out File> = ContextCompat.getExternalFilesDirs(applicationContext, null)
 					val primaryExternalStorage = externalStorageVolumes[0]*/
+					if(isFirstRun) copyDemos();
 
 					// check if we have permission to acess external storage yet
 					if (Build.VERSION.SDK_INT >= 23 && Build.VERSION.SDK_INT < 34 && ContextCompat.checkSelfPermission(PatchSelector.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
 						// ask for permission to access it
 						requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERMISSION_CODE);
 					} else {
-						copyDemos();
 						buildPatchList();
 					}
 				}
