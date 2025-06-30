@@ -62,8 +62,9 @@ import com.noisepages.nettoyeur.usb.midi.util.UsbMidiInputSelector;
 import com.noisepages.nettoyeur.usb.midi.util.UsbMidiOutputSelector;
 import com.noisepages.nettoyeur.usb.util.AsyncDeviceInfoLookup;
 */
+import android.os.Handler;
 
-public class PdDroidParty extends Activity {
+public class PdDroidParty extends AppCompatActivity {
 	public PdDroidPatchView patchview = null;
 	public static final String PATCH = "PATCH";
 	public static final String FROM_SELECTOR = "FROM_SELECTOR";
@@ -104,11 +105,24 @@ public class PdDroidParty extends Activity {
 	};
 
 	// post a 'toast' alert to the Android UI
+	// Each new message is delayed by 3 secs.
+	private ArrayList<String> toastList = new ArrayList<String>();
+	private Handler handler = new Handler();
 	private void post(final String msg) {
+		int toastSize = toastList.size();
+		toastList.add(msg);
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(getApplicationContext(), PD_CLIENT + ": " + msg, Toast.LENGTH_LONG).show();
+				handler.postDelayed (new Runnable() {
+					@Override
+					public void run() {
+						if(toastList.size() == 0) return;
+						String message = toastList.get(0);
+						toastList.remove(0);
+						Toast.makeText(getApplicationContext(), PD_CLIENT + ": " + message, Toast.LENGTH_SHORT).show();
+					}
+				}, toastSize * 3000);
 			}
 		});
 	}
