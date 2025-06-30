@@ -81,8 +81,6 @@ public class PdDroidParty extends AppCompatActivity {
 
 	private MidiManager midiManager = null;
 	private MidiDevice midiDevice = null;
-	private MidiInputPort inputPort = null;
-	private MidiToPdAdapter midiToPdAdapter = null;
 	private PdToMidiAdapter pdToMidiAdapter = null;
 
 	private int RECORD_AUDIO_PERMISSION_CODE = 49295197;
@@ -330,7 +328,8 @@ public class PdDroidParty extends AppCompatActivity {
 		wifiMulticastLock.acquire();
 		Log.e(TAG, "Got Multicast Lock (after)? " + wifiMulticastLock.isHeld());
 		// set up the midi stuff
-		midiToPdAdapter = new MidiToPdAdapter();
+		pdToMidiAdapter = new PdToMidiAdapter();
+		PdBase.setMidiReceiver(pdToMidiAdapter);
 
 		// set a progress dialog running
 		progress = new ProgressDialog(this);
@@ -530,17 +529,13 @@ public class PdDroidParty extends AppCompatActivity {
 		if (midiDevice != null) {
 			try {
 				if(verbose) post("Closing MIDI device: " + midiDevice.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
-				if(inputPort != null) {
-					inputPort.close();
-					inputPort = null;
-				}
+				pdToMidiAdapter.close(0); // close pdToMidi port 0 (the only one for now)
 				midiDevice.close();
 			} catch (IOException e) {
 				Log.e(TAG, "Error closing MIDI device", e);
 				if(verbose) post("Error closing MIDI device.");
 			}
 			midiDevice = null;
-			PdBase.setMidiReceiver(null);
 		}
 	}
 
@@ -597,7 +592,7 @@ public class PdDroidParty extends AppCompatActivity {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
 						MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
 						if (outputPort != null) {
-							outputPort.connect(midiToPdAdapter);
+							outputPort.connect(new MidiToPdAdapter(0));
 							post("MIDI input enabled on port " + portInfo.getPortNumber());
 							break; // Connect to first available output port
 						}
@@ -609,20 +604,17 @@ public class PdDroidParty extends AppCompatActivity {
 
 				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
-						if(inputPort == null) {
-							inputPort = device.openInputPort(portInfo.getPortNumber());
-							if (inputPort != null) {
-								pdToMidiAdapter = new PdToMidiAdapter(inputPort);
-								PdBase.setMidiReceiver(pdToMidiAdapter);
-								post("MIDI output enabled on port " + portInfo.getPortNumber());
-								break; // Connect to first available input port
-							} else {
-								Log.d(TAG, "unable to open Midi inputPort");
-							}
+						MidiInputPort inputPort = device.openInputPort(portInfo.getPortNumber());
+						if (inputPort != null) {
+							pdToMidiAdapter.open(inputPort, 0);
+							post("MIDI output enabled on port " + portInfo.getPortNumber());
+							break; // Connect to first available input port
+						} else {
+							Log.d(TAG, "unable to open Midi inputPort");
 						}
 					}
 				}
-				
+
 			}
 		}, null);
 	}
