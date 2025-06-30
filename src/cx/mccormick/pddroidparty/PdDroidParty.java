@@ -81,6 +81,7 @@ public class PdDroidParty extends AppCompatActivity {
 
 	private MidiManager midiManager = null;
 	private MidiDevice midiDevice = null;
+	private MidiInputPort inputPort = null;
 	private MidiToPdAdapter midiToPdAdapter = null;
 	private PdToMidiAdapter pdToMidiAdapter = null;
 
@@ -230,7 +231,7 @@ public class PdDroidParty extends AppCompatActivity {
 			finish();
 		} else if (menumidi != null && item == menumidi) {
 			if (midiDevice != null) {
-				disconnectMidiDevice();
+				disconnectMidiDevice(true);
 			} else {
 				chooseMidiDevice();
 			}
@@ -257,13 +258,7 @@ public class PdDroidParty extends AppCompatActivity {
 			public void onDeviceRemoved(MidiDeviceInfo device) {
 				post("MIDI device removed: " + device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
 				if (midiDevice != null && midiDevice.getInfo().equals(device)) {
-					try {
-						midiDevice.close();
-					} catch (IOException e) {
-						Log.e(TAG, "Error closing MIDI device", e);
-					}
-					midiDevice = null;
-					PdBase.setMidiReceiver(null);
+					disconnectMidiDevice(false);
 				}
 			}
 		}, null);
@@ -499,7 +494,7 @@ public class PdDroidParty extends AppCompatActivity {
 			pdService = null;
 		}
 		// release midi
-		disconnectMidiDevice();
+		disconnectMidiDevice(false);
 		if (midiManager != null) {
 			// The callback cannot be unregistered, so we just null out the manager.
 			// See https://developer.android.com/reference/android/media/midi/MidiManager#unregisterDeviceCallback(android.media.midi.MidiManager.DeviceCallback)
@@ -531,14 +526,18 @@ public class PdDroidParty extends AppCompatActivity {
 		}
 	}
 
-	private void disconnectMidiDevice() {
+	private void disconnectMidiDevice(boolean verbose) {
 		if (midiDevice != null) {
 			try {
-				post("Closing MIDI device: " + midiDevice.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				if(verbose) post("Closing MIDI device: " + midiDevice.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				if(inputPort != null) {
+					inputPort.close();
+					inputPort = null;
+				}
 				midiDevice.close();
 			} catch (IOException e) {
 				Log.e(TAG, "Error closing MIDI device", e);
-				post("Error closing MIDI device.");
+				if(verbose) post("Error closing MIDI device.");
 			}
 			midiDevice = null;
 			PdBase.setMidiReceiver(null);
@@ -610,12 +609,16 @@ public class PdDroidParty extends AppCompatActivity {
 
 				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
-						MidiInputPort inputPort = device.openInputPort(portInfo.getPortNumber());
-						if (inputPort != null) {
-							pdToMidiAdapter = new PdToMidiAdapter(inputPort);
-							PdBase.setMidiReceiver(pdToMidiAdapter);
-							post("MIDI output enabled on port " + portInfo.getPortNumber());
-							break; // Connect to first available input port
+						if(inputPort == null) {
+							inputPort = device.openInputPort(portInfo.getPortNumber());
+							if (inputPort != null) {
+								pdToMidiAdapter = new PdToMidiAdapter(inputPort);
+								PdBase.setMidiReceiver(pdToMidiAdapter);
+								post("MIDI output enabled on port " + portInfo.getPortNumber());
+								break; // Connect to first available input port
+							} else {
+								Log.d(TAG, "unable to open Midi inputPort");
+							}
 						}
 					}
 				}
