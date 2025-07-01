@@ -54,15 +54,12 @@ public class Bang extends Widget {
 			canvas.drawRect(dRect, paint);
 
 			paint.setColor(Color.BLACK);
+			paint.setStyle(Paint.Style.STROKE);
 			paint.setStrokeWidth(1);
-			canvas.drawLine(dRect.left /*+ 1*/, dRect.top, dRect.right, dRect.top, paint);
-			canvas.drawLine(dRect.left + 0, dRect.bottom, dRect.right, dRect.bottom, paint);
-			canvas.drawLine(dRect.left, dRect.top + 0, dRect.left, dRect.bottom, paint);
-			canvas.drawLine(dRect.right, dRect.top + 0, dRect.right, dRect.bottom, paint);
+			canvas.drawRect(dRect, paint);
 			if (bang && on.draw(canvas)) {
 				if((SystemClock.uptimeMillis() - bangtime) > hold) bang = false;
-				//paint.setStyle(Paint.Style.FILL);
-
+				paint.setStyle(Paint.Style.FILL);
 				parent.threadSafeInvalidate();
 				canvas.drawCircle(dRect.centerX(), dRect.centerY(), Math.min(dRect.width(), dRect.height()) / 2, paint);
 				paint.setColor(fgcolor);

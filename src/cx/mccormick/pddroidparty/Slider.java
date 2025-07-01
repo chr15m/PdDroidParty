@@ -82,18 +82,19 @@ public class Slider extends Widget {
 			paint.setStyle(Paint.Style.FILL);
 			canvas.drawRect(dRect, paint);
 
+			paint.setStyle(Paint.Style.STROKE);
 			paint.setColor(Color.BLACK);
 			paint.setStrokeWidth(1);
-			canvas.drawLine(dRect.left /*+ 1*/, dRect.top, dRect.right, dRect.top, paint);
-			canvas.drawLine(dRect.left /*+ 1*/, dRect.bottom, dRect.right, dRect.bottom, paint);
-			canvas.drawLine(dRect.left, dRect.top /*+ 1*/, dRect.left, dRect.bottom, paint);
-			canvas.drawLine(dRect.right, dRect.top /*+ 1*/, dRect.right, dRect.bottom, paint);
+			canvas.drawRect(dRect, paint);
 			paint.setColor(fgcolor);
-			paint.setStrokeWidth(3);
+			float handle_width = 3;
+			paint.setStrokeWidth(handle_width);
 			if (orientation_horizontal) {
-				canvas.drawLine(Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.top /*+ 2*/), Math.round(dRect.left + ((val - min) / (max - min)) * dRect.width()), Math.round(dRect.bottom /*- 2*/), paint);
+				float x = dRect.left + ((val - min) / (max - min)) * (dRect.width() - handle_width) + handle_width / 2;
+				canvas.drawLine(x, dRect.top, x, dRect.bottom, paint);
 			} else {
-				canvas.drawLine(Math.round(dRect.left /*+ 2*/), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), Math.round(dRect.right /*- 2*/), Math.round(dRect.bottom - ((val - min) / (max - min)) * dRect.height()), paint);
+				float y = dRect.bottom - ((val - min) / (max - min)) * (dRect.height() - handle_width) - handle_width / 2;
+				canvas.drawLine(dRect.left, y, dRect.right, y, paint);
 			}
 
 		} else if (!slider.none()) {
