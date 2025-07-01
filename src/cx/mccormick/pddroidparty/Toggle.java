@@ -47,10 +47,8 @@ public class Toggle extends Widget {
 
 			paint.setColor(Color.BLACK);
 			paint.setStrokeWidth(1);
-			canvas.drawLine(dRect.left /*+ 1*/, dRect.top, dRect.right, dRect.top, paint);
-			canvas.drawLine(dRect.left /*+ 1*/, dRect.bottom, dRect.right, dRect.bottom, paint);
-			canvas.drawLine(dRect.left, dRect.top /*+ 1*/, dRect.left, dRect.bottom, paint);
-			canvas.drawLine(dRect.right, dRect.top /*+ 1*/, dRect.right, dRect.bottom, paint);
+			paint.setStyle(Paint.Style.STROKE);
+			canvas.drawRect(dRect, paint);
 		}
 
 		if (val != 0) {

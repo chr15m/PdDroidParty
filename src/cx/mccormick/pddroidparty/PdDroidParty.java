@@ -10,13 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.puredata.android.io.AudioParameters;
-import org.puredata.android.midi.MidiToPdAdapter;
-import org.puredata.android.midi.PdToMidiAdapter;
 import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.PdDispatcher;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -50,10 +49,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Handler;
 
-public class PdDroidParty extends Activity {
+public class PdDroidParty extends AppCompatActivity {
 	public PdDroidPatchView patchview = null;
 	public static final String PATCH = "PATCH";
 	public static final String FROM_SELECTOR = "FROM_SELECTOR";
@@ -80,7 +81,6 @@ public class PdDroidParty extends Activity {
 
 	private MidiManager midiManager = null;
 	private MidiDevice midiDevice = null;
-	private MidiToPdAdapter midiToPdAdapter = null;
 	private PdToMidiAdapter pdToMidiAdapter = null;
 
 	private int RECORD_AUDIO_PERMISSION_CODE = 49295197;
@@ -93,11 +93,24 @@ public class PdDroidParty extends Activity {
 	};
 
 	// post a 'toast' alert to the Android UI
+	// Each new message is delayed by 3 secs.
+	private ArrayList<String> toastList = new ArrayList<String>();
+	private Handler handler = new Handler();
 	private void post(final String msg) {
+		int toastSize = toastList.size();
+		toastList.add(msg);
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(getApplicationContext(), PD_CLIENT + ": " + msg, Toast.LENGTH_LONG).show();
+				handler.postDelayed (new Runnable() {
+					@Override
+					public void run() {
+						if(toastList.size() == 0) return;
+						String message = toastList.get(0);
+						toastList.remove(0);
+						Toast.makeText(getApplicationContext(), PD_CLIENT + ": " + message, Toast.LENGTH_SHORT).show();
+					}
+				}, toastSize * 3000);
 			}
 		});
 	}
@@ -216,7 +229,7 @@ public class PdDroidParty extends Activity {
 			finish();
 		} else if (menumidi != null && item == menumidi) {
 			if (midiDevice != null) {
-				disconnectMidiDevice();
+				disconnectMidiDevice(true);
 			} else {
 				chooseMidiDevice();
 			}
@@ -243,13 +256,7 @@ public class PdDroidParty extends Activity {
 			public void onDeviceRemoved(MidiDeviceInfo device) {
 				post("MIDI device removed: " + device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
 				if (midiDevice != null && midiDevice.getInfo().equals(device)) {
-					try {
-						midiDevice.close();
-					} catch (IOException e) {
-						Log.e(TAG, "Error closing MIDI device", e);
-					}
-					midiDevice = null;
-					PdBase.setMidiReceiver(null);
+					disconnectMidiDevice(false);
 				}
 			}
 		}, null);
@@ -293,17 +300,23 @@ public class PdDroidParty extends Activity {
 	// initialise the GUI with the OpenGL rendering engine
 	private void initGui() {
 		Log.e(TAG, "initGui runs");
-		//setContentView(R.layout.main);
+
 		int flags = WindowManager.LayoutParams.FLAG_FULLSCREEN |
 		            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
 		            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 		getWindow().setFlags(flags, flags);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+		setContentView(R.layout.main);
+
 		atomlines = PdParser.parsePatch(path);
 		patchview = new PdDroidPatchView(this, this);
-		setContentView(patchview);
+		ViewGroup layout = (ViewGroup) findViewById(R.id.patch_view);
+		layout.addView(patchview);
 		patchview.requestFocus();
 		MenuBang.clear();
+		Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+		setSupportActionBar(myToolbar);
 	}
 
 	// initialise Pd asking for the desired sample rate, parameters, etc.
@@ -315,7 +328,8 @@ public class PdDroidParty extends Activity {
 		wifiMulticastLock.acquire();
 		Log.e(TAG, "Got Multicast Lock (after)? " + wifiMulticastLock.isHeld());
 		// set up the midi stuff
-		midiToPdAdapter = new MidiToPdAdapter();
+		pdToMidiAdapter = new PdToMidiAdapter();
+		PdBase.setMidiReceiver(pdToMidiAdapter);
 
 		// set a progress dialog running
 		progress = new ProgressDialog(this);
@@ -479,7 +493,7 @@ public class PdDroidParty extends Activity {
 			pdService = null;
 		}
 		// release midi
-		disconnectMidiDevice();
+		disconnectMidiDevice(false);
 		if (midiManager != null) {
 			// The callback cannot be unregistered, so we just null out the manager.
 			// See https://developer.android.com/reference/android/media/midi/MidiManager#unregisterDeviceCallback(android.media.midi.MidiManager.DeviceCallback)
@@ -511,17 +525,17 @@ public class PdDroidParty extends Activity {
 		}
 	}
 
-	private void disconnectMidiDevice() {
+	private void disconnectMidiDevice(boolean verbose) {
 		if (midiDevice != null) {
 			try {
-				post("Closing MIDI device: " + midiDevice.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				if(verbose) post("Closing MIDI device: " + midiDevice.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				pdToMidiAdapter.close(0); // close pdToMidi port 0 (the only one for now)
 				midiDevice.close();
 			} catch (IOException e) {
 				Log.e(TAG, "Error closing MIDI device", e);
-				post("Error closing MIDI device.");
+				if(verbose) post("Error closing MIDI device.");
 			}
 			midiDevice = null;
-			PdBase.setMidiReceiver(null);
 		}
 	}
 
@@ -573,37 +587,34 @@ public class PdDroidParty extends Activity {
 				post("MIDI device opened: " + device.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
 
 				// Input from device to Pd
-				// FIXME: This code is commented out due to a build error.
-				// It seems there's an incompatibility with the pd-for-android library version.
-				/*
+
 				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
 						MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
 						if (outputPort != null) {
-							outputPort.connect(midiToPdAdapter);
+							outputPort.connect(new MidiToPdAdapter(0));
 							post("MIDI input enabled on port " + portInfo.getPortNumber());
 							break; // Connect to first available output port
 						}
 					}
 				}
-				*/
+				
 
 				// Output from Pd to device
-				// FIXME: This code is commented out due to a build error.
-				// It seems there's an incompatibility with the pd-for-android library version.
-				/*
+
 				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
 					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
 						MidiInputPort inputPort = device.openInputPort(portInfo.getPortNumber());
 						if (inputPort != null) {
-							pdToMidiAdapter = new PdToMidiAdapter(inputPort);
-							PdBase.setMidiReceiver(pdToMidiAdapter);
+							pdToMidiAdapter.open(inputPort, 0);
 							post("MIDI output enabled on port " + portInfo.getPortNumber());
 							break; // Connect to first available input port
+						} else {
+							Log.d(TAG, "unable to open Midi inputPort");
 						}
 					}
 				}
-				*/
+
 			}
 		}, null);
 	}
