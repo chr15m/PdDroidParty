@@ -86,6 +86,7 @@ public class PatchSelector extends Activity implements OnItemClickListener {
 		} else {
 			initGui();
 		}
+		Log.d("PdDroidParty", "Pd version: " + PdVersionString.get());
 	}
 
 	@Override

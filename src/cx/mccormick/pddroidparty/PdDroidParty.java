@@ -205,6 +205,7 @@ public class PdDroidParty extends Activity {
 					sb.append(line + "\n");
 					line = br.readLine();
 				}
+				sb.append("Pure Data version: " + PdVersionString.get());
 			} catch (IOException e) {
 				sb.append("Copyright Chris McCormick, 2011");
 			}
