@@ -64,7 +64,11 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core:1.1.0'
+    implementation 'androidx.core:core:1.5.0'
+
+    def appcompat_version = "1.6.1"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'io.github.libpd.android:pd-core:1.2.1-rc6'
 }
