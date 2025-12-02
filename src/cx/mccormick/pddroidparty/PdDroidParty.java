@@ -11,6 +11,8 @@ import java.util.Map;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
+import org.puredata.android.midi.PdToMidiAdapter;
+import org.puredata.android.midi.MidiToPdAdapter;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.PdDispatcher;
 
