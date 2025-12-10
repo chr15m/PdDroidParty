@@ -13,6 +13,7 @@ import org.puredata.android.io.AudioParameters;
 import org.puredata.android.midi.MidiToPdAdapter;
 import org.puredata.android.midi.PdToMidiAdapter;
 import org.puredata.android.service.PdService;
+import org.puredata.android.service.PdPreferences;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.PdDispatcher;
 
@@ -25,11 +26,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.pm.PackageManager;
 import android.content.pm.ActivityInfo;
+import android.preference.PreferenceManager;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.media.midi.MidiDevice;
@@ -56,7 +59,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Handler;
 
-public class PdDroidParty extends AppCompatActivity {
+public class PdDroidParty extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 	public PdDroidPatchView patchview = null;
 	public static final String PATCH = "PATCH";
 	public static final String FROM_SELECTOR = "FROM_SELECTOR";
@@ -80,6 +83,7 @@ public class PdDroidParty extends AppCompatActivity {
 	private MenuItem menuabout = null;
 	private MenuItem menuexit = null;
 	private MenuItem menumidi = null;
+	private MenuItem menuaudio = null;
 
 	private MidiManager midiManager = null;
 	private MidiDevice midiDevice = null;
@@ -143,6 +147,9 @@ public class PdDroidParty extends AppCompatActivity {
 		fromSelector = intent.getBooleanExtra(FROM_SELECTOR, true);
 		Log.e(TAG, "onCreate initGui");
 		initGui();
+		AudioParameters.init(this);
+		PdPreferences.initPreferences(getApplicationContext());
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
 
 		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
 			setupMidi();
@@ -191,6 +198,7 @@ public class PdDroidParty extends AppCompatActivity {
 			menumidi.setIcon(android.R.drawable.ic_menu_manage);
 		}
 		// exit menu item
+		menuaudio = menu.add(0, Menu.FIRST + menu.size(), 0, "Audio");
 		menuexit = menu.add(0, Menu.FIRST + menu.size(), 0, "Exit");
 		menuexit.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		return super.onPrepareOptionsMenu(menu);
@@ -236,6 +244,8 @@ public class PdDroidParty extends AppCompatActivity {
 			} else {
 				chooseMidiDevice();
 			}
+		} else if(item == menuaudio) {
+			startActivity(new Intent(this, PdPreferences.class));
 		} else {
 			// pass the menu selection through to the MenuBang manager
 			MenuBang.hit(item);
@@ -435,7 +445,8 @@ public class PdDroidParty extends AppCompatActivity {
 
 		// go ahead and intialise the audio
 		try {
-			pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
+			//pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
+			pdService.initAudio(-1, -1, -1, -1);   // negative values default to PdService preferences
 		} catch (IOException e) {
 			Log.e(TAG, e.toString());
 			finish();
@@ -456,6 +467,16 @@ public class PdDroidParty extends AppCompatActivity {
 		patchview.loaded();
 		// dismiss the progress meter
 		progress.dismiss();
+	}
+
+	private void restartAudio() {
+		String name = getResources().getString(R.string.app_name);
+		try {
+			pdService.initAudio(-1, -1, -1, -1);   // negative values will be replaced with defaults/preferences
+			pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
+		} catch (IOException e) {
+			post(e.toString());
+		}
 	}
 
 	public static String getFlag(ArrayList<String[]> al, String flagname) {
