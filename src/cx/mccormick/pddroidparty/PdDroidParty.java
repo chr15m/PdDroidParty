@@ -255,7 +255,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		Log.w(TAG, "onSharedPreferenceChanged");
-		if (pdService != null && pdService.isRunning()) {
+		if (pdService != null) {
 			restartAudio();
 		}
 	}
