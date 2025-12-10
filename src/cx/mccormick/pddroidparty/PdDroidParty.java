@@ -260,6 +260,14 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		}
 	}
 
+	private String midiDeviceGetName(MidiDeviceInfo device) {
+		String name = device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME);
+		if (name == null) {
+			name = device.getProperties().getString(MidiDeviceInfo.PROPERTY_PRODUCT);
+		}
+		return name;
+	}
+
 	private void setupMidi() {
 		midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
 		if (midiManager == null) {
@@ -269,12 +277,12 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		midiManager.registerDeviceCallback(new MidiManager.DeviceCallback() {
 			@Override
 			public void onDeviceAdded(MidiDeviceInfo device) {
-				post("MIDI device added: " + device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				post("MIDI device added: " + midiDeviceGetName(device));
 			}
 
 			@Override
 			public void onDeviceRemoved(MidiDeviceInfo device) {
-				post("MIDI device removed: " + device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				post("MIDI device removed: " + midiDeviceGetName(device));
 				if (midiDevice != null && midiDevice.getInfo().equals(device)) {
 					disconnectMidiDevice(false);
 				}
@@ -559,7 +567,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	private void disconnectMidiDevice(boolean verbose) {
 		if (midiDevice != null) {
 			try {
-				if(verbose) post("Closing MIDI device: " + midiDevice.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				if(verbose) post("Closing MIDI device: " + midiDeviceGetName(midiDevice.getInfo()));
 				pdToMidiAdapter.close(0); // close pdToMidi port 0 (the only one for now)
 				midiDevice.close();
 			} catch (IOException e) {
@@ -591,16 +599,28 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			post("No MIDI devices found");
 			return;
 		}
+		final ArrayList<MidiDeviceInfo> deviceInfos = new ArrayList<>();
 		final ArrayList<String> deviceNames = new ArrayList<>();
 		for (MidiDeviceInfo info : devices) {
-			deviceNames.add(info.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+			String name = midiDeviceGetName(info);
+			if(name != null) {
+				deviceInfos.add(info);
+				deviceNames.add(name);
+				Log.v(TAG, "adding midi device: " + info.toString() + " : " + name);
+			} else {
+				Log.v(TAG, "discarding midi device: " + info.toString());
+			}
+		}
+		if (deviceInfos.size() == 0) {
+			post("No MIDI devices found");
+			return;
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Choose MIDI Device");
 		builder.setItems(deviceNames.toArray(new String[0]), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				connectMidiDevice(devices[which]);
+				connectMidiDevice(deviceInfos.get(which));
 			}
 		});
 		builder.create().show();
@@ -615,7 +635,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 					return;
 				}
 				midiDevice = device;
-				post("MIDI device opened: " + device.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				post("MIDI device opened: " + midiDeviceGetName(device.getInfo()));
 
 				// Input from device to Pd
 
