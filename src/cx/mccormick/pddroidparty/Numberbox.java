@@ -73,6 +73,7 @@ public class Numberbox extends Widget {
 		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
 		canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
 		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
+		canvas.drawText(fmt.format(val), dRect.left + 3, dRect.centerY() + dRect.height() * (float)0.25, paint);
 		drawLabel(canvas);
 	}
 
