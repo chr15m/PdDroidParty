@@ -32,7 +32,6 @@ public class Numberboxfixed extends Numberbox {
 				calclen.append("#");
 			}
 		}
-		fmt = new DecimalFormat(calclen.toString());
 
 		paint.setTextSize(fontsize);
 		paint.setTextAlign(Paint.Align.CENTER);
@@ -70,11 +69,10 @@ public class Numberboxfixed extends Numberbox {
 		}
 
 		if (down ? on.draw(canvas) : off.draw(canvas)) {
-			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
-			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1, dRect.bottom, paint);
-			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom - 1, paint);
-			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom, paint);
+			paint.setStyle(Paint.Style.STROKE);
+			canvas.drawRect(dRect, paint);
+			paint.setStyle(Paint.Style.FILL);
 		}
-		drawCenteredText(canvas, fmt.format(val));
+		drawCenteredText(canvas, formatNumber(val, numwidth));
 	}
 }
