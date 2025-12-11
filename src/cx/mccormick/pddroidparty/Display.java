@@ -29,7 +29,7 @@ public class Display extends Widget {
 		paint.setTextSize(fontsize);
 		paint.setTextAlign(Paint.Align.CENTER);
 
-		receivename = atomline[7];
+		receivename = app.app.replaceDollarZero(atomline[7]);
 
 		// graphics setup
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
