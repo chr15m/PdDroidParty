@@ -41,7 +41,7 @@ public class Taplist extends Widget {
 		paint.setTextAlign(Paint.Align.CENTER);
 
 		sendname = app.app.replaceDollarZero(atomline[8]);
-		receivename = atomline[7];
+		receivename = app.app.replaceDollarZero(atomline[7]);
 
 		setval(0, 0);
 

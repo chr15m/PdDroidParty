@@ -98,7 +98,7 @@ public class Widget {
 
 	public void initCommonArgs(PdDroidPatchView app, String[] atomline, int index, boolean isCanvas) {
 		sendname = app.app.replaceDollarZero(atomline[index++]);
-		receivename = atomline[index++];
+		receivename = app.app.replaceDollarZero(atomline[index++]);
 		label = setLabel(atomline[index++]);
 		labelpos[0] = Float.parseFloat(atomline[index++]) ;
 		labelpos[1] = Float.parseFloat(atomline[index++]) ;
