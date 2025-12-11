@@ -96,6 +96,18 @@ public class Widget {
 		}
 	}
 
+	public static String formatNumber(Float val, int maxwidth) {
+		String text = val.toString();
+		int last = text.length() - 1;
+		if (last > maxwidth) last = maxwidth;
+		if (last < 0) last = 0;
+		text = text.substring(0, last);
+		if (text.endsWith(".")) {
+			text = text.substring(0, text.length() - 1);
+		}
+		return text;
+	}
+
 	public void initCommonArgs(PdDroidPatchView app, String[] atomline, int index, boolean isCanvas) {
 		sendname = app.app.replaceDollarZero(atomline[index++]);
 		receivename = app.app.replaceDollarZero(atomline[index++]);

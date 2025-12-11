@@ -1,23 +1,24 @@
 package cx.mccormick.pddroidparty;
 
-import java.text.DecimalFormat;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.text.StaticLayout;
+import android.graphics.Path;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.MotionEvent;
 
 public class Numberbox extends Widget {
 	private static final String TAG = "Floatatom";
+	private static final int LABEL_LEFT   = 0;
+	private static final int LABEL_RIGHT  = 1;
+	private static final int LABEL_TOP    = 2;
+	private static final int LABEL_BOTTOM = 3;
 
 	float min, max;
 	int numwidth;
-
-	StaticLayout numLayout = null;
-	DecimalFormat fmt = null;
-	Rect tRect = new Rect();
+	int label_pos = LABEL_LEFT;
+	float font_height;
 
 	boolean down = false;
 	int pid0 = -1; //pointer id when down
@@ -25,36 +26,34 @@ public class Numberbox extends Widget {
 	public Numberbox(PdDroidPatchView app, String[] atomline) {
 		super(app);
 
+		Rect tRect = new Rect();
 		float x = Float.parseFloat(atomline[2]) ;
 		float y = Float.parseFloat(atomline[3]) ;
+
+		fontsize = Integer.parseInt(atomline[11]);
+		if(fontsize == 0) fontsize = 12;
+		labelsize = fontsize;
+		paint.setTextSize(fontsize);
 
 		// calculate screen bounds for the numbers that can fit
 		numwidth = Integer.parseInt(atomline[4]);
 		StringBuffer calclen = new StringBuffer();
 		for (int s = 0; s < numwidth; s++) {
-			if (s == 1) {
-				calclen.append(".");
-			} else {
-				calclen.append("#");
-			}
+			calclen.append("0");
 		}
-		fmt = new DecimalFormat(calclen.toString());
 		paint.getTextBounds(calclen.toString(), 0, calclen.length(), tRect);
-		dRect.set(tRect);
+		font_height = tRect.height();
+		dRect.set(x, y, x + tRect.width() + 4, y + tRect.height() * 1.75f);
 		dRect.sort();
-		dRect.offset((int)x, (int)y + fontsize);
-		dRect.top -= 3;
-		dRect.bottom += 3;
-		dRect.left -= 3;
-		dRect.right += 3;
 
 		min = Float.parseFloat(atomline[5]);
 		max = Float.parseFloat(atomline[6]);
 		sendname = app.app.replaceDollarZero(atomline[10]);
 		receivename = app.app.replaceDollarZero(atomline[9]);
 		label = setLabel(atomline[8]);
-		labelpos[0] = x;
-		labelpos[1] = y;
+
+		label_pos = Integer.parseInt(atomline[7]);
+		updateLabelPos();
 
 		setval(0, 0);
 
@@ -66,14 +65,43 @@ public class Numberbox extends Widget {
 		super(app);
 	}
 
+	public void updateLabelPos() {
+		switch (label_pos) {
+		case LABEL_LEFT:
+			Rect tRect = new Rect();
+			paint.getTextBounds(label, 0, label.length(), tRect);
+			labelpos[0] = -tRect.width() - 2;
+			labelpos[1] = dRect.height() / 2;
+			break;
+		case LABEL_RIGHT:
+			labelpos[0] = dRect.width() + 2;
+			labelpos[1] = dRect.height() / 2;
+			break;
+		case LABEL_TOP:
+			labelpos[0] = 0;
+			labelpos[1] = -font_height / 2 - 2;
+			break;
+		case LABEL_BOTTOM:
+			labelpos[0] = 0;
+			labelpos[1] = dRect.height() + font_height / 2 + 2;
+		}
+	}
+
 	public void draw(Canvas canvas) {
+		Path path = new Path();
+		path.moveTo(dRect.left, dRect.top);
+		path.lineTo(dRect.right - 5, dRect.top);
+		path.lineTo(dRect.right, dRect.top + 5);
+		path.lineTo(dRect.right, dRect.bottom);
+		path.lineTo(dRect.left, dRect.bottom);
+		path.close();
 		paint.setColor(Color.BLACK);
-		canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 5, dRect.top, paint);
-		canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right, dRect.bottom, paint);
-		canvas.drawLine(dRect.left, dRect.top + 1, dRect.left, dRect.bottom, paint);
-		canvas.drawLine(dRect.right, dRect.top + 5, dRect.right, dRect.bottom, paint);
-		canvas.drawLine(dRect.right - 5, dRect.top, dRect.right, dRect.top + 5, paint);
-		canvas.drawText(fmt.format(val), dRect.left + 3, dRect.centerY() + dRect.height() * (float)0.25, paint);
+		paint.setStyle(Paint.Style.STROKE);
+		paint.setStrokeWidth(1);
+		canvas.drawPath(path, paint);
+		paint.setStrokeWidth(0);
+		paint.setStyle(Paint.Style.FILL);
+		canvas.drawText(formatNumber(val, numwidth), dRect.left + 2, dRect.centerY() + font_height / 2, paint);
 		drawLabel(canvas);
 	}
 
@@ -186,7 +214,10 @@ public class Numberbox extends Widget {
 	}
 
 	public void receiveMessage(String symbol, Object... args) {
-		if(widgetreceiveSymbol(symbol, args)) return;
+		if(widgetreceiveSymbol(symbol, args)) {
+			updateLabelPos();
+			return;
+		}
 		if (args.length > 0 && args[0].getClass().equals(Float.class)) {
 			receiveFloat((Float)args[0]);
 		}
