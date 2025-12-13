@@ -35,6 +35,9 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	public int viewY = 0;
 	public int viewW = 1;
 	public int viewH = 1;
+	private float screenRatioW = 1;
+	private float screenRatioH = 1;
+	private boolean screenRatioEqual = true;
 
 	public int fontsize;
 	ArrayList<Widget> widgets = new ArrayList<Widget>();
@@ -111,8 +114,21 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		}
 	}
 
+	private void updateScreenRatio() {
+		screenRatioW = getWidth() / (float)viewW;
+		screenRatioH = getHeight() / (float)viewH;
+		if (screenRatioEqual) {
+			if (screenRatioW < screenRatioH) {
+				screenRatioH = screenRatioW;
+			} else {
+				screenRatioW = screenRatioH;
+			}
+		}
+	}
+
 	@Override
 	public void onDraw(Canvas canvas) {
+		updateScreenRatio();
 		canvas.drawPaint(paint);
 		if (background != null) {
 			canvas.save();
@@ -121,7 +137,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 			canvas.restore();
 		} else if (bgbitmap != null) {
 			canvas.save();
-			canvas.scale(getWidth() / (float)viewW, getHeight() / (float)viewH);
+			canvas.scale(screenRatioW, screenRatioH);
 			canvas.translate(-viewX, -viewY );
 			bgrect.set(0, 0, patchwidth, patchheight);
 			canvas.drawBitmap(bgbitmap, null, bgrect, null);
@@ -130,7 +146,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 		// draw all widgets
 		if (widgets != null) {
 			canvas.save();
-			canvas.scale(getWidth() / (float)viewW, getHeight() / (float)viewH);
+			canvas.scale(screenRatioW, screenRatioH);
 			canvas.translate(-viewX, -viewY );
 			for (Widget widget : widgets) {
 				widget.draw(canvas);
@@ -140,11 +156,11 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	}
 
 	public float PointerX(float x) {
-		return (x * ((float)viewW) / getWidth() + viewX);
+		return (x / screenRatioW + viewX);
 	}
 
 	public float PointerY(float y) {
-		return (y * ((float)viewH) / getHeight() + viewY);
+		return (y / screenRatioH + viewY);
 	}
 
 	public boolean onTouch(View view, MotionEvent event) {
@@ -209,11 +225,12 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 	}
 
 	/** set the dimensions of the patch and update orientation **/
-	public void setDimensions(int x, int y, int w, int h) {
+	public void setDimensions(int x, int y, int w, int h, boolean ratio_equal) {
 		viewX = x;
 		viewY = y;
 		viewW = w;
 		viewH = h;
+		screenRatioEqual = ratio_equal;
 	}
 
 	/** build a user interface using the lines of atoms found in the patch by the pd file parser */
@@ -233,7 +250,7 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 					if (level == 1) {
 						patchwidth = Integer.parseInt(line[4]);
 						patchheight = Integer.parseInt(line[5]);
-						setDimensions(0, 0, patchwidth, patchheight);
+						setDimensions(0, 0, patchwidth, patchheight, true);
 						fontsize = Integer.parseInt(line[6]);
 					}
 				} else if (line[1].equals("restore")) {

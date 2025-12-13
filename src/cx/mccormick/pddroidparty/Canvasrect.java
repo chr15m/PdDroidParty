@@ -8,6 +8,8 @@ public class Canvasrect extends Widget {
 	private static final String TAG = "Canvas";
 
 	WImage image = new WImage();
+	boolean isViewPort = false;
+	boolean viewPortRatioEqual = false;
 
 	public Canvasrect(PdDroidPatchView app, String[] atomline) {
 		super(app);
@@ -21,8 +23,11 @@ public class Canvasrect extends Widget {
 		dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
 		image.load(TAG, null, receivename);
 
-		if(receivename.equals("ViewPort")) {
-			parent.setDimensions((int)dRect.left, (int)dRect.top, (int)dRect.width(), (int)dRect.height());
+		isViewPort = receivename.startsWith("ViewPort");
+		viewPortRatioEqual = isViewPort && receivename.contains("Equal");
+		
+		if (isViewPort) {
+			parent.setDimensions((int)dRect.left, (int)dRect.top, (int)dRect.width(), (int)dRect.height(), viewPortRatioEqual);
 		}
 	}
 
@@ -46,9 +51,9 @@ public class Canvasrect extends Widget {
 		}
 		else widgetreceiveSymbol(symbol, args);
 
-		if(receivename.equals("ViewPort")) {
+		if(isViewPort) {
 			if (symbol.equals("vis_size") || symbol.equals("pos") ) {
-				parent.setDimensions((int)dRect.left, (int)dRect.top, (int)dRect.width(), (int)dRect.height());
+				parent.setDimensions((int)dRect.left, (int)dRect.top, (int)dRect.width(), (int)dRect.height(), viewPortRatioEqual);
 			}
 		}
 	}
