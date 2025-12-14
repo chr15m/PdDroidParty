@@ -93,23 +93,27 @@ public class Bang extends Widget {
 	}*/
 
 	public void receiveList(Object... args) {
-		bang();
+		receiveBang();
 	}
 
 	public void receiveSymbol(String symbol) {
-		bang();
+		receiveBang();
 	}
 
 	public void receiveFloat(float x) {
-		bang();
+		receiveBang();
 	}
 
 	public void receiveBang() {
 		bang();
+		if (! sendname.equals(receivename)) {
+			PdBase.sendBang(sendname);
+		}
+
 	}
 
 	public void receiveMessage(String symbol, Object... args) {
 		if(widgetreceiveSymbol(symbol, args)) return;
-		else bang();
+		else receiveBang();
 	}
 }

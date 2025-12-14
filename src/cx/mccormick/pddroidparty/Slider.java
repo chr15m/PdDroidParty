@@ -137,7 +137,7 @@ public class Slider extends Widget {
 				if (orientation_horizontal) val = get_horizontal_val(x);
 				else val = get_vertical_val(y);
 			}
-			send("" + val);
+			sendFloat(val);
 			return true;
 		}
 		return false;
@@ -163,7 +163,7 @@ public class Slider extends Widget {
 			// clamp the value
 			setval(val);
 			// send the result to Pd
-			send("" + val);
+			sendFloat(val);
 			return true;
 		}
 		return false;
@@ -184,6 +184,9 @@ public class Slider extends Widget {
 
 	public void receiveFloat(float v) {
 		setval(v);
+		if (! sendname.equals(receivename)) {
+			sendFloat(val);
+		}
 	}
 }
 

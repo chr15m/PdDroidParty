@@ -219,6 +219,8 @@ public class Knob extends Widget {
 
 	public void receiveFloat(float v) {
 		setval(v);
-		sendval();
+		if (! sendname.equals(receivename)) {
+			sendval();
+		}
 	}
 }
