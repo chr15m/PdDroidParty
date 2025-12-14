@@ -51,7 +51,8 @@ public class Widget {
 
 	public Widget(PdDroidPatchView app) {
 		parent = app;
-		fontsize = (int)((float)parent.fontsize);
+		fontsize = labelsize = (int)((float)parent.fontsize);
+		font = Typeface.create(app.getResources().getFont(R.font.dejavu_sans_mono_bold), Typeface.BOLD);
 
 		File f = null;
 
