@@ -22,6 +22,8 @@ public class Numberbox extends Widget {
 
 	boolean down = false;
 	int pid0 = -1; //pointer id when down
+	float y0, val0 ; // position of pointer, and value when pointer down.
+	boolean moved = false;
 
 	public Numberbox(PdDroidPatchView app, String[] atomline) {
 		super(app);
@@ -63,6 +65,13 @@ public class Numberbox extends Widget {
 
 	public Numberbox(PdDroidPatchView app) {
 		super(app);
+	}
+
+	public void setval(float v) {
+		val = v;
+		if (min != 0 || max != 0) {
+			val = Math.min(max, Math.max(v, min));
+		}
 	}
 
 	public void updateLabelPos() {
@@ -109,6 +118,9 @@ public class Numberbox extends Widget {
 		if (dRect.contains(x, y)) {
 			down = true;
 			pid0 = pid;
+			val0 = val;
+			y0 = y;
+			moved = false;
 			return true;
 		}
 		return false;
@@ -116,7 +128,9 @@ public class Numberbox extends Widget {
 
 	public boolean touchup(int pid, float x, float y) {
 		if (pid == pid0) {
-			parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
+			if (! moved) {
+				parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
+			}
 			down = false;
 			pid0 = -1;
 			return true;
@@ -124,78 +138,21 @@ public class Numberbox extends Widget {
 		return false;
 	}
 
-	public void touch_(MotionEvent event) {
-
-		int action = event.getAction() & MotionEvent.ACTION_MASK;
-		int pid, index;
-		float ex;
-		float ey;
-
-		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			ex = event.getX();
-			ey = event.getY();
-			if (dRect.contains(ex, ey)) {
-				down = true;
-			}
-			break;
-
-		case MotionEvent.ACTION_POINTER_DOWN:
-			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-			index = event.findPointerIndex(pid);
-			Log.d("dwnNBoxBefore", index + "");
-			index = (index == -1) ? 1 : index;
-			Log.d("dwnNBoxAfter", index + "");
-			ex = event.getX(index);
-			ey = event.getY(index);
-			if (dRect.contains(ex, ey)) {
-				down = true;
-			}
-			break;
-
-		case MotionEvent.ACTION_UP:
-			ex = event.getX();
-			ey = event.getY();
-			if (dRect.contains(ex, ey)) {
-				parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
-			}
-			down = false;
-			break;
-
-		case MotionEvent.ACTION_POINTER_UP:
-			pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-			index = event.findPointerIndex(pid);
-			Log.d("upNBoxBefore", index + "");
-			index = (index == -1) ? 1 : index;
-			Log.d("NBoxAfter", index + "");
-			ex = event.getX(index);
-			ey = event.getY(index);
-			if (dRect.contains(ex, ey)) {
-				parent.app.launchDialog(this, PdDroidParty.DIALOG_NUMBERBOX);
-			}
-			down = false;
-			break;
-
-		}
-
-		// TODO: allow dragging to set the number
-		/*if (down) {
-			//Log.e(TAG, "touch:" + val);
-			if (event.getAction() == event.ACTION_DOWN || event.getAction() == event.ACTION_MOVE) {
-				// calculate the new value based on touch
-				if (orientation_horizontal) {
-					val = (((ex - x) / w) * (max - min) + min);
-				} else {
-					val = (((h - (ey - y)) / h) * (max - min) + min);
-				}
+	public boolean touchmove(int pid, float x, float y)
+	{
+		if(pid0 == pid) {
+			float dv = Math.round((y - y0) / 2);
+			if(dv != 0) {
+				val = val0 - Math.round((y - y0) / 2);
 				// clamp the value
-				val = Math.min(max, Math.max(min, val));
+				setval(val);
 				// send the result to Pd
-				send("" + val);
-			} else if (event.getAction() == event.ACTION_UP) {
-				down = false;
+				sendFloat(val);
+				moved =true;
 			}
-		}*/
+			return true;
+		}
+		return false;
 	}
 
 	public void receiveList(Object... args) {
