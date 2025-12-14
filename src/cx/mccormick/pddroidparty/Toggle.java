@@ -109,9 +109,16 @@ public class Toggle extends Widget {
 
 	public void receiveFloat(float v) {
 		setval(v);
+		if (! sendname.equals(receivename)) {
+			sendFloat(val);
+		}
 	}
 
 	public void receiveBang() {
 		toggle();
+		if (! sendname.equals(receivename)) {
+			sendFloat(val);
+		}
+
 	}
 }
