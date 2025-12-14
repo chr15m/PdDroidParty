@@ -210,7 +210,10 @@ public class Numberbox extends Widget {
 		} else {
 			val = v;
 		}
-		sendFloat(val);
+		if (! sendname.equals(receivename)) {
+			sendFloat(val);
+		}
+
 	}
 
 	public void receiveMessage(String symbol, Object... args) {
