@@ -58,6 +58,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Handler;
+import java.nio.file.Paths;
 
 public class PdDroidParty extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 	public PdDroidPatchView patchview = null;
@@ -345,6 +346,9 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		MenuBang.clear();
 		Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 		setSupportActionBar(myToolbar);
+		String name = Paths.get(path).getParent().getFileName().toString();
+		String appname = getResources().getString(R.string.app_name);
+		getSupportActionBar().setTitle(appname + " - " + name);
 	}
 
 	// initialise Pd asking for the desired sample rate, parameters, etc.
