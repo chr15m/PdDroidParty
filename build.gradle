@@ -4,13 +4,17 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.1'
+        classpath 'com.android.tools.build:gradle:8.13.1'
     }
 }
 
 allprojects {
     repositories {
         google()
+        maven {
+            name = 'Central Portal Snapshots'
+            url = 'https://central.sonatype.com/repository/maven-snapshots/'
+        }
         mavenCentral()
     }
 }
@@ -42,14 +46,15 @@ tasks.register("zipAbs", Zip) {
 android {
     namespace = 'cx.mccormick.pddroidparty'
     compileSdkVersion 34
-    ndkVersion = '24.0.8215888'
+    ndkVersion = '29.0.14206865'
 
     defaultConfig {
         applicationId "cx.mccormick.pddroidparty"
-        minSdkVersion 17
-        targetSdkVersion 34
         versionCode = project.hasProperty('versionCode') ? project.getProperty('versionCode').toInteger() : 1
         versionName = project.hasProperty('versionName') ? project.getProperty('versionName') : ""
+
+        minSdkVersion = 28
+        targetSdkVersion = 34
     }
 
     sourceSets {
@@ -88,6 +93,20 @@ android {
         dependsOn("zipDemos")
         dependsOn("zipAbs")
     }
+
+    buildFeatures {
+        // Extract native libs from prefab, to be able to access the headers and to link to the libs
+        prefab = true
+        viewBinding = true
+    }
+
+    packagingOptions {
+        jniLibs {
+            // since externals are loaded at native code level, they need to be copied to the actual
+            // filesystem, instead of staying in the apk; so we must set useLegacyPackaging:
+            useLegacyPackaging = true
+        }
+    }
 }
 
 dependencies {
@@ -97,5 +116,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat_version"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'io.github.libpd.android:pd-core:1.2.1-rc6'
+    def pdCoreVersion = "1.4.1-SNAPSHOT"
+    implementation "io.github.libpd.android:pd-core:$pdCoreVersion"
 }
