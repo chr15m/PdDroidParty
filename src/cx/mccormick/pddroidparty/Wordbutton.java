@@ -37,6 +37,10 @@ public class Wordbutton extends Bang {
 		paint.setTextSize(Math.round(h * 0.75));
 		paint.setTextAlign(Paint.Align.CENTER);
 		paint.getTextBounds(spacereplace, 0, label.length(), tRect);
+		if(tRect.width() > w) {
+			paint.setTextSize(Math.round(h * 0.75 * w / tRect.width()));
+			paint.getTextBounds(spacereplace, 0, label.length(), tRect);
+		}
 		labelpos[0] = w / 2 - tRect.width() / 2;
 		labelpos[1] = h / 2 - tRect.height() / 2;
 
