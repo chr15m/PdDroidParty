@@ -34,6 +34,12 @@ public class Taplist extends Widget {
 
 		// get list atoms
 		for (int a = 9; a < atomline.length; a++) {
+			if(atomline[a].endsWith(",")) {
+				String s = atomline[a];
+				s = s.substring(0, s.length() - 1);
+				atoms.add(s);
+				break;
+			}
 			atoms.add(atomline[a]);
 		}
 
