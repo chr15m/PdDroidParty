@@ -24,7 +24,7 @@ public class Canvasrect extends Widget {
 		image.load(TAG, null, receivename);
 
 		isViewPort = receivename.equals("ViewPort");
-		viewPortRatioEqual = isViewPort && label.contains("equal");
+		viewPortRatioEqual = isViewPort && label != null && label.contains("equal");
 
 		if (isViewPort) {
 			parent.setDimensions((int)dRect.left, (int)dRect.top, (int)dRect.width(), (int)dRect.height(), viewPortRatioEqual);
@@ -55,7 +55,7 @@ public class Canvasrect extends Widget {
 				parent.setDimensions((int)dRect.left, (int)dRect.top, (int)dRect.width(), (int)dRect.height(), viewPortRatioEqual);
 			}
 			if (symbol.equals("label")) {
-				viewPortRatioEqual = isViewPort && label.contains("equal");
+				viewPortRatioEqual = isViewPort && label != null && label.contains("equal");
 				parent.setDimensions((int)dRect.left, (int)dRect.top, (int)dRect.width(), (int)dRect.height(), viewPortRatioEqual);
 			}
 		}
