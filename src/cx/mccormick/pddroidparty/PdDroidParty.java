@@ -138,13 +138,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			};
 			midi.setup(this);
 		}
-
-		new Thread() {
-			@Override
-			public void run() {
-				bindService(new Intent(PdDroidParty.this, PdService.class), serviceConnection, BIND_AUTO_CREATE);
-			}
-		} .start();
+		bindService(new Intent(PdDroidParty.this, PdService.class), serviceConnection, BIND_AUTO_CREATE);
 	}
 
 	// this callback makes sure that we handle orientation changes without audio glitches
@@ -256,7 +250,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		getSupportActionBar().setTitle(appname + " - " + name);
 	}
 
-	// initialise Pd asking for the desired sample rate, parameters, etc.
+	// initialise Pd service
 	private void initPd() {
 		Context context = this.getApplicationContext();
 		// make sure netreceive can receive broadcast UDP packets
@@ -272,22 +266,14 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		progress.setIndeterminate(true);
 		progress.show();
 
-		new Thread() {
-			@Override
-			public void run() {
-				// get the actual lines of atoms from the patch
-				String norecord = getFlag(atomlines, "norecord");
-
-				if (Build.VERSION.SDK_INT >= 23 && norecord == null && !hasRecordPermission()) {
-					// Show user dialog to grant permission to record audio
-					requestPermissions(new String[] {Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_PERMISSION_CODE);
-				} else {
-					startPd();
-				}
-			}
-		} .start();
+		String norecord = getFlag(atomlines, "norecord");
+		if (Build.VERSION.SDK_INT >= 23 && norecord == null && !hasRecordPermission()) {
+			// Show user dialog to grant permission to record audio
+			requestPermissions(new String[] {Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_PERMISSION_CODE);
+		} else {
+			startPd();
+		}
 	}
-
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -297,12 +283,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			}
 			// regardless of whether permission to record is granted, we still start the patch
 			// (with no audio input if it has no permission)
-			new Thread() {
-				@Override
-				public void run() {
-					startPd();
-				}
-			} .start();
+			startPd();
 			return;
 		}
 	}
@@ -350,28 +331,33 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 
 		// go ahead and intialise the audio
 		try {
-			//pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
 			pdService.initAudio(-1, -1, -1, -1);   // negative values default to PdService preferences
 		} catch (IOException e) {
 			Log.e(TAG, e.toString());
 			finish();
 		}
 
-		try {
-			dollarzero = PdBase.openPatch(path.toString());
-		} catch (IOException e) {
-			Log.e(TAG, "startPd() opening " + path.toString() + ": " + e.toString() + "; exiting now");
-			finish();
-		}
-		patchview.buildUI(atomlines);
-		// start the audio thread
-		Resources res = getResources();
-		String name = res.getString(R.string.app_name);
-		pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
-		// tell the patch view everything has been loaded
-		patchview.loaded();
-		// dismiss the progress meter
-		progress.dismiss();
+		// load the patch in a thread so that it doesn't block UI
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					dollarzero = PdBase.openPatch(path.toString());
+				} catch (IOException e) {
+					Log.e(TAG, "startPd() opening " + path.toString() + ": " + e.toString() + "; exiting now");
+					finish();
+				}
+				patchview.buildUI(atomlines);
+				// start the audio thread
+				Resources res = getResources();
+				String name = res.getString(R.string.app_name);
+				pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
+				// tell the patch view everything has been loaded
+				patchview.loaded();
+				// dismiss the progress meter
+				progress.dismiss();
+			}
+		}.start();
 	}
 
 	private void restartAudio() {
