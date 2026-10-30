@@ -1,17 +1,13 @@
 package cx.mccormick.pddroidparty;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.puredata.android.io.AudioParameters;
-import org.puredata.android.midi.MidiToPdAdapter;
-import org.puredata.android.midi.PdToMidiAdapter;
 import org.puredata.android.service.PdService;
 import org.puredata.android.service.PdPreferences;
 import org.puredata.core.PdBase;
@@ -19,7 +15,6 @@ import org.puredata.core.utils.PdDispatcher;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -27,7 +22,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.pm.PackageManager;
@@ -35,27 +29,17 @@ import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
-import android.media.midi.MidiDevice;
-import android.media.midi.MidiDeviceInfo;
-import android.media.midi.MidiInputPort;
-import android.media.midi.MidiManager;
-import android.media.midi.MidiOutputPort;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Build;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Handler;
 import java.nio.file.Paths;
@@ -81,14 +65,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	Widget widgetpopped = null;
 	MulticastLock wifiMulticastLock = null;
 	private ProgressDialog progress = null;
-	private MenuItem menuabout = null;
-	private MenuItem menuexit = null;
-	private MenuItem menumidi = null;
-	private MenuItem menuaudio = null;
-
-	private MidiManager midiManager = null;
-	private MidiDevice midiDevice = null;
-	private PdToMidiAdapter pdToMidiAdapter = null;
+	Midi midi;
 
 	private int RECORD_AUDIO_PERMISSION_CODE = 49295197;
 
@@ -153,7 +130,13 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
 
 		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
-			setupMidi();
+			midi = new Midi() {
+				@Override
+				void post(final String msg) {
+					PdDroidParty.this.post(msg);
+				}
+			};
+			midi.setup(this);
 		}
 
 		new Thread() {
@@ -180,72 +163,23 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		return true;
-	}
-
-	// menu launch yeah
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.clear();
-		// about menu item
-		menuabout = menu.add(0, Menu.FIRST + menu.size(), 0, "About");
-		menuabout.setIcon(android.R.drawable.ic_menu_info_details);
-		// add the menu bang menu items
-		MenuBang.setMenu(menu);
-		// TODO: preferences = ic_menu_preferences
-		// midi menu
-		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
-			menumidi = menu.add(0, Menu.FIRST + menu.size(), 0, "Midi");
-			menumidi.setIcon(android.R.drawable.ic_menu_manage);
+		getMenuInflater().inflate(R.menu.options_menu, menu);
+		if (! getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
+			menu.findItem(R.id.midi).setVisible(false);
 		}
-		// exit menu item
-		menuaudio = menu.add(0, Menu.FIRST + menu.size(), 0, "Audio");
-		menuexit = menu.add(0, Menu.FIRST + menu.size(), 0, "Exit");
-		menuexit.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-		return super.onPrepareOptionsMenu(menu);
+		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item == menuabout) {
-			// load in the about dialog contents from assets/about.html
-			StringBuffer sb = new StringBuffer();
-			try {
-				AssetManager assets = getAssets();
-				InputStreamReader reader = new InputStreamReader(assets.open("about.html"), "UTF-8");
-				BufferedReader br = new BufferedReader(reader);
-				String line = br.readLine();
-				while(line != null) {
-					sb.append(line + "\n");
-					line = br.readLine();
-				}
-				sb.append("Pure Data version: " + PdVersionString.get());
-			} catch (IOException e) {
-				sb.append("Copyright Chris McCormick, 2011");
-			}
-
-			// convert the string to HTML for the about dialog
-			final SpannableString s = new SpannableString(Html.fromHtml(sb.toString()));
-			Linkify.addLinks(s, Linkify.ALL);
-
-			AlertDialog ab = new AlertDialog.Builder(this)
-			.setTitle("About")
-			.setIcon(android.R.drawable.ic_dialog_info)
-			.setMessage(s)
-			.setPositiveButton("ok", null)
-			.create();
-			ab.show();
-			// make the links clickable
-			((TextView)ab.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-		} else if (item == menuexit) {
+		int id = item.getItemId();
+		if (id == R.id.about) {
+			About.open(this);
+		} else if (id == R.id.exit) {
 			finish();
-		} else if (menumidi != null && item == menumidi) {
-			if (midiDevice != null) {
-				disconnectMidiDevice(true);
-			} else {
-				chooseMidiDevice();
-			}
-		} else if(item == menuaudio) {
+		} else if (id == R.id.midi) {
+			midi.menuClicked(this);
+		} else if(id == R.id.audio) {
 			startActivity(new Intent(this, PdPreferences.class));
 		} else {
 			// pass the menu selection through to the MenuBang manager
@@ -260,36 +194,6 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		if (pdService != null && pdService.isRunning()) {
 			restartAudio();
 		}
-	}
-
-	private String midiDeviceGetName(MidiDeviceInfo device) {
-		String name = device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME);
-		if (name == null) {
-			name = device.getProperties().getString(MidiDeviceInfo.PROPERTY_PRODUCT);
-		}
-		return name;
-	}
-
-	private void setupMidi() {
-		midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
-		if (midiManager == null) {
-			Log.w(TAG, "No MIDI support");
-			return;
-		}
-		midiManager.registerDeviceCallback(new MidiManager.DeviceCallback() {
-			@Override
-			public void onDeviceAdded(MidiDeviceInfo device) {
-				post("MIDI device added: " + midiDeviceGetName(device));
-			}
-
-			@Override
-			public void onDeviceRemoved(MidiDeviceInfo device) {
-				post("MIDI device removed: " + midiDeviceGetName(device));
-				if (midiDevice != null && midiDevice.getInfo().equals(device)) {
-					disconnectMidiDevice(false);
-				}
-			}
-		}, null);
 	}
 
 	// send a Pd atom-string 's' to a particular receiver 'dest'
@@ -360,9 +264,6 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		Log.e(TAG, "Got Multicast Lock (before)? " + wifiMulticastLock.isHeld());
 		wifiMulticastLock.acquire();
 		Log.e(TAG, "Got Multicast Lock (after)? " + wifiMulticastLock.isHeld());
-		// set up the midi stuff
-		pdToMidiAdapter = new PdToMidiAdapter();
-		PdBase.setMidiReceiver(pdToMidiAdapter);
 
 		// set a progress dialog running
 		progress = new ProgressDialog(this);
@@ -459,7 +360,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		try {
 			dollarzero = PdBase.openPatch(path.toString());
 		} catch (IOException e) {
-			post(e.toString() + "; exiting now");
+			Log.e(TAG, "startPd() opening " + path.toString() + ": " + e.toString() + "; exiting now");
 			finish();
 		}
 		patchview.buildUI(atomlines);
@@ -536,13 +437,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			// already unbound
 			pdService = null;
 		}
-		// release midi
-		disconnectMidiDevice(false);
-		if (midiManager != null) {
-			// The callback cannot be unregistered, so we just null out the manager.
-			// See https://developer.android.com/reference/android/media/midi/MidiManager#unregisterDeviceCallback(android.media.midi.MidiManager.DeviceCallback)
-			midiManager = null;
-		}
+		midi.finish();
 		// release the lock on wifi multicasting
 		if (wifiMulticastLock != null && wifiMulticastLock.isHeld())
 			wifiMulticastLock.release();
@@ -569,20 +464,6 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		}
 	}
 
-	private void disconnectMidiDevice(boolean verbose) {
-		if (midiDevice != null) {
-			try {
-				if(verbose) post("Closing MIDI device: " + midiDeviceGetName(midiDevice.getInfo()));
-				pdToMidiAdapter.close(0); // close pdToMidi port 0 (the only one for now)
-				midiDevice.close();
-			} catch (IOException e) {
-				Log.e(TAG, "Error closing MIDI device", e);
-				if(verbose) post("Error closing MIDI device.");
-			}
-			midiDevice = null;
-		}
-	}
-
 	public String getPatchRelativePath(String dir) {
 		String root = getPatchFile().getParent();
 		if (dir.equals(".")) {
@@ -592,87 +473,6 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		} else {
 			return dir;
 		}
-	}
-
-	private void chooseMidiDevice() {
-		if (midiManager == null) {
-			post("MIDI not available");
-			return;
-		}
-		final MidiDeviceInfo[] devices = midiManager.getDevices();
-		if (devices.length == 0) {
-			post("No MIDI devices found");
-			return;
-		}
-		final ArrayList<MidiDeviceInfo> deviceInfos = new ArrayList<>();
-		final ArrayList<String> deviceNames = new ArrayList<>();
-		for (MidiDeviceInfo info : devices) {
-			String name = midiDeviceGetName(info);
-			if(name != null) {
-				deviceInfos.add(info);
-				deviceNames.add(name);
-				Log.v(TAG, "adding midi device: " + info.toString() + " : " + name);
-			} else {
-				Log.v(TAG, "discarding midi device: " + info.toString());
-			}
-		}
-		if (deviceInfos.size() == 0) {
-			post("No MIDI devices found");
-			return;
-		}
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Choose MIDI Device");
-		builder.setItems(deviceNames.toArray(new String[0]), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				connectMidiDevice(deviceInfos.get(which));
-			}
-		});
-		builder.create().show();
-	}
-
-	private void connectMidiDevice(MidiDeviceInfo info) {
-		midiManager.openDevice(info, new MidiManager.OnDeviceOpenedListener() {
-			@Override
-			public void onDeviceOpened(MidiDevice device) {
-				if (device == null) {
-					post("Could not open MIDI device");
-					return;
-				}
-				midiDevice = device;
-				post("MIDI device opened: " + midiDeviceGetName(device.getInfo()));
-
-				// Input from device to Pd
-
-				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
-					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
-						MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
-						if (outputPort != null) {
-							outputPort.connect(new MidiToPdAdapter(0));
-							post("MIDI input enabled on port " + portInfo.getPortNumber());
-							break; // Connect to first available output port
-						}
-					}
-				}
-				
-
-				// Output from Pd to device
-
-				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
-					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
-						MidiInputPort inputPort = device.openInputPort(portInfo.getPortNumber());
-						if (inputPort != null) {
-							pdToMidiAdapter.open(inputPort, 0);
-							post("MIDI output enabled on port " + portInfo.getPortNumber());
-							break; // Connect to first available input port
-						} else {
-							Log.d(TAG, "unable to open Midi inputPort");
-						}
-					}
-				}
-
-			}
-		}, null);
 	}
 
 	@Override

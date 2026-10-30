@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/about"
+		  android:title="@string/about" />
+	<item android:id="@+id/rescan_catalog"
+		  android:title="@string/rescan_catalog"
+		  android:visible ="false"
+	/>
+	<item android:id="@+id/edit_links"
+		  android:title="@string/edit_links"
+		  android:visible ="false"
+	/>
+	<item android:id="@+id/midi"
+		  android:title="@string/midi" />
+	<item android:id="@+id/audio"
+		  android:title="@string/audio" />
+	<item android:id="@+id/exit"
+		  android:title="@string/exit" />
+</menu>

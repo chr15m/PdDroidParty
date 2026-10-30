@@ -3,4 +3,16 @@
 	<string name="app_name">PdDroid Party</string>
 	<string name="okbutton">ok</string>
 	<string name="cancelbutton">cancel</string>
+
+	<string name="install">install</string>
+	<string name="delete">delete</string>
+	<string name="check_updates">check updates</string>
+
+	<string name="about">About</string>
+	<string name="midi">Midi</string>
+	<string name="audio">Audio</string>
+	<string name="exit">Exit</string>
+	<string name="rescan_catalog">Rescan catalog</string>
+	<string name="edit_links">Edit links</string>
+	<string name="links_hint">add your links here...</string>
 </resources>

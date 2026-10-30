@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-  <supports-screens android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:anyDensity="true" />
-  <application android:icon="@drawable/icon" android:label="@string/app_name" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-    <activity android:name=".PatchSelector" android:label="@string/app_name" android:configChanges="orientation" 
-            android:launchMode="singleTask" android:exported="true" android:allowBackup="false">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-
-             <intent-filter>
+    <supports-screens android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:anyDensity="true" />
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".PatchSelector.PatchSelector" android:label="@string/app_name" android:configChanges="orientation" 
+                android:launchMode="singleTask" android:exported="true" android:allowBackup="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:mimeType="*/*" />
                 <data android:scheme="file" />
                 <data android:scheme="content" />
                 <data android:host="*" />
-                <data android:pathPattern=".*..*..*..*..*..*.pdz" />
-                <data android:pathPattern=".*..*..*..*..*.pdz" />
-                <data android:pathPattern=".*..*..*..*.pdz" />
-                <data android:pathPattern=".*..*..*.pdz" />
-                <data android:pathPattern=".*..*.pdz" />
-                <data android:pathPattern=".*.pdz" />
+                <data android:mimeType="application/zip" />
+                <data android:mimeType="application/octet-stream" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
                 <data android:scheme="content" />
-                <data android:mimeType="text/plain" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathSuffix=".pdz" />
             </intent-filter>
+        </activity>
 
-    </activity>
+        <activity android:name=".PdDroidParty" android:launchMode="singleTask" android:label="@string/app_name" android:configChanges="orientation" android:theme="@style/PatchTheme"></activity>
+        <activity android:name=".NumberboxDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Numberbox"></activity>
+        <activity android:name=".SaveDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Save"></activity>
+        <activity android:name=".LoadDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Load"></activity>
+        <activity android:label="Audio Preferences" android:name="org.puredata.android.service.PdPreferences" />
+        <activity android:name=".PatchSelector.LinksEditor" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Edit links"></activity>
 
-    <activity android:name=".PdDroidParty" android:launchMode="singleTask" android:label="@string/app_name" android:configChanges="orientation" android:theme="@style/PatchTheme"></activity>
-    <activity android:name=".NumberboxDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Numberbox"></activity>
-    <activity android:name=".SaveDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Save"></activity>
-    <activity android:name=".LoadDialog" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation" android:label="Load"></activity>
-    <activity android:label="Audio Preferences" android:name="org.puredata.android.service.PdPreferences" />
-    <service android:name="org.puredata.android.service.PdService" android:foregroundServiceType="mediaPlayback|microphone"/>
-  </application>
-  <uses-permission android:name="android.permission.RECORD_AUDIO" />
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-  <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-  <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-  <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-  <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-  <uses-permission android:name="android.permission.CHANGE_NETWORK_MULTICAST_STATE" />
-  <uses-permission android:name="android.permission.VIBRATE" />
+        <service android:name="org.puredata.android.service.PdService" android:foregroundServiceType="mediaPlayback|microphone"/>
+    </application>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 </manifest>
