@@ -141,6 +141,12 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		bindService(new Intent(PdDroidParty.this, PdService.class), serviceConnection, BIND_AUTO_CREATE);
 	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+		Log.d(TAG, "onStart");
+	}
+
 	// this callback makes sure that we handle orientation changes without audio glitches
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -153,6 +159,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	protected void onDestroy() {
 		super.onDestroy();
 		cleanup();
+		Log.d(TAG, "onDestroy");
 	}
 
 	@Override
@@ -214,7 +221,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	public void registerReceiver(String name, Widget w) {
 		// do $0 replacement
 		String realname = replaceDollarZero(name);
-		Log.e(TAG, "Receiver: " + realname);
+		//Log.e(TAG, "Receiver: " + realname);
 		DroidPartyReceiver r = receivemap.get(realname);
 		if (r == null) {
 			r = new DroidPartyReceiver(patchview, w);
