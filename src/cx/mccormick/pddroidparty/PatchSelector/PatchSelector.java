@@ -317,6 +317,7 @@ public class PatchSelector extends AppCompatActivity {
 	private void launchDroidParty(String path, boolean fromPatchSelector) {
 		String pdMain = PatchUtils.getMainPatchPath(path).getPath();
 		if(pdMain == null) return;
+		Log.d(TAG, "launchDroidParty: " + path);
 		Intent intent = new Intent(this, PdDroidParty.class);
 		intent.putExtra(PdDroidParty.PATCH, pdMain);
 		intent.putExtra(PdDroidParty.FROM_SELECTOR, fromPatchSelector);
