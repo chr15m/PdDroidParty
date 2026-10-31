@@ -2,6 +2,7 @@ package cx.mccormick.pddroidparty;
 
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import java.util.Arrays;
 
 public class Touch extends Widget {
 	private static final String TAG = "Touch";
@@ -9,8 +10,8 @@ public class Touch extends Widget {
 	WImage on = new WImage();
 	WImage off = new WImage();
 
-	boolean down = false;
-	int pid0 = -1; //pointer id when down
+	boolean multi = false;
+	int[] pids = new int[20]; //pointer ids in use
 
 	public Touch(PdDroidPatchView app, String[] atomline) {
 		super(app);
@@ -25,17 +26,58 @@ public class Touch extends Widget {
 
 		sendname = app.app.replaceDollarZero(atomline[7]);
 
+		int i = 8;
+		while(atomline.length > i) {
+			switch(atomline[i]) {
+				case "multi": multi = true;
+			}
+			i++;
+		}
 		// try and load images
 		on.load(TAG, "on", sendname);
 		off.load(TAG, "off", sendname);
+		Arrays.fill(pids, -1);
+	}
+
+	private int getPidIndex(int pid) {
+		for(int i = 0; i < pids.length; i++) {
+			if(pids[i] == pid) return i;
+		}
+		return -1;
+	}
+
+	private int takePid(int pid) {
+		int i0 = getPidIndex(pid);
+		if(i0 != -1) return i0; // shouldn't happen
+		for(int i = 0; i < pids.length; i++) {
+			if(pids[i] == -1) {
+				pids[i] = pid;
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	private void releasePid(int pid) {
+		int index = getPidIndex(pid);
+		if(index != -1) pids[index] = -1;
+	}
+
+	private void releasePidIndex(int index) {
+		if(index != -1) pids[index] = -1;
+	}
+
+	private int countPids() {
+		int count = 0;
+		for(int i = 0; i < pids.length; i++) {
+			if(pids[i] != -1) count++;
+		}
+		return count;
 	}
 
 	public void draw(Canvas canvas) {
-		if (down) {
-			paint.setStrokeWidth(2);
-		} else {
-			paint.setStrokeWidth(1);
-		}
+		boolean down = (countPids() > 0);
+		paint.setStrokeWidth(down ? 2 : 1);
 
 		if (down ? on.draw(canvas) : off.draw(canvas)) {
 			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1, dRect.top, paint);
@@ -45,39 +87,41 @@ public class Touch extends Widget {
 		}
 	}
 
-	public void Sendxy(float x, float y)
+	public void Sendxy(int index, float x, float y)
 	{
-		send(((x - dRect.left) / dRect.width()) + " "
-			+ ((y - dRect.top) / dRect.height()));
+		float xnorm = (x - dRect.left) / dRect.width();
+		float ynorm = (y - dRect.top) / dRect.height();
+		if(multi) send(xnorm + " " + ynorm + " " + index);
+		else send(xnorm + " " + ynorm);
 	}
 
 	public boolean touchdown(int pid, float x, float y)
 	{
 		if (dRect.contains(x, y)) {
-
-			down = true;
-			pid0 = pid;
-			Sendxy(x, y);
+			int index = takePid(pid);
+			if(index == -1) return false;
+			Sendxy(index, x, y);
 			return true;
 		}
-
 		return false;
 	}
 
 	public boolean touchup(int pid, float x, float y)
 	{
-		if(pid == pid0) {
-			down = false;
-			pid0 = -1;
-			send("-1 -1");
+		int index = getPidIndex(pid);
+		if(index != -1) {
+			releasePidIndex(index);
+			send("-1 -1 " + index);
+			return true;
 		}
 		return false;
 	}
 
 	public boolean touchmove(int pid, float x, float y)
 	{
-		if(pid == pid0) {
-			Sendxy(x, y);
+		int index = getPidIndex(pid);
+		if(index != -1) {
+			Sendxy(index, x, y);
 			return true;
 		}
 		return false;
