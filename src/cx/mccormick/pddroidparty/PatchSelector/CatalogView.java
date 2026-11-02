@@ -73,7 +73,7 @@ public class CatalogView {
 			public boolean onItemLongClick(AdapterView<?> arg0, View v, int position, long id) {
 				Node n = displayedList.get(position);
 				Log.d(TAG, "long click on: " + n.getPath());
-				showMenu(n);
+				showMenu(n, v);
 				return true;
 			}
 		});
@@ -172,16 +172,50 @@ public class CatalogView {
 		refreshScheduler.refresh();
 	}
 
-	private void showMenu(Node node) {
-		PopupMenu popup = new PopupMenu(context, view);
+	private static long folderSize(File directory) {
+		long length = 0;
+		if(directory == null | ! directory.isDirectory()) return 0;
+		for (File file : directory.listFiles()) {
+			if (file.isFile())
+				length += file.length();
+			else
+				length += folderSize(file);
+		}
+		return length;
+	}
+
+	private static String formatSize(long size) {
+		if(size < 1024) return "" + size;
+		else if(size < 1024 * 1024) return "" + (Math.round(10 * (size / 1024.0)) / 10.0) + "kB";
+		else return "" + (Math.round(10 * (size / (1024.0 * 1024.0))) / 10.0) + "MB";
+	}
+
+	private static long countItems(Group group) { 
+		long count = 0;
+		for(Item i: group.items) if(i.file.exists()) count++;
+		for(Group g: group.groups) count += countItems(g);
+		return count;
+	}
+
+	private void showMenu(Node node, View v) {
+		PopupMenu popup = new PopupMenu(context, v);
 		popup.getMenuInflater().inflate(R.menu.catalog_context, popup.getMenu());
 		if(node instanceof Item) {
 			if(node.file.exists()) {
+				popup.getMenu().findItem(R.id.name).setTitle(node.name
+					+ "  ---  size: " + formatSize(folderSize(node.file)));
 				popup.getMenu().findItem(R.id.delete).setVisible(true);
-				popup.getMenu().findItem(R.id.check_updates).setVisible(true);
+				if(node.link != null) popup.getMenu().findItem(R.id.check_updates).setVisible(true);
 			} else {
 				popup.getMenu().findItem(R.id.install).setVisible(true);
+				popup.getMenu().findItem(R.id.name).setTitle(node.name);
 			}
+		} else {
+			long size = folderSize(node.file);
+			popup.getMenu().findItem(R.id.name).setTitle(node.name
+				+ "  ---  installed patches: " + countItems((Group)node)
+				+ "  ---  total size: " + formatSize(size));
+			if(size != 0) popup.getMenu().findItem(R.id.delete).setVisible(true);
 		}
 		popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 			@Override
@@ -201,7 +235,7 @@ public class CatalogView {
 					return true;
 				} else if(id == R.id.delete) {
 					Log.d(TAG, "delete " + node.getPath());
-					if(node instanceof Item && node.file.exists()) {
+					if(node.file.exists()) {
 						PatchUtils.deleteDirectory(node.file);
 						refresh();
 					}
