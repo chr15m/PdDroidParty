@@ -1,6 +1,7 @@
 package cx.mccormick.pddroidparty.PatchSelector;
 
 import java.util.List;
+import java.io.File;
 
 import android.util.Log;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.ArrayAdapter;
 import android.os.Handler;
+import android.net.Uri;
 
 import cx.mccormick.pddroidparty.R;
 import cx.mccormick.pddroidparty.PatchSelector.Nodes.*;
@@ -50,7 +52,11 @@ class CatalogAdapter extends ArrayAdapter<Node> {
 					else imageView.setImageResource(R.drawable.ic_menu_archive);
 				}
 				else if(! n.file.exists()) imageView.setImageResource(R.drawable.download);
-				else imageView.setImageResource(R.drawable.icon);
+				else {
+					File iconFile = new File(n.file, "/icon.png");
+					if(iconFile.exists()) imageView.setImageURI(Uri.fromFile(iconFile));
+					else imageView.setImageResource(R.drawable.icon);
+				}
 			}
 		}
 		TextView pathText = (TextView) convertView.findViewById(R.id.path);
