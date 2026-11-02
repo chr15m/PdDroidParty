@@ -161,10 +161,7 @@ public class PatchSelector extends AppCompatActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.options_menu, menu);
-		menu.findItem(R.id.midi).setVisible(false);
-		menu.findItem(R.id.rescan_catalog).setVisible(true);
-		menu.findItem(R.id.edit_links).setVisible(true);
+		getMenuInflater().inflate(R.menu.selector_options_menu, menu);
 		return true;
 	}
 
