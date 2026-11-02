@@ -134,14 +134,25 @@ public class CatalogView {
 		displayedList.clear();
 		// if not root, add 'go back' item
 		if(showBackNode) displayedList.add(current);
-		// patches first
+
+			// installed patches first
 		sortNodeList(current.items);
-		displayedList.addAll(current.items);
-		// then non-empty dirs
+		//displayedList.addAll(current.items);
+		for(Item n: current.items) {
+			if(n.file.exists()) displayedList.add(n);
+		}
+
+			// then non-empty dirs
 		sortNodeList(current.groups);
 		for(Group n: current.groups) {
 			if(n.containsItems()) displayedList.add(n);
 		}
+
+			// then downloadable patches
+		for(Item n: current.items) {
+			if(!n.file.exists()) displayedList.add(n);
+		}
+
 		adapter.notify(showBackNode);
 		backPressedCallback.setEnabled(showBackNode);
 		if(! showBackNode) print();
