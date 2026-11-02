@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.nio.file.Paths;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
@@ -42,7 +43,10 @@ import android.view.WindowManager;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import android.os.Handler;
-import java.nio.file.Paths;
+import androidx.activity.OnBackPressedCallback;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 
 public class PdDroidParty extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 	public PdDroidPatchView patchview = null;
@@ -56,6 +60,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	public static final int DIALOG_LOAD = 3;
 	public int dollarzero = -1;
 	private boolean fromSelector = false;
+	private boolean askBeforeQuit = false;
 	private String path;
 	private PdService pdService = null;
 	private final Object lock = new Object();
@@ -139,6 +144,11 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			midi.setup(this);
 		}
 		bindService(new Intent(PdDroidParty.this, PdService.class), serviceConnection, BIND_AUTO_CREATE);
+
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		askBeforeQuit = sharedPref.getBoolean("askBeforeQuit", false);
+		getOnBackPressedDispatcher().addCallback(backPressedCallback);
+		backPressedCallback.setEnabled(askBeforeQuit);
 	}
 
 	@Override
@@ -164,10 +174,11 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.options_menu, menu);
+		getMenuInflater().inflate(R.menu.patch_options_menu, menu);
 		if (! getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
 			menu.findItem(R.id.midi).setVisible(false);
 		}
+		menu.findItem(R.id.askBeforeQuit).setChecked(askBeforeQuit);
 		return true;
 	}
 
@@ -182,6 +193,15 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			midi.menuClicked(this);
 		} else if(id == R.id.audio) {
 			startActivity(new Intent(this, PdPreferences.class));
+		} else if(id == R.id.askBeforeQuit) {
+			askBeforeQuit = ! askBeforeQuit;
+			item.setChecked(askBeforeQuit);
+			backPressedCallback.setEnabled(askBeforeQuit);
+			Log.d(TAG, "ask before quit: " + askBeforeQuit);
+			SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = sharedPref.edit();
+			editor.putBoolean("askBeforeQuit", askBeforeQuit);
+			editor.apply();
 		} else {
 			// pass the menu selection through to the MenuBang manager
 			MenuBang.hit(item);
@@ -195,6 +215,32 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		if (pdService != null && pdService.isRunning()) {
 			restartAudio();
 		}
+	}
+
+	private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(false) {
+		@Override
+		public void handleOnBackPressed() {
+			showQuitDialog();
+		}
+	};
+
+	private void showQuitDialog() {
+		new AlertDialog.Builder(this)
+			.setTitle("Confirm quit")
+			.setMessage("Are you sure you want to leave?")
+			.setPositiveButton("Okay", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			})
+			.setNegativeButton("Cancel", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			})
+			.show();
 	}
 
 	// send a Pd atom-string 's' to a particular receiver 'dest'
