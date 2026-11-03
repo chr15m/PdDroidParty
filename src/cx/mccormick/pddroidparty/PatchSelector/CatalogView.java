@@ -9,13 +9,11 @@ import java.util.Comparator;
 import android.util.Log;
 import android.content.Context;
 import android.view.View;
-import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.PopupMenu;
-import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -172,79 +170,29 @@ public class CatalogView {
 		refreshScheduler.refresh();
 	}
 
-	private static long folderSize(File directory) {
-		long length = 0;
-		if(directory == null | ! directory.isDirectory()) return 0;
-		for (File file : directory.listFiles()) {
-			if (file.isFile())
-				length += file.length();
-			else
-				length += folderSize(file);
-		}
-		return length;
-	}
-
-	private static String formatSize(long size) {
-		if(size < 1024) return "" + size;
-		else if(size < 1024 * 1024) return "" + (Math.round(10 * (size / 1024.0)) / 10.0) + "kB";
-		else return "" + (Math.round(10 * (size / (1024.0 * 1024.0))) / 10.0) + "MB";
-	}
-
-	private static long countItems(Group group) { 
-		long count = 0;
-		for(Item i: group.items) if(i.file.exists()) count++;
-		for(Group g: group.groups) count += countItems(g);
-		return count;
-	}
-
 	private void showMenu(Node node, View v) {
-		PopupMenu popup = new PopupMenu(context, v);
-		popup.getMenuInflater().inflate(R.menu.catalog_context, popup.getMenu());
-		if(node instanceof Item) {
-			if(node.file.exists()) {
-				popup.getMenu().findItem(R.id.name).setTitle(node.name
-					+ "  ---  size: " + formatSize(folderSize(node.file)));
-				popup.getMenu().findItem(R.id.delete).setVisible(true);
-				if(node.link != null) popup.getMenu().findItem(R.id.check_updates).setVisible(true);
-			} else {
-				popup.getMenu().findItem(R.id.install).setVisible(true);
-				popup.getMenu().findItem(R.id.name).setTitle(node.name);
-			}
-		} else {
-			long size = folderSize(node.file);
-			popup.getMenu().findItem(R.id.name).setTitle(node.name
-				+ "  ---  installed patches: " + countItems((Group)node)
-				+ "  ---  total size: " + formatSize(size));
-			if(size != 0) popup.getMenu().findItem(R.id.delete).setVisible(true);
-		}
-		popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		new NodeMenu(context, v, (ViewGroup)view, node) {
 			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				int id = item.getItemId();
+			public void onClicked(int id) {
 				if(id == R.id.install) {
 					if(node instanceof Item && node.link != null) {
 						Log.d(TAG, "install " + node.getPath());
 						installPdz(node.name, node.parent.getPath(), node.link.url.toString());
 					}
-					return true;
 				} else if(id == R.id.check_updates) {
 					if(node instanceof Item && node.link != null) {
 						Log.d(TAG, "check updates " + node.getPath());
 						installPdz(node.name, node.parent.getPath(), node.link.url.toString());
 					}
-					return true;
 				} else if(id == R.id.delete) {
 					Log.d(TAG, "delete " + node.getPath());
 					if(node.file.exists()) {
 						PatchUtils.deleteDirectory(node.file);
 						refresh();
 					}
-					return true;
 				}
-				return false;
 			}
-		});
-		if(popup.getMenu().hasVisibleItems()) popup.show();
+		};
 	}
 
 	public void runPatchDir(String patchDir) {}
