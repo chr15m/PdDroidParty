@@ -8,6 +8,7 @@ import cx.mccormick.pddroidparty.Widget.WImage;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Color;
 import android.util.Log;
 
 public class Taplist extends Widget {
@@ -74,15 +75,13 @@ public class Taplist extends Widget {
 		}
 
 		if (down ? on.draw(canvas) : off.draw(canvas)) {
-			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right - 1,
-			                dRect.top, paint);
-			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right - 1,
-			                dRect.bottom, paint);
-			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left,
-			                dRect.bottom - 1, paint);
-			canvas.drawLine(dRect.right, dRect.top, dRect.right, dRect.bottom,
-			                paint);
+			paint.setStyle(Paint.Style.STROKE);
+			paint.setColor(Color.BLACK);
+			paint.setStrokeWidth(1);
+			canvas.drawRect(dRect, paint);
 		}
+		paint.setStrokeWidth(0);
+		paint.setStyle(Paint.Style.FILL);
 		drawCenteredText(canvas, atoms.get((int) val));
 	}
 
