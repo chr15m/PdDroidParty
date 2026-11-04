@@ -50,8 +50,11 @@ android {
 
     defaultConfig {
         applicationId "cx.mccormick.pddroidparty"
-        versionCode = project.hasProperty('versionCode') ? project.getProperty('versionCode').toInteger() : 1
-        versionName = project.hasProperty('versionName') ? project.getProperty('versionName') : ""
+        versionName = 'git rev-parse HEAD'.execute().text.trim().substring(0, 8)
+        versionCode = 'git rev-list --count HEAD'.execute().text.trim().toInteger() 
+        //versionCode = project.hasProperty('versionCode') ? project.getProperty('versionCode').toInteger() : 1
+        //versionName = project.hasProperty('versionName') ? project.getProperty('versionName') : ""
+        project.logger.lifecycle("defaultConfig versionCode: " + versionCode + " versionName: " + versionName)
 
         minSdkVersion = 28
         targetSdkVersion = 34
