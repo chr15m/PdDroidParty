@@ -87,6 +87,7 @@ public class PatchSelector extends AppCompatActivity {
 		if (testForBakedPatch()) {
 			runBackedPatch();
 		} else {
+			if(isFirstRun || isNewInstall) copyDemos();
 			if (Build.VERSION.SDK_INT >= 23 && Build.VERSION.SDK_INT < 34 && ContextCompat.checkSelfPermission(PatchSelector.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
 				// ask for permission to access it; then runSelectorGui()
 				requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERMISSION_CODE);
