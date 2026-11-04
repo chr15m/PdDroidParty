@@ -57,7 +57,7 @@ android {
         project.logger.lifecycle("defaultConfig versionCode: " + versionCode + " versionName: " + versionName)
 
         minSdkVersion = 28
-        targetSdkVersion = 34
+        targetSdkVersion = 36
 
         // Uncomment the following 'ndk' section to select only needed CPU architectures in the APK
         ndk {
@@ -82,10 +82,13 @@ android {
     signingConfigs {
         release {
             if (project.hasProperty('RELEASE_STORE_FILE')) {
+                project.logger.lifecycle("signingConfigs: signing")
                 storeFile file(RELEASE_STORE_FILE)
                 storePassword RELEASE_STORE_PASSWORD
                 keyAlias RELEASE_KEY_ALIAS
                 keyPassword RELEASE_KEY_PASSWORD
+            } else {
+                project.logger.lifecycle("signingConfigs: couldn't find the store file")
             }
         }
     }
