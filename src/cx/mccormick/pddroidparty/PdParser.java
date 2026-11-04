@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public final class PdParser {
 	private static final String line_re = "(#((.|\r|\n)*?)[^\\\\])\r{0,1}\n{0,1};\r{0,1}\n";
-	private static final String token_re = " |\r\n?|\n";
+	private static final String token_re = "(?<!\\\\)\\s+|\r\n?|\n";
 
 	// test stub
 	public static void main (String[] aArguments) {
@@ -21,6 +21,7 @@ public final class PdParser {
 
 	// print out a particular atom line
 	public static void printAtom(String[] line) {
+		System.out.print("PdParser: ");
 		for (int i = 0; i < line.length; i++) {
 			System.out.print(" [" + line[i] + "]");
 		}
@@ -80,9 +81,15 @@ public final class PdParser {
 		Matcher matcher = pattern.matcher(patchtext);
 		ArrayList<String[]> atomlines = new ArrayList<String[]>();
 		while (matcher.find()) {
-			String[] s = token_pattern.split(matcher.group(1));
-			atomlines.add(token_pattern.split(matcher.group(1)));
+			String line = matcher.group(1);
+			line = line.replace(" \\, ", ", "); // this happens in comments ("text" object)
+			String[] words = token_pattern.split(line);
+			for(int i = 0; i < words.length; i++) {
+				words[i] = words[i].replace("\\", ""); // remove backslash in resulting strings
+			}
+			atomlines.add(words);
 		}
+		printAtoms(atomlines);
 		return atomlines;
 	}
 }
