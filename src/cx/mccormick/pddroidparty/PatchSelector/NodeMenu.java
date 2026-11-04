@@ -90,7 +90,7 @@ public class NodeMenu {
 			long size = folderSize(node.file);
 			int itemCount = countItems((Group)node);
 			setupText(layout, R.id.size, formatSize(folderSize(node.file)));
-			setupText(layout, R.id.patches, itemCount + (itemCount > 1 ? " patches" : " patch"));
+			setupText(layout, R.id.patches, itemCount + " installed " + (itemCount > 1 ? "patches" : "patch"));
 			setupButton(layout, R.id.install, false);
 			setupButton(layout, R.id.delete, size != 0);
 			setupButton(layout, R.id.check_updates, false);
