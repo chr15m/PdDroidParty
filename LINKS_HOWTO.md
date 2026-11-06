@@ -59,7 +59,7 @@ This directory can contain pdz files, a `links.txt` file, or subdirectories them
 
 - the **release** of a github repo, like:  
 **`gh janedoe_synths https://api.github.com/repos/janedoe/PdDroidPatches/releases/tags/synthstag`**  
-In this case, the **description text** of the release (the `body` field in the JSON) is treated as a *links* file, and its lines (only between "`# LINKS`" and "`# ENDLINKS`" lines if present) are parsed for links.  
+In this case, the **description text** of the release (the `body` field in the JSON) is treated as a *links* file, and its lines (only between "`#LINKS`" and "`#ENDLINKS`" lines if present) are parsed for links.  
 Moreover, the **release assets** (the `assets` array field of the JSON) are taken into account too: if an asset is named `links.txt`, it is parsed for links; an asset named `*.pdz` is made available for installation.
 
 
