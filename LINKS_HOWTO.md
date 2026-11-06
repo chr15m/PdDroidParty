@@ -9,9 +9,9 @@ The patches must be available for download in the form of *pdz* files, which are
 
 Any file named `links.txt` located in the PdDroidParty external storage directory (normally `/sdcard/Android/data/cx.mccormick.pddroidparty/files`), or in its subdirectories, is analyzed this way:
 
-- if a line starts with "`# LINKS`", only the following lines are considered
-- if a line starts with "`# ENDLINKS`", only the preceding are considered  
- (note if no line starts with "`# LINKS`" or "`# ENDLINKS`", the whole file is taken into account)
+- if a line starts with "`#LINKS`", only the following lines are considered
+- if a line starts with "`#ENDLINKS`", only the preceding are considered  
+ (note if no line starts with "`#LINKS`" or "`#ENDLINKS`", the whole file is taken into account)
 - each remaining line of the file is checked to see if it is a valid link. 
 
 A link line must contain at least 3 words (no spaces allowed...): **`TYPE`** **`NAME`** **`URL`**

@@ -142,10 +142,10 @@ public class Links {
 		int firstLine = 0;
 		int lastLine = lines.length - 1;
 		for(int i = 0; i < lines.length; i++) {
-			if(lines[i].startsWith("# LINKS")) {
+			if(lines[i].startsWith("#LINKS")) {
 				firstLine = i + 1;
 			}
-			else if(lines[i].startsWith("# ENDLINKS")) {
+			else if(lines[i].startsWith("#ENDLINKS")) {
 				lastLine = i - 1;
 			}
 		}
