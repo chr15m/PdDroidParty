@@ -292,6 +292,10 @@ public class PdDroidPatchView extends View implements OnTouchListener {
 								widgets.add(new Display(this, line));
 							} else if (line[4].equals("touch")) {
 								widgets.add(new Touch(this, line));
+							} else if (line[4].equals("hradio")) {
+								widgets.add(new Radio(this, line, true));
+							} else if (line[4].equals("vradio")) {
+								widgets.add(new Radio(this, line, false));
 							}
 						}
 					}
