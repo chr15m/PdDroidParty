@@ -116,6 +116,7 @@ public class Numberbox extends Widget {
 		canvas.drawPath(path, paint);
 		paint.setStrokeWidth(0);
 		paint.setStyle(Paint.Style.FILL);
+		paint.setTextSize(labelsize);
 		canvas.drawText(formatNumber(val, numwidth), dRect.left + 2, dRect.centerY() + font_height / 2, paint);
 		drawLabel(canvas);
 	}

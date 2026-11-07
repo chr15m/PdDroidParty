@@ -205,7 +205,6 @@ public class Widget {
 			paint.setColor(labelcolor);
 			paint.setTextSize(labelsize);
 			canvas.drawText(label, dRect.left + labelpos[0], dRect.top + labelpos[1] + labelsize / 3, paint);
-			paint.setTextSize(fontsize);
 		}
 		paint.setColor(Color.BLACK);
 	}

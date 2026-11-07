@@ -67,6 +67,7 @@ public class Numberbox2 extends Numberbox {
 		paint.setStrokeWidth(0);
 		paint.setColor(fgcolor);
 		paint.setStyle(Paint.Style.FILL);
+		paint.setTextSize(labelsize);
 		canvas.drawText(formatNumber(val, numwidth), dRect.left + 8, dRect.centerY() + dRect.height() * (float)0.25, paint);
 		drawLabel(canvas);
 	}
