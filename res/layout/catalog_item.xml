@@ -20,13 +20,13 @@
 			>
 		<ImageView
 				android:id="@+id/icon"
-				android:layout_width="40sp"
-				android:layout_height="40sp"
+				android:layout_width="40dp"
+				android:layout_height="40dp"
 				android:layout_gravity="left"
 				android:src="@drawable/icon"
 				android:background="@android:color/white"
-				android:height="40sp"
-				android:maxHeight="40sp"
+				android:height="40dp"
+				android:maxHeight="40dp"
 				android:scaleType="centerInside"
 				/>
 
@@ -36,9 +36,10 @@
 				android:layout_height="wrap_content"
 				android:text="name" android:textStyle="bold"
 				android:layout_weight="1" 
-				android:height="40sp"
+				android:height="40dp"
 				android:gravity="left | center_vertical"
 				android:layout_gravity="left"
+				android:layout_marginLeft="4dp"
 				/>
 	</LinearLayout>
 </LinearLayout>
