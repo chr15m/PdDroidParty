@@ -1,0 +1,8 @@
+#N canvas 61 117 284 223 12;
+#X obj 89 165 hradio 30 1 0 4 radio-s radio-r radio 0 -10 0 20 #0f4710 #faff00 #000000 0;
+#X obj 28 40 vradio 20 1 1 8 radio-s radio-r radio 0 -10 0 12 #feffc6 #000000 #2f004d 2;
+#X obj 95 34 r radio-s;
+#X msg 95 83 set \$1;
+#X obj 95 108 s radio-r;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
