@@ -95,7 +95,8 @@ public class NodeMenu {
 			setupButton(layout, R.id.delete, size != 0);
 			setupButton(layout, R.id.check_updates, false);
 		}
-
+		popupWindow.setFocusable(true);
+		popupWindow.setTouchModal(true);
 		popupWindow.showAsDropDown(itemView);
 	}
 
