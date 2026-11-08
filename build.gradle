@@ -25,6 +25,21 @@ tasks.register("createResRaw") {
     mkdir "res/raw"
 }
 
+tasks.register("createBuild") {
+    mkdir "build"
+}
+
+tasks.register("zipDownloadableDemos", Zip) {
+    group = "Android"
+    description = "Zip the demo patches to resources"
+    archiveFileName = "demos.pdz"
+    excludes = ['links.txt']
+    includes = ['demos/']
+    destinationDirectory = layout.projectDirectory.dir("build");
+    from "droidparty-demos"
+    dependsOn("createBuild")
+}
+
 tasks.register("zipDemos", Zip) {
     group = "Android"
     description = "Zip the demo patches to resources"
@@ -103,6 +118,9 @@ android {
     tasks.named("preBuild") {
         dependsOn("zipDemos")
         dependsOn("zipAbs")
+          // strictly speaking, preBuild doesn't depend on zipDownloadableDemos,
+          // which can be triggered alone with: ./gradlew zipDownloadableDemos
+        dependsOn("zipDownloadableDemos")
     }
 
     buildFeatures {
@@ -135,4 +153,5 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     def pdCoreVersion = "1.4.3-SNAPSHOT"
     implementation "io.github.libpd.android:pd-core:$pdCoreVersion"
+    //implementation fileTree(include: ['*.aar'], dir: 'libs')
 }
