@@ -139,6 +139,12 @@ public class Nodes {
 			return n;
 		}
 
+		public void deleteGroup(String name) {
+			Group n = findGroup(name);
+			if(n == null) return;
+			groups.remove(n);
+		}
+
 		private void processLinksFile(File f) {
 			Log.d(TAG, "in " + getPath() + "/, found links.txt, parsing it...");
 			try {
@@ -149,8 +155,8 @@ public class Nodes {
 			} catch(Exception e) {}
 		}
 
-		public void scan(boolean recursive) {
-			if(link != null && ! recursive) link.scan(this);
+		public void scan(boolean scanlink) {
+			if(link != null && scanlink) link.scan(this);
 			if(!file.isDirectory()) return;
 			File[] files = file.listFiles();
 			for (File f: files) {
@@ -159,7 +165,7 @@ public class Nodes {
 						Item n = get(f.getName());
 					} else {
 						Group n = getGroup(f.getName());
-						if(n != null && recursive) n.scan(true);
+						if(n != null) n.scan(false);
 					}
 				} else if(f.getName().equals("links.txt")) {
 					processLinksFile(f);
