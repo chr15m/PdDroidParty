@@ -99,11 +99,11 @@ public class CatalogView {
 			}
 		};
 		root.file = new File(rootPath);
-		root.scan(true);
+		root.scan(false);
 	}
 	
 	public void scan() {
-		current.scan(false);
+		current.scan(true);
 	}
 
 	public void print() {
@@ -125,10 +125,15 @@ public class CatalogView {
 		});
 	}
 
+	private boolean existsNonEmptyGroup(String name) {
+		Group group = current.findGroup(name);
+		return group != null && group.containsItems();
+	}
+
 	private void refresh() {
 		boolean showBackNode = (current.parent != null);
 		Log.d(TAG, "refreshing " + current.getPath());
-		current.scan(false);
+		current.scan(true);
 		displayedList.clear();
 		// if not root, add 'go back' item
 		if(showBackNode) displayedList.add(current);
@@ -137,7 +142,7 @@ public class CatalogView {
 		sortNodeList(current.items);
 		//displayedList.addAll(current.items);
 		for(Item n: current.items) {
-			if(n.file.exists()) displayedList.add(n);
+			if(n.file.exists() && ! existsNonEmptyGroup(n.name)) displayedList.add(n);
 		}
 
 			// then non-empty dirs
@@ -148,7 +153,7 @@ public class CatalogView {
 
 			// then downloadable patches
 		for(Item n: current.items) {
-			if(!n.file.exists()) displayedList.add(n);
+			if(!n.file.exists()  && ! existsNonEmptyGroup(n.name)) displayedList.add(n);
 		}
 
 		adapter.notify(showBackNode);
@@ -188,6 +193,7 @@ public class CatalogView {
 					Log.d(TAG, "delete " + node.getPath());
 					if(node.file.exists()) {
 						PatchUtils.deleteDirectory(node.file);
+						if(node.parent != null) node.parent.deleteGroup(node.name);
 						refresh();
 					}
 				}
