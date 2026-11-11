@@ -1,0 +1,7 @@
+#!/bin/bash
+
+revno=`git rev-list --count HEAD`
+cwd=`pwd`
+dirname=`basename $cwd`
+
+deken upload --version $revno droidparty-abstractions

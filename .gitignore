@@ -18,3 +18,4 @@ build
 
 # Archive in res/raw are refreshed when building
 res/raw/*
+*.dek*
