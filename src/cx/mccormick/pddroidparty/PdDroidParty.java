@@ -64,6 +64,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	public int dollarzero = -1;
 	private boolean fromSelector = false;
 	private boolean askBeforeQuit = false;
+	private boolean showCpu = false;
 	private String path;
 	private PdService pdService = null;
 	private final Object lock = new Object();
@@ -80,7 +81,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	private final PdDispatcher dispatcher = new PdDispatcher() {
 		@Override
 		public void print(String s) {
-			Log.e("Pd [print]", s);
+			Log.e(TAG, "[print] " + s);
 		}
 	};
 
@@ -152,6 +153,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		askBeforeQuit = sharedPref.getBoolean("askBeforeQuit", false);
 		getOnBackPressedDispatcher().addCallback(backPressedCallback);
 		backPressedCallback.setEnabled(askBeforeQuit);
+		updateShowCpu(true);
 	}
 
 	@Override
@@ -182,6 +184,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			menu.findItem(R.id.midi).setVisible(false);
 		}
 		menu.findItem(R.id.askBeforeQuit).setChecked(askBeforeQuit);
+		menu.findItem(R.id.showCpu).setChecked(showCpu);
 		return true;
 	}
 
@@ -200,12 +203,15 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			askBeforeQuit = ! askBeforeQuit;
 			item.setChecked(askBeforeQuit);
 			backPressedCallback.setEnabled(askBeforeQuit);
-			Log.d(TAG, "ask before quit: " + askBeforeQuit);
 			SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor editor = sharedPref.edit();
 			editor.putBoolean("askBeforeQuit", askBeforeQuit);
 			editor.apply();
-		} else {
+		} else if (id == R.id.showCpu) {
+			showCpu = ! showCpu;
+			item.setChecked(showCpu);
+			updateShowCpu(false);
+		}else {
 			// pass the menu selection through to the MenuBang manager
 			MenuBang.hit(item);
 		}
@@ -358,10 +364,23 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 			ProgressBar progressBar = myToolbar.findViewById(R.id.cpu);
 			@Override public void receiveFloat(String source, float x) {
-				progressBar.setProgress((int)x);
+				if(showCpu) progressBar.setProgress((int)x);
 			}
 		};
 		dispatcher.addListener("_cpu_percent_", listener);
+	}
+
+	private void updateShowCpu(boolean init) {
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		if(init) showCpu = sharedPref.getBoolean("showCpu", false);
+		else {
+			SharedPreferences.Editor editor = sharedPref.edit();
+			editor.putBoolean("showCpu", showCpu);
+			editor.apply();
+		}
+		Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+		View view = myToolbar.findViewById(R.id.showCpu);
+		view.setVisibility(showCpu ? View.VISIBLE : View.GONE);
 	}
 
 	public void startPd() {

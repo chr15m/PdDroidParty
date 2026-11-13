@@ -8,6 +8,9 @@
 		  android:title="@string/audio" />
 	<item android:id="@+id/exit"
 		  android:title="@string/exit" />
+	<item android:id="@+id/showCpu"
+		  android:title="@string/showCpu"
+		  android:checkable="true" />
 	<item android:id="@+id/askBeforeQuit"
 		  android:title="@string/askBeforeQuit"
 		  android:checkable="true" />
