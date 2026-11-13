@@ -13,6 +13,7 @@ import org.puredata.android.service.PdService;
 import org.puredata.android.service.PdPreferences;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.PdDispatcher;
+import org.puredata.core.PdListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -36,12 +37,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Build;
 import android.util.Log;
+import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 import android.os.Handler;
 import androidx.activity.OnBackPressedCallback;
 import android.app.AlertDialog;
@@ -345,6 +348,22 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		return ContextCompat.checkSelfPermission(PdDroidParty.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
 	}
 
+	private void registerCpuPercent() {
+		try {
+			PdBase.openPatch(getFilesDir() + "/_cpu_percent_.pd");
+		} catch (IOException e) {
+			Log.e(TAG, e.toString());
+		}
+		PdListener listener = new PdListener.Adapter() {
+			Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+			ProgressBar progressBar = myToolbar.findViewById(R.id.cpu);
+			@Override public void receiveFloat(String source, float x) {
+				progressBar.setProgress((int)x);
+			}
+		};
+		dispatcher.addListener("_cpu_percent_", listener);
+	}
+
 	public void startPd() {
 		String norecord = getFlag(atomlines, "norecord");
 
@@ -389,6 +408,8 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			Log.e(TAG, e.toString());
 			finish();
 		}
+
+		registerCpuPercent();
 
 		// load the patch in a thread so that it doesn't block UI
 		new Thread() {
