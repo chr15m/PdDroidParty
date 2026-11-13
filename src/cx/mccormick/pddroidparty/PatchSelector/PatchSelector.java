@@ -87,7 +87,10 @@ public class PatchSelector extends AppCompatActivity {
 		if (testForBakedPatch()) {
 			runBackedPatch();
 		} else {
-			if(isFirstRun || isNewInstall) copyDemos();
+			if(isFirstRun || isNewInstall) {
+				copyDemos();
+				addBundledAbstractions();
+			}
 			if (Build.VERSION.SDK_INT >= 23 && Build.VERSION.SDK_INT < 34 && ContextCompat.checkSelfPermission(PatchSelector.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
 				// ask for permission to access it; then runSelectorGui()
 				requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERMISSION_CODE);
@@ -355,6 +358,7 @@ public class PatchSelector extends AppCompatActivity {
 		Resources res = getResources();
 		File libDir = getFilesDir();
 		try {
+			Log.d(TAG, "copying abstractions to: " + libDir.getAbsolutePath());
 			IoUtils.extractZipResource(res.openRawResource(R.raw.abstractions), libDir, true);
 		} catch (IOException e) {
 			Log.e(TAG, e.toString());
