@@ -16,5 +16,15 @@ include $(BUILD_SHARED_LIBRARY)
 
 #---------------------------------------------------------------
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := threadtime
+EXTSRC_DIR := $(LOCAL_PATH)/threadtime/
+LOCAL_CPPFLAGS := -DPD
+LOCAL_SRC_FILES := $(EXTSRC_DIR)/threadtime.c
+LOCAL_SHARED_LIBRARIES = pd
+include $(BUILD_SHARED_LIBRARY)
+
+#---------------------------------------------------------------
+
 $(call import-module,prefab/pd-core)
 
