@@ -16,4 +16,5 @@
 	<string name="edit_links">Edit links</string>
 	<string name="links_hint">add your links here...</string>
 	<string name="askBeforeQuit">Ask before quit</string>
+	<string name="showCpu">Show CPU usage</string>
 </resources>
