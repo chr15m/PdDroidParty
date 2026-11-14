@@ -32,7 +32,12 @@ public class Numberbox extends Widget {
 		float x = Float.parseFloat(atomline[2]) ;
 		float y = Float.parseFloat(atomline[3]) ;
 
-		fontsize = Integer.parseInt(atomline[11]);
+		fontsize = 0;
+		if(atomline.length >= 12) {
+			try {
+				fontsize = Integer.parseInt(atomline[11]);
+			} catch(Exception e) {}
+		}
 		if(fontsize == 0) fontsize = 12;
 		labelsize = fontsize;
 		paint.setTextSize(fontsize);
@@ -75,6 +80,7 @@ public class Numberbox extends Widget {
 	}
 
 	public void updateLabelPos() {
+		if (label == null) return;
 		switch (label_pos) {
 		case LABEL_LEFT:
 			Rect tRect = new Rect();
@@ -110,6 +116,7 @@ public class Numberbox extends Widget {
 		canvas.drawPath(path, paint);
 		paint.setStrokeWidth(0);
 		paint.setStyle(Paint.Style.FILL);
+		paint.setTextSize(labelsize);
 		canvas.drawText(formatNumber(val, numwidth), dRect.left + 2, dRect.centerY() + font_height / 2, paint);
 		drawLabel(canvas);
 	}

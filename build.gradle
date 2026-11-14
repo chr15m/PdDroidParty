@@ -25,6 +25,21 @@ tasks.register("createResRaw") {
     mkdir "res/raw"
 }
 
+tasks.register("createBuild") {
+    mkdir "build"
+}
+
+tasks.register("zipDownloadableDemos", Zip) {
+    group = "Android"
+    description = "Zip the demo patches to resources"
+    archiveFileName = "demos.pdz"
+    excludes = ['links.txt']
+    includes = ['demos/']
+    destinationDirectory = layout.projectDirectory.dir("build");
+    from "droidparty-demos"
+    dependsOn("createBuild")
+}
+
 tasks.register("zipDemos", Zip) {
     group = "Android"
     description = "Zip the demo patches to resources"
@@ -50,11 +65,19 @@ android {
 
     defaultConfig {
         applicationId "cx.mccormick.pddroidparty"
-        versionCode = project.hasProperty('versionCode') ? project.getProperty('versionCode').toInteger() : 1
-        versionName = project.hasProperty('versionName') ? project.getProperty('versionName') : ""
+        versionName = 'git rev-parse HEAD'.execute().text.trim().substring(0, 8)
+        versionCode = 'git rev-list --count HEAD'.execute().text.trim().toInteger() 
+        //versionCode = project.hasProperty('versionCode') ? project.getProperty('versionCode').toInteger() : 1
+        //versionName = project.hasProperty('versionName') ? project.getProperty('versionName') : ""
+        project.logger.lifecycle("defaultConfig versionCode: " + versionCode + " versionName: " + versionName)
 
         minSdkVersion = 28
-        targetSdkVersion = 34
+        targetSdkVersion = 36
+
+        // Uncomment the following 'ndk' section to select only needed CPU architectures in the APK
+        ndk {
+        //    abiFilters 'arm64-v8a'
+        }
     }
 
     sourceSets {
@@ -74,10 +97,13 @@ android {
     signingConfigs {
         release {
             if (project.hasProperty('RELEASE_STORE_FILE')) {
+                project.logger.lifecycle("signingConfigs: signing")
                 storeFile file(RELEASE_STORE_FILE)
                 storePassword RELEASE_STORE_PASSWORD
                 keyAlias RELEASE_KEY_ALIAS
                 keyPassword RELEASE_KEY_PASSWORD
+            } else {
+                project.logger.lifecycle("signingConfigs: couldn't find the store file")
             }
         }
     }
@@ -92,6 +118,9 @@ android {
     tasks.named("preBuild") {
         dependsOn("zipDemos")
         dependsOn("zipAbs")
+          // strictly speaking, preBuild doesn't depend on zipDownloadableDemos,
+          // which can be triggered alone with: ./gradlew zipDownloadableDemos
+        dependsOn("zipDownloadableDemos")
     }
 
     buildFeatures {
@@ -107,6 +136,12 @@ android {
             useLegacyPackaging = true
         }
     }
+
+    externalNativeBuild {
+        ndkBuild {
+            path 'jni/Android.mk'
+        }
+    }
 }
 
 dependencies {
@@ -116,6 +151,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat_version"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    def pdCoreVersion = "1.4.1-SNAPSHOT"
+    def pdCoreVersion = "1.4.3-SNAPSHOT"
     implementation "io.github.libpd.android:pd-core:$pdCoreVersion"
+    //implementation fileTree(include: ['*.aar'], dir: 'libs')
 }

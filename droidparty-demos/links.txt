@@ -1,0 +1,3 @@
+gh users https://api.github.com/repos/chr15m/PdDroidParty/releases/tags/users
+pdz demos https://github.com/chr15m/PdDroidParty/releases/download/demos/demos.pdz
+

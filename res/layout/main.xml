@@ -15,7 +15,31 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    />
+    >
+        <LinearLayout 
+            android:id="@+id/showCpu"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right | center_vertical"
+            >
+                <TextView
+                    android:id="@+id/test"
+                    android:text="CPU"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+                <ProgressBar
+                     android:id="@+id/cpu"
+                     style="@android:style/Widget.ProgressBar.Horizontal"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:progress="25"
+                     android:paddingBottom="3dp"
+
+                     />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
     <LinearLayout
         android:id="@+id/patch_view"
         android:layout_width="fill_parent" 

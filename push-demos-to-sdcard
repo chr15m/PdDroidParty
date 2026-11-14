@@ -2,8 +2,8 @@
 
 if [ "$1" == "" ]
 then
-	adb push droidparty-demos /sdcard/PdDroidParty/droidparty-demos
+	adb push droidparty-demos /sdcard/Android/data/cx.mccormick.pddroidparty/files/
 else
-	adb push droidparty-demos/$1 /sdcard/PdDroidParty/droidparty-demos/$1
+	adb push droidparty-demos/$1 /sdcard/Android/data/cx.mccormick.pddroidparty/files
 fi
 

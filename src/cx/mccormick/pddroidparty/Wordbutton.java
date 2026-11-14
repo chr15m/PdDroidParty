@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -37,6 +38,10 @@ public class Wordbutton extends Bang {
 		paint.setTextSize(Math.round(h * 0.75));
 		paint.setTextAlign(Paint.Align.CENTER);
 		paint.getTextBounds(spacereplace, 0, label.length(), tRect);
+		if(tRect.width() > w) {
+			paint.setTextSize(Math.round(h * 0.75 * w / tRect.width()));
+			paint.getTextBounds(spacereplace, 0, label.length(), tRect);
+		}
 		labelpos[0] = w / 2 - tRect.width() / 2;
 		labelpos[1] = h / 2 - tRect.height() / 2;
 
@@ -59,15 +64,13 @@ public class Wordbutton extends Bang {
 		}
 
 		if (down ? on.draw(canvas) : off.draw(canvas)) {
-			canvas.drawLine(dRect.left + 1, dRect.top, dRect.right, dRect.top,
-			                paint);
-			canvas.drawLine(dRect.left + 1, dRect.bottom, dRect.right,
-			                dRect.bottom, paint);
-			canvas.drawLine(dRect.left, dRect.top + 1, dRect.left,
-			                dRect.bottom, paint);
-			canvas.drawLine(dRect.right, dRect.top + 1, dRect.right,
-			                dRect.bottom, paint);
+			paint.setStyle(Paint.Style.STROKE);
+			paint.setColor(Color.BLACK);
+			paint.setStrokeWidth(1);
+			canvas.drawRect(dRect, paint);
 		}
+		paint.setStrokeWidth(0);
+		paint.setStyle(Paint.Style.FILL);
 		drawCenteredText(canvas, spacereplace);
 	}
 

@@ -1,25 +1,22 @@
 package cx.mccormick.pddroidparty;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.nio.file.Paths;
 
 import org.puredata.android.io.AudioParameters;
-import org.puredata.android.midi.MidiToPdAdapter;
-import org.puredata.android.midi.PdToMidiAdapter;
 import org.puredata.android.service.PdService;
 import org.puredata.android.service.PdPreferences;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.PdDispatcher;
+import org.puredata.core.PdListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -27,7 +24,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.pm.PackageManager;
@@ -35,30 +31,25 @@ import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
-import android.media.midi.MidiDevice;
-import android.media.midi.MidiDeviceInfo;
-import android.media.midi.MidiInputPort;
-import android.media.midi.MidiManager;
-import android.media.midi.MidiOutputPort;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Build;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
+import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 import android.os.Handler;
-import java.nio.file.Paths;
+import androidx.activity.OnBackPressedCallback;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 
 public class PdDroidParty extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 	public PdDroidPatchView patchview = null;
@@ -72,6 +63,8 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	public static final int DIALOG_LOAD = 3;
 	public int dollarzero = -1;
 	private boolean fromSelector = false;
+	private boolean askBeforeQuit = false;
+	private boolean showCpu = false;
 	private String path;
 	private PdService pdService = null;
 	private final Object lock = new Object();
@@ -81,21 +74,14 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	Widget widgetpopped = null;
 	MulticastLock wifiMulticastLock = null;
 	private ProgressDialog progress = null;
-	private MenuItem menuabout = null;
-	private MenuItem menuexit = null;
-	private MenuItem menumidi = null;
-	private MenuItem menuaudio = null;
-
-	private MidiManager midiManager = null;
-	private MidiDevice midiDevice = null;
-	private PdToMidiAdapter pdToMidiAdapter = null;
+	Midi midi;
 
 	private int RECORD_AUDIO_PERMISSION_CODE = 49295197;
 
 	private final PdDispatcher dispatcher = new PdDispatcher() {
 		@Override
 		public void print(String s) {
-			Log.e("Pd [print]", s);
+			Log.e(TAG, "[print] " + s);
 		}
 	};
 
@@ -153,15 +139,27 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
 
 		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
-			setupMidi();
+			midi = new Midi() {
+				@Override
+				void post(final String msg) {
+					PdDroidParty.this.post(msg);
+				}
+			};
+			midi.setup(this);
 		}
+		bindService(new Intent(PdDroidParty.this, PdService.class), serviceConnection, BIND_AUTO_CREATE);
 
-		new Thread() {
-			@Override
-			public void run() {
-				bindService(new Intent(PdDroidParty.this, PdService.class), serviceConnection, BIND_AUTO_CREATE);
-			}
-		} .start();
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		askBeforeQuit = sharedPref.getBoolean("askBeforeQuit", false);
+		getOnBackPressedDispatcher().addCallback(backPressedCallback);
+		backPressedCallback.setEnabled(askBeforeQuit);
+		updateShowCpu(true);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		Log.d(TAG, "onStart");
 	}
 
 	// this callback makes sure that we handle orientation changes without audio glitches
@@ -176,78 +174,44 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	protected void onDestroy() {
 		super.onDestroy();
 		cleanup();
+		Log.d(TAG, "onDestroy");
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		return true;
-	}
-
-	// menu launch yeah
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.clear();
-		// about menu item
-		menuabout = menu.add(0, Menu.FIRST + menu.size(), 0, "About");
-		menuabout.setIcon(android.R.drawable.ic_menu_info_details);
-		// add the menu bang menu items
-		MenuBang.setMenu(menu);
-		// TODO: preferences = ic_menu_preferences
-		// midi menu
-		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
-			menumidi = menu.add(0, Menu.FIRST + menu.size(), 0, "Midi");
-			menumidi.setIcon(android.R.drawable.ic_menu_manage);
+		getMenuInflater().inflate(R.menu.patch_options_menu, menu);
+		if (! getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
+			menu.findItem(R.id.midi).setVisible(false);
 		}
-		// exit menu item
-		menuaudio = menu.add(0, Menu.FIRST + menu.size(), 0, "Audio");
-		menuexit = menu.add(0, Menu.FIRST + menu.size(), 0, "Exit");
-		menuexit.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-		return super.onPrepareOptionsMenu(menu);
+		menu.findItem(R.id.askBeforeQuit).setChecked(askBeforeQuit);
+		menu.findItem(R.id.showCpu).setChecked(showCpu);
+		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item == menuabout) {
-			// load in the about dialog contents from assets/about.html
-			StringBuffer sb = new StringBuffer();
-			try {
-				AssetManager assets = getAssets();
-				InputStreamReader reader = new InputStreamReader(assets.open("about.html"), "UTF-8");
-				BufferedReader br = new BufferedReader(reader);
-				String line = br.readLine();
-				while(line != null) {
-					sb.append(line + "\n");
-					line = br.readLine();
-				}
-				sb.append("Pure Data version: " + PdVersionString.get());
-			} catch (IOException e) {
-				sb.append("Copyright Chris McCormick, 2011");
-			}
-
-			// convert the string to HTML for the about dialog
-			final SpannableString s = new SpannableString(Html.fromHtml(sb.toString()));
-			Linkify.addLinks(s, Linkify.ALL);
-
-			AlertDialog ab = new AlertDialog.Builder(this)
-			.setTitle("About")
-			.setIcon(android.R.drawable.ic_dialog_info)
-			.setMessage(s)
-			.setPositiveButton("ok", null)
-			.create();
-			ab.show();
-			// make the links clickable
-			((TextView)ab.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-		} else if (item == menuexit) {
+		int id = item.getItemId();
+		if (id == R.id.about) {
+			About.open(this);
+		} else if (id == R.id.exit) {
 			finish();
-		} else if (menumidi != null && item == menumidi) {
-			if (midiDevice != null) {
-				disconnectMidiDevice(true);
-			} else {
-				chooseMidiDevice();
-			}
-		} else if(item == menuaudio) {
+		} else if (id == R.id.midi) {
+			midi.menuClicked(this);
+		} else if(id == R.id.audio) {
 			startActivity(new Intent(this, PdPreferences.class));
-		} else {
+		} else if(id == R.id.askBeforeQuit) {
+			askBeforeQuit = ! askBeforeQuit;
+			item.setChecked(askBeforeQuit);
+			backPressedCallback.setEnabled(askBeforeQuit);
+			SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = sharedPref.edit();
+			editor.putBoolean("askBeforeQuit", askBeforeQuit);
+			editor.apply();
+		} else if (id == R.id.showCpu) {
+			showCpu = ! showCpu;
+			item.setChecked(showCpu);
+			updateShowCpu(false);
+		}else {
 			// pass the menu selection through to the MenuBang manager
 			MenuBang.hit(item);
 		}
@@ -262,34 +226,30 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		}
 	}
 
-	private String midiDeviceGetName(MidiDeviceInfo device) {
-		String name = device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME);
-		if (name == null) {
-			name = device.getProperties().getString(MidiDeviceInfo.PROPERTY_PRODUCT);
+	private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(false) {
+		@Override
+		public void handleOnBackPressed() {
+			showQuitDialog();
 		}
-		return name;
-	}
+	};
 
-	private void setupMidi() {
-		midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
-		if (midiManager == null) {
-			Log.w(TAG, "No MIDI support");
-			return;
-		}
-		midiManager.registerDeviceCallback(new MidiManager.DeviceCallback() {
-			@Override
-			public void onDeviceAdded(MidiDeviceInfo device) {
-				post("MIDI device added: " + midiDeviceGetName(device));
-			}
-
-			@Override
-			public void onDeviceRemoved(MidiDeviceInfo device) {
-				post("MIDI device removed: " + midiDeviceGetName(device));
-				if (midiDevice != null && midiDevice.getInfo().equals(device)) {
-					disconnectMidiDevice(false);
+	private void showQuitDialog() {
+		new AlertDialog.Builder(this)
+			.setTitle("Confirm quit")
+			.setMessage("Are you sure you want to leave?")
+			.setPositiveButton("Okay", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
 				}
-			}
-		}, null);
+			})
+			.setNegativeButton("Cancel", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			})
+			.show();
 	}
 
 	// send a Pd atom-string 's' to a particular receiver 'dest'
@@ -316,7 +276,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 	public void registerReceiver(String name, Widget w) {
 		// do $0 replacement
 		String realname = replaceDollarZero(name);
-		Log.e(TAG, "Receiver: " + realname);
+		//Log.e(TAG, "Receiver: " + realname);
 		DroidPartyReceiver r = receivemap.get(realname);
 		if (r == null) {
 			r = new DroidPartyReceiver(patchview, w);
@@ -352,7 +312,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		getSupportActionBar().setTitle(appname + " - " + name);
 	}
 
-	// initialise Pd asking for the desired sample rate, parameters, etc.
+	// initialise Pd service
 	private void initPd() {
 		Context context = this.getApplicationContext();
 		// make sure netreceive can receive broadcast UDP packets
@@ -360,9 +320,6 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		Log.e(TAG, "Got Multicast Lock (before)? " + wifiMulticastLock.isHeld());
 		wifiMulticastLock.acquire();
 		Log.e(TAG, "Got Multicast Lock (after)? " + wifiMulticastLock.isHeld());
-		// set up the midi stuff
-		pdToMidiAdapter = new PdToMidiAdapter();
-		PdBase.setMidiReceiver(pdToMidiAdapter);
 
 		// set a progress dialog running
 		progress = new ProgressDialog(this);
@@ -371,22 +328,14 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		progress.setIndeterminate(true);
 		progress.show();
 
-		new Thread() {
-			@Override
-			public void run() {
-				// get the actual lines of atoms from the patch
-				String norecord = getFlag(atomlines, "norecord");
-
-				if (Build.VERSION.SDK_INT >= 23 && norecord == null && !hasRecordPermission()) {
-					// Show user dialog to grant permission to record audio
-					requestPermissions(new String[] {Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_PERMISSION_CODE);
-				} else {
-					startPd();
-				}
-			}
-		} .start();
+		String norecord = getFlag(atomlines, "norecord");
+		if (Build.VERSION.SDK_INT >= 23 && norecord == null && !hasRecordPermission()) {
+			// Show user dialog to grant permission to record audio
+			requestPermissions(new String[] {Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_PERMISSION_CODE);
+		} else {
+			startPd();
+		}
 	}
-
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -396,18 +345,42 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			}
 			// regardless of whether permission to record is granted, we still start the patch
 			// (with no audio input if it has no permission)
-			new Thread() {
-				@Override
-				public void run() {
-					startPd();
-				}
-			} .start();
+			startPd();
 			return;
 		}
 	}
 
 	public boolean hasRecordPermission() {
 		return ContextCompat.checkSelfPermission(PdDroidParty.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+	}
+
+	private void registerCpuPercent() {
+		try {
+			PdBase.openPatch(getFilesDir() + "/_cpu_percent_.pd");
+		} catch (IOException e) {
+			Log.e(TAG, e.toString());
+		}
+		PdListener listener = new PdListener.Adapter() {
+			Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+			ProgressBar progressBar = myToolbar.findViewById(R.id.cpu);
+			@Override public void receiveFloat(String source, float x) {
+				if(showCpu) progressBar.setProgress((int)x);
+			}
+		};
+		dispatcher.addListener("_cpu_percent_", listener);
+	}
+
+	private void updateShowCpu(boolean init) {
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		if(init) showCpu = sharedPref.getBoolean("showCpu", false);
+		else {
+			SharedPreferences.Editor editor = sharedPref.edit();
+			editor.putBoolean("showCpu", showCpu);
+			editor.apply();
+		}
+		Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+		View view = myToolbar.findViewById(R.id.showCpu);
+		view.setVisibility(showCpu ? View.VISIBLE : View.GONE);
 	}
 
 	public void startPd() {
@@ -449,28 +422,35 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 
 		// go ahead and intialise the audio
 		try {
-			//pdService.initAudio(sRate, nIn, nOut, -1);   // negative values default to PdService preferences
 			pdService.initAudio(-1, -1, -1, -1);   // negative values default to PdService preferences
 		} catch (IOException e) {
 			Log.e(TAG, e.toString());
 			finish();
 		}
 
-		try {
-			dollarzero = PdBase.openPatch(path.toString());
-		} catch (IOException e) {
-			post(e.toString() + "; exiting now");
-			finish();
-		}
-		patchview.buildUI(atomlines);
-		// start the audio thread
-		Resources res = getResources();
-		String name = res.getString(R.string.app_name);
-		pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
-		// tell the patch view everything has been loaded
-		patchview.loaded();
-		// dismiss the progress meter
-		progress.dismiss();
+		registerCpuPercent();
+
+		// load the patch in a thread so that it doesn't block UI
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					dollarzero = PdBase.openPatch(path.toString());
+				} catch (IOException e) {
+					Log.e(TAG, "startPd() opening " + path.toString() + ": " + e.toString() + "; exiting now");
+					finish();
+				}
+				patchview.buildUI(atomlines);
+				// start the audio thread
+				Resources res = getResources();
+				String name = res.getString(R.string.app_name);
+				pdService.startAudio(new Intent(PdDroidParty.this, PdDroidParty.class), R.drawable.icon, name, "Return to " + name + ".");
+				// tell the patch view everything has been loaded
+				patchview.loaded();
+				// dismiss the progress meter
+				progress.dismiss();
+			}
+		}.start();
 	}
 
 	private void restartAudio() {
@@ -536,13 +516,7 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 			// already unbound
 			pdService = null;
 		}
-		// release midi
-		disconnectMidiDevice(false);
-		if (midiManager != null) {
-			// The callback cannot be unregistered, so we just null out the manager.
-			// See https://developer.android.com/reference/android/media/midi/MidiManager#unregisterDeviceCallback(android.media.midi.MidiManager.DeviceCallback)
-			midiManager = null;
-		}
+		midi.finish();
 		// release the lock on wifi multicasting
 		if (wifiMulticastLock != null && wifiMulticastLock.isHeld())
 			wifiMulticastLock.release();
@@ -569,20 +543,6 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		}
 	}
 
-	private void disconnectMidiDevice(boolean verbose) {
-		if (midiDevice != null) {
-			try {
-				if(verbose) post("Closing MIDI device: " + midiDeviceGetName(midiDevice.getInfo()));
-				pdToMidiAdapter.close(0); // close pdToMidi port 0 (the only one for now)
-				midiDevice.close();
-			} catch (IOException e) {
-				Log.e(TAG, "Error closing MIDI device", e);
-				if(verbose) post("Error closing MIDI device.");
-			}
-			midiDevice = null;
-		}
-	}
-
 	public String getPatchRelativePath(String dir) {
 		String root = getPatchFile().getParent();
 		if (dir.equals(".")) {
@@ -592,87 +552,6 @@ public class PdDroidParty extends AppCompatActivity implements SharedPreferences
 		} else {
 			return dir;
 		}
-	}
-
-	private void chooseMidiDevice() {
-		if (midiManager == null) {
-			post("MIDI not available");
-			return;
-		}
-		final MidiDeviceInfo[] devices = midiManager.getDevices();
-		if (devices.length == 0) {
-			post("No MIDI devices found");
-			return;
-		}
-		final ArrayList<MidiDeviceInfo> deviceInfos = new ArrayList<>();
-		final ArrayList<String> deviceNames = new ArrayList<>();
-		for (MidiDeviceInfo info : devices) {
-			String name = midiDeviceGetName(info);
-			if(name != null) {
-				deviceInfos.add(info);
-				deviceNames.add(name);
-				Log.v(TAG, "adding midi device: " + info.toString() + " : " + name);
-			} else {
-				Log.v(TAG, "discarding midi device: " + info.toString());
-			}
-		}
-		if (deviceInfos.size() == 0) {
-			post("No MIDI devices found");
-			return;
-		}
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Choose MIDI Device");
-		builder.setItems(deviceNames.toArray(new String[0]), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				connectMidiDevice(deviceInfos.get(which));
-			}
-		});
-		builder.create().show();
-	}
-
-	private void connectMidiDevice(MidiDeviceInfo info) {
-		midiManager.openDevice(info, new MidiManager.OnDeviceOpenedListener() {
-			@Override
-			public void onDeviceOpened(MidiDevice device) {
-				if (device == null) {
-					post("Could not open MIDI device");
-					return;
-				}
-				midiDevice = device;
-				post("MIDI device opened: " + midiDeviceGetName(device.getInfo()));
-
-				// Input from device to Pd
-
-				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
-					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
-						MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
-						if (outputPort != null) {
-							outputPort.connect(new MidiToPdAdapter(0));
-							post("MIDI input enabled on port " + portInfo.getPortNumber());
-							break; // Connect to first available output port
-						}
-					}
-				}
-				
-
-				// Output from Pd to device
-
-				for (MidiDeviceInfo.PortInfo portInfo : device.getInfo().getPorts()) {
-					if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
-						MidiInputPort inputPort = device.openInputPort(portInfo.getPortNumber());
-						if (inputPort != null) {
-							pdToMidiAdapter.open(inputPort, 0);
-							post("MIDI output enabled on port " + portInfo.getPortNumber());
-							break; // Connect to first available input port
-						} else {
-							Log.d(TAG, "unable to open Midi inputPort");
-						}
-					}
-				}
-
-			}
-		}, null);
 	}
 
 	@Override
