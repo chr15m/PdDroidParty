@@ -151,7 +151,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat_version"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    def pdCoreVersion = "1.4.3-SNAPSHOT"
+    def pdCoreVersion = "1.4.4-SNAPSHOT"
     implementation "io.github.libpd.android:pd-core:$pdCoreVersion"
     //implementation fileTree(include: ['*.aar'], dir: 'libs')
 }
