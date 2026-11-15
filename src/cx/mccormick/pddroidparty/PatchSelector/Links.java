@@ -2,6 +2,10 @@ package cx.mccormick.pddroidparty.PatchSelector;
 
 import android.util.Log;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -105,8 +109,24 @@ public class Links {
 		}
 	}
 
+	public static String[] splitWords(String s) {
+		List<String> tokens = new ArrayList<>();
+		// Matches either "anything inside quotes" OR non-whitespace sequences
+		Pattern pattern = Pattern.compile("\"([^\"]*)\"|(\\S+)");
+		Matcher matcher = pattern.matcher(s);
+
+		while (matcher.find()) {
+			if (matcher.group(1) != null) {
+				tokens.add(matcher.group(1)); // Add text without quotes
+			} else {
+				tokens.add(matcher.group(2)); // Add unquoted word
+			}
+		}
+		return tokens.toArray(new String[0]);
+	}
+
 	private static Link buildLink(String linksLine) {
-		String[] words = linksLine.split(" ");
+		String[] words = splitWords(linksLine);
 		if(words.length < 3) return null;
 		try {
 			URL url = new URL(words[2]);
