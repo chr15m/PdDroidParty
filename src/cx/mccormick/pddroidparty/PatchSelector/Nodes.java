@@ -148,10 +148,8 @@ public class Nodes {
 		private void processLinksFile(File f) {
 			Log.d(TAG, "in " + getPath() + "/, found links.txt, parsing it...");
 			try {
-				List<String> lines = Files.readAllLines(Paths.get(f.getPath()));
-				for(String line: lines) {
-					Links.processLinkLine(line, this);
-				}
+				byte[] encoded = Files.readAllBytes(Paths.get(f.getPath()));
+				Links.processLinksString(new String(encoded), this);
 			} catch(Exception e) {}
 		}
 
