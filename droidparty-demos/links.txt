@@ -1,3 +1,28 @@
 gh users https://api.github.com/repos/chr15m/PdDroidParty/releases/tags/users
 pdz demos https://github.com/chr15m/PdDroidParty/releases/download/demos/demos.pdz
 
+#ENDLINKS
+
+LINKS HOWTO
+
+Each link line must contain 3 tokens: TYPE NAME URL
+Tokens can be enclosed in double quotes if they contain spaces (mostly for NAME)
+
+Type can be: "pdz" for patch, "links" for text file containing links, "gh" for github API
+exemples:
+
+pdz "my super piano" https://my_site/my_patches/piano.pdz
+-> will install piano.pdz as "my super piano"
+
+links "my synths collection" https://my_site/my_patches/synths.txt
+-> will parse the links in synths.txt under new dir "my synths collection/"
+
+gh user_patches https://api.github.com/repos/USER/REPO/releases/tags/TAG
+-> will add pdz assets of the TAG release into new dir "user_patches/";
+if release notes contains links, add them too.
+
+gh user_patches2 https://api.github.com/repos/USER/REPO/contents/export_dir
+-> will add pdz files contained in the "/export_dir/" of the repo and its subdirs into new dir "user_patches2/";
+also, parse any file called "links.txt" in "export_dir/" or any subdir.
+
+
