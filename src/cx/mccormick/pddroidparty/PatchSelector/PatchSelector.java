@@ -221,8 +221,8 @@ public class PatchSelector extends AppCompatActivity {
 		}
 	}
 
-	private void processZip(String zipPath, String destDirPath, String checkName) {
-		boolean runAndQuit = (checkName == null); // checkName is only set by the PatchSelector
+	private void processZip(String zipPath, String destDirPath, String installName) {
+		boolean runAndQuit = (installName == null); // installName is only set by the PatchSelector
 
 		String tempPath = patchesPath + "pdTemp/";
 		PatchUtils.deleteDirectory(new File(tempPath));
@@ -236,15 +236,8 @@ public class PatchSelector extends AppCompatActivity {
 			Log.e(TAG, "processZip() bad zipfile");
 			return;
 		}
-		if(checkName != null && ! checkName.equals(patchName)) {
-			Toast.makeText(PatchSelector.this,
-				"The name of the zip and its first directory don't match: " + checkName + " / " + patchName,
-				Toast.LENGTH_LONG)
-				.show();
-			Log.e(TAG, "processZip() the name of the zip and its first directory don't match: " + checkName + " / " + patchName);
-			return;
-		}
-		String patchPath = patchesPath + destDirPath + "/" + patchName;
+		if(installName == null) installName = patchName;
+		String patchPath = patchesPath + destDirPath + "/" + installName;
 		String installedVersion = PatchUtils.getPatchVersion(patchPath);
 		if (installedVersion == null) { // patch isn't installed yet
 			try {
