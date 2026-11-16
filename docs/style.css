@@ -1,0 +1,249 @@
+body {
+  margin-top: 20px;
+  font-family: 'Didact Gothic', sans-serif;
+  font-size: 1.5em;
+  color: #333333;
+  background-color: #eee;
+}
+
+header {
+  max-width: 1024px;
+  margin: auto;
+  font-size: 2em;
+}
+
+nav {
+  margin: 0.5em auto;
+  text-align: right;
+  max-width: 1024px;
+}
+
+nav a + a {
+  margin-left: 1em;
+}
+
+main {
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+  background: rgba(255, 255,255,0.5);
+  padding: 1em;
+  max-width: 1024px;
+  border-radius: 5px;
+}
+
+footer {
+  text-align: center;
+  color: #888;
+}
+
+img#icon {
+  margin: 0px 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #0ca624; /*#a0c030;*/
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+    border: 1px solid silver;
+    padding: 0.2em;
+}
+
+header a {
+  color: #333;
+}
+
+img {
+  display: block;
+  margin: 2em auto;
+  text-align: center;
+}
+
+h1 {
+  font-size: 1.5em;
+}
+
+h2 {
+  font-size: 1.25em;
+}
+
+.google-play-link {
+}
+
+.google-play-link img {
+  display: block;
+  width: 400px;
+  max-width: 100%;
+  margin: auto;
+}
+
+.screenshots > p {
+  text-align: center;
+}
+
+.screenshots img {
+  display: inline-block;
+  max-width: 90%;
+  margin: auto;
+  width: 300px; 
+}
+
+.app-link {
+  margin: 3em 0.5em;
+}
+
+.app-link h4 {
+ text-align: center;
+}
+
+.app-link img {
+  max-width: 400px;
+  width: 90%;
+  display: block;
+  margin: auto;
+}
+
+ul#downloads li {
+  font-family: "Courier New", monospace;
+}
+
+ul#downloads li:first-child {
+  font-family: 'Didact Gothic', sans-serif;
+  font-size: 1.5em;
+  list-style-type: none;
+  margin-bottom: 1em;
+}
+
+fieldset {
+  border: 2px dashed #0ca624;
+  display: block;
+  width: 500px;
+  height: 300px;
+  margin: 5em auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+#fileselect {
+  border: 1px solid silver;
+}
+
+.demo img {
+  max-width: 100%;
+  border: 1px solid #555;
+  border-radius: 3px;
+  box-shadow: 0px 0px 10px #aaa;
+}
+
+/* mobile overrides */
+
+@media only screen and (max-width: 600px) {
+  header {
+    text-align: center;
+    font-size: 1.25em;
+  }
+
+  header img#icon {
+    display: block;
+    margin: 0.25em auto;
+  }
+
+  nav {
+    text-align: center;
+    font-size: 1em;
+    margin-bottom: 1.5em;
+  }
+
+  nav a {
+    display: block;
+    margin: 0.5em;
+  }
+
+  body {
+    line-height: 1.5;
+  }
+}
+
+/* tinysignup */
+
+.tinysignup {
+  text-align: center;
+  margin-bottom: 4em;
+}
+
+.tinysignup p {
+  text-align: center;
+  margin-top: 4em;
+}
+
+.tinysignup input {
+  border: 2px solid silver;
+  padding: 0.25em;
+  font-size: 1em;
+  width: 20em;
+  max-width: 100%;
+  border-radius: 5px;
+  margin-top: 0.25em;
+}
+
+.tinysignup button {
+  border: 2px solid #0ca624;
+  padding: 0.2em 1.5em;
+  font-size: 1em;
+  border-radius: 5px;
+  background-color: #0ca624;
+  color: white;
+  margin-top: 0.25em;
+  margin-left: 0.25em;
+}
+
+.tinysignup .spinner {
+  
+}
+
+.tinysignup .message {
+  border: 2px solid #0ca624;
+  padding: 0.5em 1.5em;
+  font-size: 1em;
+  background-color: #0ca624;
+  color: white;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  background-color: #0ca624;
+  border-radius: 5px;
+
+  margin: 40px auto;
+  animation: spinner 1.2s infinite ease-in-out;
+}
+
+@-webkit-keyframes spinner {
+  0% { -webkit-transform: perspective(120px) }
+  50% { -webkit-transform: perspective(120px) rotateY(180deg) }
+  100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+}
+
+@keyframes spinner {
+  0% { 
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg) 
+  } 50% { 
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg) 
+  } 100% { 
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
+}
+
