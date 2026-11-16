@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="en-us"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> PdDroidParty downloads</title>
+    <link href="https://fonts.googleapis.com/css?family=Didact+Gothic" rel="stylesheet" type="text/css">
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <meta name="title" content="Run your Pure Data patches on Android">
+    <meta name="description" content="PdDroidParty is an open source Android app you can use to run your Pure Data patches on Android.">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://droidparty.net/">
+    <meta property="og:title" content="Run your Pure Data patches on Android">
+    <meta property="og:description" content="PdDroidParty is an open source Android app you can use to run your Pure Data patches on Android.">
+    <meta property="og:image" content="https://droidparty.net/img/header-image-1024-500.jpg">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://droidparty.net/">
+    <meta property="twitter:title" content="Run your Pure Data patches on Android">
+    <meta property="twitter:description" content="PdDroidParty is an open source Android app you can use to run your Pure Data patches on Android.">
+    <meta property="twitter:image" content="https://droidparty.net/img/header-image-1024-500.jpg">
+  </head>
+<body>
+  <header>
+    <img src="img/icon.png" id="icon">
+    <a href="index.html">PdDroidParty</a>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="documentation.html">Documentation</a>
+    <a href="sharing.html">Sharing patches</a>
+    <a href="privacy.html">Privacy</a>
+  </nav>
+
+  <main id="content"><h1>How to share PdDroidParty patches</h1>
+  <p>
+  </p>
+
+<h2>Zipping patches to "pdz"</h2>
+<p>
+You can share your PdDroidParty compatible patches with people by zipping up the folder with your patch in it
+and renaming the file extension from <code>.zip</code> to <code>.pdz</code>.
+</p><p>The name of the top level directory will be used as the name of the patch, when the name hasn't been specified to PdDroidParty by other ways (see later).
+For example MyPatch.pdz will contain a folder called <code>MyPatch/</code>, which contains your files like <code>droidparty_main.pd</code> etc.
+</p><p>You can also include in <code>droidparty_main.pd</code> a Pd comment with the text "version: 99" to set the version of your patch so that people receiving them will know
+what version they are being asked to install. Each time you release a new version of your <code>.pdz</code> file you can increment the version number.
+</p>
+
+<h2>Sharing the "pdz"</h2>
+<p>You can share the <code>pdz</code> in different ways.</p>
+<ul><li>
+When you send a <code>pdz</code> file to somebody, PdDroidParty will launch and run the patch on their device if they have the app installed.
+</li></ul>
+<p>
+If you make the <code>pdz</code> file available for download on a server,
+there are several ways to provide the URL to PdDroidParty so it can download it.
+</p>
+<ul>
+<li>
+Locally: by editing the <code>links</code> in PdDroidParty (menu -> Edit links), you can enter the URLs of remote <code>pdz</code> files.
+You can even enter in the <code>links</code> the URL of a remote "links" text file, where several patches URLs and further links redirections are listed.
+</li>
+<li>
+Publically: if you provide us the URLs of your patches, or even better, the URL of your "links" file, we can register it in the "users" list,
+so that anybody can download your patches easily.
+<br>To do this, open an issue in the PdDroidParty github, or write to the Pd list, or to our personal addresses.
+</li>
+</ul>
+<h3>How the "links" file works</h3>
+<p>
+Each link line must contain 3 tokens: <b>TYPE NAME URL</b>
+<br>Tokens can be enclosed in double quotes if they contain spaces (mostly for <b>NAME</b>)
+</p>
+
+<p>
+<b>TYPE</b> can be: <code>pdz</code> for patch, <code>links</code> for text file containing links, <code>gh</code> for github API.
+<br>Exemples:
+</p>
+
+<p>
+<code>pdz "my super piano" https://my_site/my_patches/piano.pdz</code>
+<br>will install piano.pdz as "my super piano"
+</p>
+
+<p>
+<code>links "my synths collection" https://my_site/my_patches/synths.txt</code>
+<br>will parse the links in synths.txt under new dir "my synths collection/"
+</p>
+
+<p>
+<code>gh user_patches https://api.github.com/repos/USER/REPO/releases/tags/TAG</code>
+<br>will add pdz assets of the TAG release into new dir "user_patches/";
+if release notes contains links, add them too.
+</p>
+
+<p>
+<code>gh user_patches2 https://api.github.com/repos/USER/REPO/contents/export_dir</code>
+<br>will add pdz files contained in the "/export_dir/" of the repo and its subdirs into new dir "user_patches2/";
+also, parse any file called "links.txt" in "export_dir/" or any subdir.
+</p>
+
+For more details about how the "links" work, see the <a href="https://github.com/chr15m/PdDroidParty/blob/master/LINKS_HOWTO.md">LINKS HOWTO</a>
+</p>
+  <footer>
+    <p>Copyright <a href="https://mccormick.cx">Chris McCormick</a> since 2011.</p>
+    <p><a href="https://twitter.com/mccrmx">@mccrmx</a></p>
+  </footer>
+
+
+</body></html>

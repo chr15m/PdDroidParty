@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="en-us"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> How to make Pure Data patches for PdDroidParty</title>
+    <link href="https://fonts.googleapis.com/css?family=Didact+Gothic" rel="stylesheet" type="text/css">
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <meta name="title" content="Run your Pure Data patches on Android">
+    <meta name="description" content="PdDroidParty is an open source Android app you can use to run your Pure Data patches on Android.">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://droidparty.net/">
+    <meta property="og:title" content="Run your Pure Data patches on Android">
+    <meta property="og:description" content="PdDroidParty is an open source Android app you can use to run your Pure Data patches on Android.">
+    <meta property="og:image" content="https://droidparty.net/img/header-image-1024-500.jpg">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://droidparty.net/">
+    <meta property="twitter:title" content="Run your Pure Data patches on Android">
+    <meta property="twitter:description" content="PdDroidParty is an open source Android app you can use to run your Pure Data patches on Android.">
+    <meta property="twitter:image" content="https://droidparty.net/img/header-image-1024-500.jpg">
+  </head>
+<body>
+  <header>
+    <img src="img/icon.png" id="icon">
+    <a href="index.html">PdDroidParty</a>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="documentation.html">Documentation</a>
+    <a href="sharing.html">Sharing patches</a>
+    <a href="privacy.html">Privacy</a>
+  </nav>
+
+  <main id="content"><h1>How to make Pure Data patches for PdDroidParty</h1>
+<ol>
+<li>
+<p>Create a new Pd patch called <code>droidparty_main.pd</code> in a subdirectory.
+This patch will contain your GUI objects like sliders, toggles, numberboxes etc.
+If you have an existing patch you want to run with PdDroidParty you can create
+the <code>droidparty_main.pd</code> patch in the same directory.</p>
+</li>
+<li>
+<p>PdDroidParty GUI patches will be scaled to fit the screen of the device.
+Your patches should have the rough dimensions of a phone/tablet in landscape mode
+(e.g. 3:2 aspect ratio or e.g. 480x320 should usually work well).
+If it's not exact it doesn't matter - the GUI elements will be scaled.
+If the width of your patch is greater than the height it will be show in landscape mode,
+otherwise it will be show in portrait mode.</p>
+</li>
+<li>
+<p>Numberbox, Sliders, Radiobuttons, Toggle, Comment, Bang, and Canvas are currently rendered by PdDroidParty.
+A few other GUI objects, specific to PdDroidParty, are emulated on Pd by dedicated abstractions.
+See the Abstractions section below for more details.</p>
+</li>
+<li>
+<p>All GUI elements should communicate with the main audio patches using send and receive only.
+You can usually set send and receive for each GUI by right clicking on the object and choosing 'properties' in Pd.
+Do not directly connect cables to the GUI elements as they won't work.
+It helps to keep the GUIs on their own in the <code>droidparty_main.pd</code> file and have it include the logic
+of your patch as an abstraction or subpatch containing senders and receivers for interfacing with GUI elements.
+This is good patch design practice anyway as it is basically a model-view-controller methodology.</p>
+</li>
+<li>
+<p>Copy the entire directory containing your <code>droidparty_main.pd</code> onto your device under a directory
+called <code>/sdcard/Android/data/cx.mccormick.pddroidparty/files</code>.
+For example your directory called <code>MyPdPatch</code> containing a patch called <code>droidparty_main.pd</code>
+could be copied to <code>/sdcard/Android/data/cx.mccormick.pddroidparty/files/MyPdPatch</code> on your device.
+<br>You can usually do this over USB with most phones and tablets by mounting your device as a hard drive on your computer.
+<br>Another way is to use <code>adb</code> commandline utility, by typing in a terminal located in the folder containing
+<code>MyPdPatch</code>: <br><code>adb push MyPdPatch /sdcard/Android/data/cx.mccormick.pddroidparty/files/</code>.
+However, the device must be in developer mode to make this to work.
+<br>Finally, you can also upload you patch to a server and add the URL to PdDroidParty's links,
+see <a href="sharing.html">How to share PdDroidParty patches</a>.
+</li>
+<li>
+<p>Run PdDroidParty and you will find an entry named after your subdirectory. Tap it to load your patch.</p>
+</li>
+</ol>
+<h2>Abstractions</h2>
+<p>As well as the supported internal objects listed above, the following abstractions work in Pd and are emulated natively on the device.
+You can download these abstractions from Pd's menu <code>Tools/Find externals</code>, search for <code>droidparty-abstractions</code>.
+Open the file <code>droidparty-abstractions/_OVERVIEW.pd</code> for more details and specific usage:</p>
+<ul>
+<li><code>[wordbutton]</code> - It's like a bang, but on the device it looks like a box with a word in it.</li>
+<li><code>[numberbox]</code> - It's like a numberbox, but on the device it stretches to fit a rectangle. (easier layout).</li>
+<li><code>[taplist]</code> - Lets the user tap through a list of symbols/floats.</li>
+<li><code>[touch]</code> - Kaospad style 2d touch surface, with multitouch ability on the device.</li>
+<li><code>[menubang]</code> - Puts an entry into the menu which sends a bang when the user selects it. Optional icon is called menubang-xxxx.png where xxxx is the name of your menubang.</li>
+<li><code>[loadsave]</code> - Wraps and openpanel/savepanel type of interface into a single abstraction that lets the user specify or choose filenames using the Android interface.</li>
+</ul>
+<h2>MIDI</h2>
+<p>You can connect your MIDI controllers and keyboards to your device running PdDroidParty,
+ and use them to control your patches with Pd's built-in midi objects like [ctlin] and [notein].
+ You will probably need an OTG USB cable to plug in your MIDI devices.
+ Once you have plugged in your MIDI device and loaded a PdDroidParty path, use the menu to enable access to the device in the software.</p>
+<h2>Fonts</h2>
+<p>You can theme all of the defult non-SVG-themed widgets with a font other than the built-in courier font. Put a TTF font file of your choice in the patch directory and call it 'font.ttf' if you want aliased rendering, or 'font-antialiased.ttf' if you want anti-aliased rendering. This will cause PdDroidParty to render that patch with the font you have chosen.</p>
+<h2>SVG Widgets</h2>
+<p>It's possible to theme your patches with SVG images now. You can theme the following Pd GUI objects: canvas, numberbox (the abstraction), sliders, taplist (abstraction), toggle, touch (abstraction), wordbutton (abstraction).</p>
+<div class="screenshots">
+<p><img src="img/droidparty-phone-screenshot-2.png" alt="Pd patch running on Android with SVG UIs"></p>
+</div>
+<p>To theme e.g. the toggle, create an SVG called Toggle.svg in the directory holding your <code>droidparty_main.pd</code> patch. You can also have separate images for specific toggles by using their send name or label name in the SVG filename. For example a toggle with a send name of "mysend" could have an SVG called Toggle-mysend.svg which would override the default Toggle.svg image. Send and label names are split on the hyphen ("-") character so for example if you have two toggles with send names of mysend-1 and mysend-2 you could theme them separately with Toggle-mysend-1.svg and Toggle-mysend-2.svg or you could theme them with the same image by creating a file called Toggle-mysend.svg which would apply to both.</p>
+<p>The SVG renderer is not very robust, so the best way to design your own widget graphics is to start with the widget graphics in droidparty-tests/svg-widgets/*.svg and modify them. The renderer only really works on plain paths, so make sure you convert any objects like rectangles or circles to plain SVG paths. The renderer used is a fork of <a href="http://code.google.com/p/svg-android/">svg-android</a> with some support for <a href="http://inkscape.org/">Inkscape</a> hacked in.</p>
+<p>You can put three special attributes on the SVG element using a text editor, for font customisation. They are textFont, textColor, textOffset and textAntialias. textOffset is a relative value like "0.25 0.25" which will move the text down and to the right relative to the center of the widget being drawn. textFont should be the name of the font file excluding the extension. textAntialias should be "true" or "false". textColor is a hex string like "#ffffff".</p>
+<h2>ViewPort canvas</h2>
+<p>It is possible to map only a part of the main Pd window to the actual device screen, by using a specially configured canvas GUI:</p>
+<ul>
+<li>In the main pd window, create a canvas gui (menu Put -&gt; Canvas)</li>
+<li>Make sure the canvas is in the background (select all the objects but the canvas, cut and paste)</li>
+<li>Edit the canvas properties, set the receive name to "ViewPort" and configure its size and position to select the part of the window you want to display on the PdDroidParty screen</li>
+<li>You can dynamically change the viewport by sending "pos" and "vis_size" messages to "ViewPort", so you have visual indication of the portion of the screen that will be displayed on PdDroidParty</li>
+</ul>
+<p>The selected viewport area will be rescaled in order to fill the screen of the device.</p>
+<p>See <code>droidparty-demos/pure-widgets-demo/droidparty_main.pd</code> for an example of this feature.</p>
+<h2>Orientation</h2>
+<p>The patch will be oriented according to the ViewPort canvas as documented above, or the dimensions of the <code>droidparty_main.pd</code> patch if there is no viewport canvas. If the current patch or viewport has a larger width than height, it will rotate to landscape on the phone. If it has a larger height than width, it will rotate to portrait.</p>
+<h2>Icon</h2>
+<p>You can add an "icon.png" file in your directory, it will be used by the Patch Selector to represent the patch, in place of the default PdDroidParty icon.</p>
+<h2>Config</h2>
+<p>If you want to prevent the app from asking for record permission for your patch you can add a subpatch like <code>pd config</code> and put a comment inside the subpatch like <code>PdDroidParty.config.norecord 1</code>.</p>
+</main>
+
+  <footer>
+    <p>Copyright <a href="https://mccormick.cx">Chris McCormick</a> since 2011.</p>
+    <p><a href="https://twitter.com/mccrmx">@mccrmx</a></p>
+  </footer>
+
+
+</body></html>
